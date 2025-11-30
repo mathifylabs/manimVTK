@@ -150,65 +150,23 @@ def surface_to_vtk_polydata(
     """
     vtk = _get_vtk()
 
-    points = vtk.vtkPoints()
-    polys = vtk.vtkCellArray()
-    colors = vtk.vtkUnsignedCharArray()
-    colors.SetNumberOfComponents(4)
-    colors.SetName("Colors")
+    # Manim's Surface is a VGroup of patches - collect all points from submobjects
+    all_points = []
+    for mobject in surface.get_family():
+        if hasattr(mobject, "points") and len(mobject.points) > 0:
+            all_points.extend(mobject.points)
 
-    # Get the surface function and ranges
-    try:
-        func = surface.uv_func
-        if u_range is None:
-            u_range = surface.u_range
-        if v_range is None:
-            v_range = surface.v_range
-    except AttributeError:
-        # Fallback: use points directly from the surface
-        pts = surface.points
-        for p in pts:
-            points.InsertNextPoint(float(p[0]), float(p[1]), float(p[2]))
-
+    if not all_points:
+        # Return empty polydata if no points found
         polydata = vtk.vtkPolyData()
-        polydata.SetPoints(points)
         return polydata
 
-    nu, nv = resolution
-    u_vals = np.linspace(u_range[0], u_range[1], nu)
-    v_vals = np.linspace(v_range[0], v_range[1], nv)
+    all_points = np.array(all_points)
 
-    # Create points grid
-    point_indices = np.zeros((nu, nv), dtype=int)
-    idx = 0
-    for i, u in enumerate(u_vals):
-        for j, v in enumerate(v_vals):
-            try:
-                point = func(u, v)
-                points.InsertNextPoint(float(point[0]), float(point[1]), float(point[2]))
-                point_indices[i, j] = idx
-                idx += 1
-            except Exception:
-                # Handle invalid points
-                points.InsertNextPoint(0.0, 0.0, 0.0)
-                point_indices[i, j] = idx
-                idx += 1
-
-    # Create triangles from grid
-    for i in range(nu - 1):
-        for j in range(nv - 1):
-            # First triangle
-            tri1 = vtk.vtkTriangle()
-            tri1.GetPointIds().SetId(0, point_indices[i, j])
-            tri1.GetPointIds().SetId(1, point_indices[i + 1, j])
-            tri1.GetPointIds().SetId(2, point_indices[i, j + 1])
-            polys.InsertNextCell(tri1)
-
-            # Second triangle
-            tri2 = vtk.vtkTriangle()
-            tri2.GetPointIds().SetId(0, point_indices[i + 1, j])
-            tri2.GetPointIds().SetId(1, point_indices[i + 1, j + 1])
-            tri2.GetPointIds().SetId(2, point_indices[i, j + 1])
-            polys.InsertNextCell(tri2)
+    # Create VTK points
+    points = vtk.vtkPoints()
+    for p in all_points:
+        points.InsertNextPoint(float(p[0]), float(p[1]), float(p[2]))
 
     # Get color
     try:
@@ -219,8 +177,47 @@ def surface_to_vtk_polydata(
         rgba_int = [255, 255, 255, 255]
 
     # Add colors for each point
-    for _ in range(points.GetNumberOfPoints()):
+    colors = vtk.vtkUnsignedCharArray()
+    colors.SetNumberOfComponents(4)
+    colors.SetName("Colors")
+    for _ in range(len(all_points)):
         colors.InsertNextTuple4(*rgba_int)
+
+    # Create polygons - each patch is typically 16 points in Manim's bezier representation
+    # We'll create triangles from groups of 4 points (quad patches)
+    polys = vtk.vtkCellArray()
+
+    # Manim's surfaces are made of quadrilateral bezier patches
+    # Each patch has 16 control points arranged in a 4x4 grid
+    num_points = len(all_points)
+    patch_size = 16
+
+    for patch_start in range(0, num_points, patch_size):
+        if patch_start + patch_size > num_points:
+            break
+
+        # For a 4x4 bezier patch, create triangles from the corners and edges
+        # Use corners of the bezier patch for triangulation
+        indices = [
+            patch_start,       # (0,0)
+            patch_start + 3,   # (0,3)
+            patch_start + 12,  # (3,0)
+            patch_start + 15,  # (3,3)
+        ]
+
+        # Triangle 1: corners 0, 1, 2
+        tri1 = vtk.vtkTriangle()
+        tri1.GetPointIds().SetId(0, indices[0])
+        tri1.GetPointIds().SetId(1, indices[1])
+        tri1.GetPointIds().SetId(2, indices[2])
+        polys.InsertNextCell(tri1)
+
+        # Triangle 2: corners 1, 3, 2
+        tri2 = vtk.vtkTriangle()
+        tri2.GetPointIds().SetId(0, indices[1])
+        tri2.GetPointIds().SetId(1, indices[3])
+        tri2.GetPointIds().SetId(2, indices[2])
+        polys.InsertNextCell(tri2)
 
     polydata = vtk.vtkPolyData()
     polydata.SetPoints(points)

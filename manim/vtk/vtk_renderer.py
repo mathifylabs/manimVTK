@@ -104,6 +104,9 @@ class VTKRenderer:
         self._vtk_camera = None
         self._exporter: VTKExporter | None = None
 
+        # Flag to track if VTK rendering is available (may not be in headless environments)
+        self._vtk_rendering_available = False
+
         # Actor cache to avoid recreating actors every frame
         self._actor_cache: dict[int, Any] = {}
 
@@ -114,37 +117,102 @@ class VTKRenderer:
             self._vtk = _get_vtk()
         return self._vtk
 
+    def _check_vtk_rendering_available(self) -> bool:
+        """Check if VTK offscreen rendering is available.
+
+        VTK requires either a display (X11), EGL, or OSMesa for offscreen rendering.
+        This method checks the environment to determine if rendering is possible.
+
+        Returns
+        -------
+        bool
+            True if VTK offscreen rendering should be available.
+        """
+        import os
+        import ctypes
+
+        # Check for display
+        display = os.environ.get("DISPLAY", "")
+        if display:
+            return True
+
+        # Check for EGL
+        try:
+            ctypes.CDLL("libEGL.so.1")
+            return True
+        except OSError:
+            pass
+
+        # Check for OSMesa
+        try:
+            ctypes.CDLL("libOSMesa.so")
+            return True
+        except OSError:
+            pass
+
+        return False
+
     def _init_vtk_rendering(self) -> None:
-        """Initialize VTK rendering components."""
+        """Initialize VTK rendering components.
+
+        In headless environments (e.g., Google Colab without GPU), VTK rendering
+        may fail. This method attempts to initialize VTK rendering and falls back
+        to using the Cairo camera for video frames if VTK rendering is unavailable.
+        VTK file export will still work regardless.
+        """
+        # Check if VTK rendering is possible before attempting initialization
+        if not self._check_vtk_rendering_available():
+            logger.warning(
+                "VTK offscreen rendering not available (no display, EGL, or OSMesa). "
+                "Video will use Cairo renderer. VTK export will still work."
+            )
+            self._vtk_rendering_available = False
+            return
+
         vtk = self.vtk
 
-        # Create render window
-        self._render_window = vtk.vtkRenderWindow()
-        self._render_window.SetOffScreenRendering(True)
-        self._render_window.SetSize(config["pixel_width"], config["pixel_height"])
+        try:
+            # Create render window
+            self._render_window = vtk.vtkRenderWindow()
+            self._render_window.SetOffScreenRendering(True)
+            self._render_window.SetSize(config["pixel_width"], config["pixel_height"])
 
-        # Create renderer
-        self._renderer = vtk.vtkRenderer()
+            # Create renderer
+            self._renderer = vtk.vtkRenderer()
 
-        # Set background color
-        bg_color = config["background_color"]
-        rgb = bg_color.to_rgb() if hasattr(bg_color, "to_rgb") else [0.0, 0.0, 0.0]
-        self._renderer.SetBackground(*rgb)
+            # Set background color
+            bg_color = config["background_color"]
+            rgb = bg_color.to_rgb() if hasattr(bg_color, "to_rgb") else [0.0, 0.0, 0.0]
+            self._renderer.SetBackground(*rgb)
 
-        self._render_window.AddRenderer(self._renderer)
+            self._render_window.AddRenderer(self._renderer)
 
-        # Create camera
-        self._vtk_camera = vtk.vtkCamera()
-        self._vtk_camera.SetPosition(0, 0, 10)
-        self._vtk_camera.SetFocalPoint(0, 0, 0)
-        self._vtk_camera.SetViewUp(0, 1, 0)
+            # Create camera
+            self._vtk_camera = vtk.vtkCamera()
+            self._vtk_camera.SetPosition(0, 0, 10)
+            self._vtk_camera.SetFocalPoint(0, 0, 0)
+            self._vtk_camera.SetViewUp(0, 1, 0)
 
-        # Set camera to match Manim's coordinate system
-        frame_height = config["frame_height"]
-        self._vtk_camera.ParallelProjectionOn()
-        self._vtk_camera.SetParallelScale(frame_height / 2)
+            # Set camera to match Manim's coordinate system
+            frame_height = config["frame_height"]
+            self._vtk_camera.ParallelProjectionOn()
+            self._vtk_camera.SetParallelScale(frame_height / 2)
 
-        self._renderer.SetActiveCamera(self._vtk_camera)
+            self._renderer.SetActiveCamera(self._vtk_camera)
+
+            # Test if VTK rendering actually works by doing a test render
+            self._render_window.Render()
+            self._vtk_rendering_available = True
+            logger.debug("VTK offscreen rendering initialized successfully")
+        except Exception as e:
+            logger.warning(
+                f"VTK offscreen rendering not available ({e}). "
+                "Video will use Cairo renderer. VTK export will still work."
+            )
+            self._vtk_rendering_available = False
+            self._render_window = None
+            self._renderer = None
+            self._vtk_camera = None
 
     def init_scene(self, scene: Scene) -> None:
         """Initialize the renderer for a scene.
@@ -291,6 +359,10 @@ class VTKRenderer:
         mobjects : Iterable[Mobject]
             Mobjects to add/update in the VTK scene.
         """
+        # Skip if VTK rendering isn't available
+        if not self._vtk_rendering_available or self._renderer is None:
+            return
+
         # Clear old actors
         self._renderer.RemoveAllViewProps()
 
@@ -306,6 +378,10 @@ class VTKRenderer:
         mobj : Mobject
             The mobject to add.
         """
+        # Skip if VTK rendering isn't available
+        if not self._vtk_rendering_available or self._renderer is None:
+            return
+
         vtk = self.vtk
 
         # Get or create polydata
@@ -351,10 +427,11 @@ class VTKRenderer:
         PixelArray
             NumPy array of pixel values (height x width x 3).
         """
-        vtk = self.vtk
-
-        if self._render_window is None:
+        # Fall back to Cairo camera if VTK rendering isn't available
+        if not self._vtk_rendering_available or self._render_window is None:
             return np.array(self.camera.pixel_array)
+
+        vtk = self.vtk
 
         # Render
         self._render_window.Render()
