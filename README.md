@@ -35,6 +35,27 @@ manim MyScene --renderer vtk --vtk-time-series
 
 ### Installation
 
+#### Prerequisites (Linux only)
+
+Manim depends on [ManimPango](https://github.com/ManimCommunity/ManimPango), which requires system dependencies on Linux since pre-built wheels are not available. Install them first:
+
+**Debian/Ubuntu (including Google Colab):**
+```bash
+sudo apt install libpango1.0-dev pkg-config python3-dev
+```
+
+**Fedora:**
+```bash
+sudo dnf install pango-devel pkg-config python3-devel
+```
+
+**Arch Linux:**
+```bash
+sudo pacman -S pango pkgconf
+```
+
+#### Install Manim-VTK
+
 ```bash
 # Clone the repository
 git clone https://github.com/mathifylabs/manimVTK.git
