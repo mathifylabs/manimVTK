@@ -129,26 +129,48 @@ class VTKRenderer:
             True if VTK offscreen rendering should be available.
         """
         import os
+        import platform
         import ctypes
 
-        # Check for display
+        # Check for display (works on all Unix-like systems)
         display = os.environ.get("DISPLAY", "")
         if display:
             return True
 
-        # Check for EGL
-        try:
-            ctypes.CDLL("libEGL.so.1")
-            return True
-        except OSError:
-            pass
+        system = platform.system()
 
-        # Check for OSMesa
-        try:
-            ctypes.CDLL("libOSMesa.so")
-            return True
-        except OSError:
-            pass
+        # Platform-specific library checks
+        if system == "Darwin":  # macOS
+            # On macOS, we can typically render without a display via OpenGL
+            # Check for OpenGL framework
+            try:
+                ctypes.CDLL("/System/Library/Frameworks/OpenGL.framework/OpenGL")
+                return True
+            except OSError:
+                pass
+        elif system == "Windows":
+            # On Windows, check for OpenGL32.dll
+            try:
+                ctypes.CDLL("opengl32.dll")
+                return True
+            except OSError:
+                pass
+        else:  # Linux and other Unix-like systems
+            # Check for EGL (modern offscreen rendering)
+            for egl_lib in ["libEGL.so.1", "libEGL.so"]:
+                try:
+                    ctypes.CDLL(egl_lib)
+                    return True
+                except OSError:
+                    pass
+
+            # Check for OSMesa (software rendering)
+            for osmesa_lib in ["libOSMesa.so", "libOSMesa.so.8"]:
+                try:
+                    ctypes.CDLL(osmesa_lib)
+                    return True
+                except OSError:
+                    pass
 
         return False
 

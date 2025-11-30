@@ -183,40 +183,56 @@ def surface_to_vtk_polydata(
     for _ in range(len(all_points)):
         colors.InsertNextTuple4(*rgba_int)
 
-    # Create polygons - each patch is typically 16 points in Manim's bezier representation
-    # We'll create triangles from groups of 4 points (quad patches)
+    # Create polygons from bezier patches
     polys = vtk.vtkCellArray()
 
-    # Manim's surfaces are made of quadrilateral bezier patches
-    # Each patch has 16 control points arranged in a 4x4 grid
-    num_points = len(all_points)
-    patch_size = 16
+    # Manim's 3D surfaces are composed of cubic bezier patches.
+    # Each patch uses 16 control points arranged in a 4x4 grid:
+    #
+    #   0   1   2   3     (row 0)
+    #   4   5   6   7     (row 1)
+    #   8   9  10  11     (row 2)
+    #  12  13  14  15     (row 3)
+    #
+    # For VTK export, we approximate each bezier patch as two triangles
+    # using the four corner control points.
+    bezier_patch_size = 4  # 4x4 grid
+    num_control_points_per_patch = bezier_patch_size * bezier_patch_size  # 16 points
 
-    for patch_start in range(0, num_points, patch_size):
-        if patch_start + patch_size > num_points:
+    # Corner indices within a 4x4 bezier patch (row-major order):
+    # Top-left (0,0) = 0, Top-right (0,3) = 3
+    # Bottom-left (3,0) = 12, Bottom-right (3,3) = 15
+    corner_top_left = 0
+    corner_top_right = bezier_patch_size - 1  # 3
+    corner_bottom_left = (bezier_patch_size - 1) * bezier_patch_size  # 12
+    corner_bottom_right = num_control_points_per_patch - 1  # 15
+
+    num_points = len(all_points)
+
+    for patch_start in range(0, num_points, num_control_points_per_patch):
+        if patch_start + num_control_points_per_patch > num_points:
             break
 
-        # For a 4x4 bezier patch, create triangles from the corners and edges
-        # Use corners of the bezier patch for triangulation
-        indices = [
-            patch_start,       # (0,0)
-            patch_start + 3,   # (0,3)
-            patch_start + 12,  # (3,0)
-            patch_start + 15,  # (3,3)
+        # Get corner indices for this patch
+        corners = [
+            patch_start + corner_top_left,
+            patch_start + corner_top_right,
+            patch_start + corner_bottom_left,
+            patch_start + corner_bottom_right,
         ]
 
-        # Triangle 1: corners 0, 1, 2
+        # Triangle 1: top-left, top-right, bottom-left
         tri1 = vtk.vtkTriangle()
-        tri1.GetPointIds().SetId(0, indices[0])
-        tri1.GetPointIds().SetId(1, indices[1])
-        tri1.GetPointIds().SetId(2, indices[2])
+        tri1.GetPointIds().SetId(0, corners[0])
+        tri1.GetPointIds().SetId(1, corners[1])
+        tri1.GetPointIds().SetId(2, corners[2])
         polys.InsertNextCell(tri1)
 
-        # Triangle 2: corners 1, 3, 2
+        # Triangle 2: top-right, bottom-right, bottom-left
         tri2 = vtk.vtkTriangle()
-        tri2.GetPointIds().SetId(0, indices[1])
-        tri2.GetPointIds().SetId(1, indices[3])
-        tri2.GetPointIds().SetId(2, indices[2])
+        tri2.GetPointIds().SetId(0, corners[1])
+        tri2.GetPointIds().SetId(1, corners[3])
+        tri2.GetPointIds().SetId(2, corners[2])
         polys.InsertNextCell(tri2)
 
     polydata = vtk.vtkPolyData()
