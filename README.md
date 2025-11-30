@@ -1,142 +1,229 @@
 <p align="center">
     <a href="https://www.manim.community/"><img src="https://raw.githubusercontent.com/ManimCommunity/manim/main/logo/cropped.png"></a>
     <br />
+    <h1 align="center">Manim-VTK</h1>
+    <h3 align="center">Scientific Visualization meets Mathematical Animation</h3>
     <br />
-    <a href="https://pypi.org/project/manim/"><img src="https://img.shields.io/pypi/v/manim.svg?style=flat&logo=pypi" alt="PyPI Latest Release"></a>
-    <a href="https://hub.docker.com/r/manimcommunity/manim"><img src="https://img.shields.io/docker/v/manimcommunity/manim?color=%23099cec&label=docker%20image&logo=docker" alt="Docker image"> </a>
-    <a href="https://mybinder.org/v2/gh/ManimCommunity/jupyter_examples/HEAD?filepath=basic_example_scenes.ipynb"><img src="https://mybinder.org/badge_logo.svg"></a>
+    <p align="center">
+    <a href="https://github.com/mathifylabs/manimVTK"><img src="https://img.shields.io/badge/fork-manim--vtk-blue?style=flat&logo=github" alt="GitHub Fork"></a>
     <a href="http://choosealicense.com/licenses/mit/"><img src="https://img.shields.io/badge/license-MIT-red.svg?style=flat" alt="MIT License"></a>
-    <a href="https://www.reddit.com/r/manim/"><img src="https://img.shields.io/reddit/subreddit-subscribers/manim.svg?color=orange&label=reddit&logo=reddit" alt="Reddit" href=></a>
-    <a href="https://twitter.com/manim_community/"><img src="https://img.shields.io/twitter/url/https/twitter.com/cloudposse.svg?style=social&label=Follow%20%40manim_community" alt="Twitter">
-    <a href="https://www.manim.community/discord/"><img src="https://img.shields.io/discord/581738731934056449.svg?label=discord&color=yellow&logo=discord" alt="Discord"></a>
-    <a href="https://github.com/psf/black"><img src="https://img.shields.io/badge/code%20style-black-000000.svg" alt="Code style: black">
-    <a href="https://docs.manim.community/"><img src="https://readthedocs.org/projects/manimce/badge/?version=latest" alt="Documentation Status"></a>
-    <a href="https://pepy.tech/project/manim"><img src="https://pepy.tech/badge/manim/month?" alt="Downloads"> </a>
-    <img src="https://github.com/ManimCommunity/manim/workflows/CI/badge.svg" alt="CI">
-    <br />
-    <br />
-    <i>An animation engine for explanatory math videos</i>
+    <a href="https://www.python.org/"><img src="https://img.shields.io/badge/python-3.9+-blue.svg" alt="Python 3.9+"></a>
+    </p>
 </p>
 <hr />
 
-Manim is an animation engine for explanatory math videos. It's used to create precise animations programmatically, as demonstrated in the videos of [3Blue1Brown](https://www.3blue1brown.com/).
+**Manim-VTK** is a fork of [Manim Community](https://www.manim.community/) that integrates VTK (Visualization Toolkit) for scientific visualization and export capabilities. It keeps Manim's elegant syntax and animation system while adding the ability to:
 
-> [!NOTE]
-> The community edition of Manim (ManimCE) is a version maintained and developed by the community. It was forked from 3b1b/manim, a tool originally created and open-sourced by Grant Sanderson, also creator of the 3Blue1Brown educational math videos. While Grant Sanderson continues to maintain his own repository, we recommend this version for its continued development, improved features, enhanced documentation, and more active community-driven maintenance. If you would like to study how Grant makes his videos, head over to his repository ([3b1b/manim](https://github.com/3b1b/manim)).
+- **Export VTK assets** for visualization in ParaView, PyVista, and vtk.js
+- **Render with VTK** for high-quality shaded surfaces
+- **Create time series** animations for CFD and scientific data
+- **Generate interactive 3D datasets** alongside traditional video output
 
-## Table of Contents:
+## 🎯 What's New
 
-- [Installation](#installation)
-- [Usage](#usage)
-- [Documentation](#documentation)
-- [Docker](#docker)
-- [Help with Manim](#help-with-manim)
-- [Contributing](#contributing)
-- [License](#license)
+Users can now render scenes with VTK and export scientific visualization data:
 
-## Installation
+```bash
+# Export both an MP4 video AND VTK scene files
+manim -pqh MyScene --renderer vtk --vtk-export
 
-> [!CAUTION]
-> These instructions are for the community version _only_. Trying to use these instructions to install [3b1b/manim](https://github.com/3b1b/manim) or instructions there to install this version will cause problems. Read [this](https://docs.manim.community/en/stable/faq/installation.html#why-are-there-different-versions-of-manim) and decide which version you wish to install, then only follow the instructions for your desired version.
+# Export time series for ParaView animation scrubbing
+manim MyScene --renderer vtk --vtk-time-series
+```
 
-Manim requires a few dependencies that must be installed prior to using it. If you
-want to try it out first before installing it locally, you can do so
-[in our online Jupyter environment](https://try.manim.community/).
+## 🚀 Quick Start
 
-For local installation, please visit the [Documentation](https://docs.manim.community/en/stable/installation.html)
-and follow the appropriate instructions for your operating system.
+### Installation
 
-## Usage
+```bash
+# Clone the repository
+git clone https://github.com/mathifylabs/manimVTK.git
+cd manimVTK
 
-Manim is an extremely versatile package. The following is an example `Scene` you can construct:
+# Install with VTK support
+pip install -e ".[vtk]"
+
+# Or install with full scientific stack (includes PyVista)
+pip install -e ".[scientific]"
+```
+
+### Basic Usage
 
 ```python
 from manim import *
 
-
-class SquareToCircle(Scene):
+class CFDVisualization(Scene):
     def construct(self):
-        circle = Circle()
-        square = Square()
-        square.flip(RIGHT)
-        square.rotate(-3 * TAU / 8)
-        circle.set_fill(PINK, opacity=0.5)
-
-        self.play(Create(square))
-        self.play(Transform(square, circle))
-        self.play(FadeOut(square))
+        # Create a surface (e.g., representing pressure field)
+        surface = Surface(
+            lambda u, v: np.array([u, v, np.sin(u) * np.cos(v)]),
+            u_range=[-2, 2],
+            v_range=[-2, 2],
+            resolution=(50, 50),
+        )
+        surface.set_color(BLUE)
+        
+        self.play(Create(surface))
+        self.wait()
 ```
 
-In order to view the output of this scene, save the code in a file called `example.py`. Then, run the following in a terminal window:
+Render with VTK export:
 
-```sh
-manim -p -ql example.py SquareToCircle
+```bash
+manim -pqh example.py CFDVisualization --renderer vtk --vtk-export
 ```
 
-You should see your native video player program pop up and play a simple scene in which a square is transformed into a circle. You may find some more simple examples within this
-[GitHub repository](example_scenes). You can also visit the [official gallery](https://docs.manim.community/en/stable/examples.html) for more advanced examples.
+This produces:
+- `media/videos/example/1080p60/CFDVisualization.mp4` - Standard video output
+- `media/vtk/CFDVisualization/CFDVisualization_final.vtm` - VTK MultiBlock file
 
-Manim also ships with a `%%manim` IPython magic which allows to use it conveniently in JupyterLab (as well as classic Jupyter) notebooks. See the
-[corresponding documentation](https://docs.manim.community/en/stable/reference/manim.utils.ipython_magic.ManimMagic.html) for some guidance and
-[try it out online](https://mybinder.org/v2/gh/ManimCommunity/jupyter_examples/HEAD?filepath=basic_example_scenes.ipynb).
+## 📦 VTK Export Options
 
-## Command line arguments
+### Static Export (`--vtk-export`)
 
-The general usage of Manim is as follows:
+Exports the final scene state to VTK format:
+- Single mobject: `.vtp` (PolyData)
+- Multiple mobjects: `.vtm` (MultiBlock)
 
-![manim-illustration](https://raw.githubusercontent.com/ManimCommunity/manim/main/docs/source/_static/command.png)
+### Time Series Export (`--vtk-time-series`)
 
-The `-p` flag in the command above is for previewing, meaning the video file will automatically open when it is done rendering. The `-ql` flag is for a faster rendering at a lower quality.
+Exports frame-by-frame VTK files with a `.pvd` collection file:
 
-Some other useful flags include:
+```
+media/vtk/MyScene/
+├── MyScene.pvd              # ParaView Data collection file
+├── MyScene_00000.vtp        # Frame 0
+├── MyScene_00001.vtp        # Frame 1
+├── ...
+└── MyScene_viewer.html      # Basic HTML viewer template
+```
 
-- `-s` to skip to the end and just show the final frame.
-- `-n <number>` to skip ahead to the `n`'th animation of a scene.
-- `-f` show the file in the file browser.
+Load the `.pvd` file in ParaView to scrub through animations using its native time slider.
 
-For a thorough list of command line arguments, visit the [documentation](https://docs.manim.community/en/stable/guides/configuration.html).
+## 🔧 CLI Options
 
-## Documentation
+| Option | Description |
+|--------|-------------|
+| `--renderer vtk` | Use VTK renderer |
+| `--vtk-export` | Export final scene to VTK format |
+| `--vtk-time-series` | Export all frames as VTK time series |
 
-Documentation is in progress at [ReadTheDocs](https://docs.manim.community/).
+## 💡 Use Cases
 
-## Docker
+### CFD Visualization
 
-The community also maintains a docker image (`manimcommunity/manim`), which can be found [on DockerHub](https://hub.docker.com/r/manimcommunity/manim).
-Instructions on how to install and use it can be found in our [documentation](https://docs.manim.community/en/stable/installation/docker.html).
+```python
+from manim import *
+from manim.vtk import add_scalar_field, add_vector_field
 
-## Help with Manim
+class PressureField(Scene):
+    def construct(self):
+        # Create surface mesh
+        surface = Surface(
+            lambda u, v: np.array([u, v, 0]),
+            u_range=[-2, 2],
+            v_range=[-2, 2],
+        )
+        
+        # Color by pressure (handled in VTK export)
+        self.add(surface)
+        self.wait()
+```
 
-If you need help installing or using Manim, feel free to reach out to our [Discord
-Server](https://www.manim.community/discord/) or [Reddit Community](https://www.reddit.com/r/manim). If you would like to submit a bug report or feature request, please open an issue.
+### Interactive Web Viewing
 
-## Contributing
+The exported `.vtkjs` files can be embedded in web applications using vtk.js, perfect for:
+- Educational platforms
+- Research presentations
+- Interactive documentation
 
-Contributions to Manim are always welcome. In particular, there is a dire need for tests and documentation. For contribution guidelines, please see the [documentation](https://docs.manim.community/en/stable/contributing.html).
+## 🏗 Architecture
 
-However, please note that Manim is currently undergoing a major refactor. In general,
-contributions implementing new features will not be accepted in this period.
-The contribution guide may become outdated quickly; we highly recommend joining our
-[Discord server](https://www.manim.community/discord/) to discuss any potential
-contributions and keep up to date with the latest developments.
+Manim-VTK adds a new renderer layer:
 
-Most developers on the project use `uv` for management. You'll want to have uv installed and available in your environment.
-Learn more about `uv` at its [documentation](https://docs.astral.sh/uv/) and find out how to install manim with uv at the [manim dev-installation guide](https://docs.manim.community/en/latest/contributing/development.html) in the manim documentation.
+```
+┌─────────────────────────────────────────────────────────┐
+│                    Manim Core                           │
+│  (Scene, Mobject, VMobject, Animation, play, etc.)     │
+└─────────────────────────────────────────────────────────┘
+                           │
+                           ▼
+┌─────────────────────────────────────────────────────────┐
+│               Renderer Abstraction                       │
+│  ┌─────────────┐ ┌─────────────┐ ┌─────────────────┐   │
+│  │CairoRenderer│ │OpenGLRenderer│ │ VTKRenderer ✨  │   │
+│  └─────────────┘ └─────────────┘ └─────────────────┘   │
+└─────────────────────────────────────────────────────────┘
+                           │
+                           ▼
+┌─────────────────────────────────────────────────────────┐
+│            VTK Export / Viewer Layer                    │
+│  • vtk_exporter.py - File export (.vtp, .vtm, .pvd)   │
+│  • vtk_mobject_adapter.py - Manim → VTK conversion    │
+│  • HTML/vtk.js viewer template                         │
+└─────────────────────────────────────────────────────────┘
+```
 
-## How to Cite Manim
+## 📊 Supported Mobjects
 
-We acknowledge the importance of good software to support research, and we note
-that research becomes more valuable when it is communicated effectively. To
-demonstrate the value of Manim, we ask that you cite Manim in your work.
-Currently, the best way to cite Manim is to go to our
-[repository page](https://github.com/ManimCommunity/manim) (if you aren't already) and
-click the "cite this repository" button on the right sidebar. This will generate
-a citation in your preferred format, and will also integrate well with citation managers.
+| Mobject Type | VTK Export | Notes |
+|--------------|------------|-------|
+| `VMobject` (2D shapes) | ✅ | Converted to PolyData with colors |
+| `Surface` | ✅ | Full mesh with UV coordinates |
+| `Sphere`, `Cube`, etc. | ✅ | 3D primitives |
+| `ParametricSurface` | ✅ | Parametric surfaces |
+| `VGroup` | ✅ | Exported as MultiBlock |
 
-## Code of Conduct
+## 🔬 Scientific Features
 
-Our full code of conduct, and how we enforce it, can be read on [our website](https://docs.manim.community/en/stable/conduct.html).
+### Scalar Fields
 
-## License
+Attach scalar data (pressure, temperature) to VTK exports:
 
-The software is double-licensed under the MIT license, with copyright by 3blue1brown LLC (see LICENSE), and copyright by Manim Community Developers (see LICENSE.community).
+```python
+from manim.vtk import add_scalar_field
+
+# After creating polydata
+add_scalar_field(polydata, "pressure", pressure_values)
+```
+
+### Vector Fields
+
+Attach velocity/force fields for glyphs and streamlines:
+
+```python
+from manim.vtk import add_vector_field
+
+# Attach velocity (U, V, W components)
+add_vector_field(polydata, "velocity", velocity_vectors)
+```
+
+## 🤝 Contributing
+
+Contributions are welcome! This fork is particularly interested in:
+- Additional mobject → VTK conversions
+- vtk.js web viewer improvements
+- CFD-specific visualization features
+- Performance optimizations
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+## 📄 License
+
+The software is double-licensed under the MIT license:
+- Copyright by 3blue1brown LLC (see LICENSE)
+- Copyright by Manim Community Developers (see LICENSE.community)
+- Copyright by Mathify Labs for VTK extensions
+
+## 🙏 Acknowledgments
+
+- [Manim Community](https://www.manim.community/) - The original animation engine
+- [3Blue1Brown](https://www.3blue1brown.com/) - Creator of the original Manim
+- [VTK](https://vtk.org/) - The Visualization Toolkit
+- [ParaView](https://www.paraview.org/) - Scientific visualization application
+
+---
+
+<p align="center">
+<i>Describe your simulation → get both a video and an interactive 3D dataset.</i>
+</p>
