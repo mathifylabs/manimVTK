@@ -94,7 +94,32 @@ def render(**kwargs: Any) -> ClickArgs | dict[str, Any]:
 
     config.digest_args(click_args)
     file = Path(config.input_file)
-    if config.renderer == RendererType.OPENGL:
+
+    if config.renderer == RendererType.VTK:
+        # VTK Renderer
+        from manim.vtk.vtk_renderer import VTKRenderer
+
+        try:
+            vtk_export = getattr(click_args, "vtk_export", False) or False
+            vtk_time_series = getattr(click_args, "vtk_time_series", False) or False
+
+            for SceneClass in scene_classes_from_file(file):
+                try:
+                    with tempconfig({}):
+                        renderer = VTKRenderer(
+                            vtk_export=vtk_export,
+                            vtk_time_series=vtk_time_series,
+                        )
+                        scene = SceneClass(renderer=renderer)
+                        scene.render()
+                except Exception:
+                    error_console.print_exception()
+                    sys.exit(1)
+        except Exception:
+            error_console.print_exception()
+            sys.exit(1)
+
+    elif config.renderer == RendererType.OPENGL:
         from manim.renderer.opengl_renderer import OpenGLRenderer
 
         try:

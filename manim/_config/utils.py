@@ -324,6 +324,10 @@ class ManimConfig(MutableMapping):
         "force_window",
         "no_latex_cleanup",
         "preview_command",
+        # VTK-specific options
+        "vtk_export",
+        "vtk_time_series",
+        "vtk_dir",
     }
 
     def __init__(self) -> None:
@@ -773,6 +777,9 @@ class ManimConfig(MutableMapping):
             "dry_run",
             "no_latex_cleanup",
             "preview_command",
+            # VTK-specific options
+            "vtk_export",
+            "vtk_time_series",
         ]:
             if hasattr(args, key):
                 attr = getattr(args, key)
@@ -1487,6 +1494,33 @@ class ManimConfig(MutableMapping):
     @use_projection_stroke_shaders.setter
     def use_projection_stroke_shaders(self, value: bool) -> None:
         self._set_boolean("use_projection_stroke_shaders", value)
+
+    @property
+    def vtk_export(self) -> bool:
+        """Whether to export VTK files after rendering (--vtk-export)."""
+        return self._d["vtk_export"] or False
+
+    @vtk_export.setter
+    def vtk_export(self, value: bool) -> None:
+        self._set_boolean("vtk_export", value)
+
+    @property
+    def vtk_time_series(self) -> bool:
+        """Whether to export VTK time series (.pvd) files (--vtk-time-series)."""
+        return self._d["vtk_time_series"] or False
+
+    @vtk_time_series.setter
+    def vtk_time_series(self, value: bool) -> None:
+        self._set_boolean("vtk_time_series", value)
+
+    @property
+    def vtk_dir(self) -> str:
+        """Directory for VTK output files. See :meth:`ManimConfig.get_dir`."""
+        return self._d["vtk_dir"] or "{media_dir}/vtk"
+
+    @vtk_dir.setter
+    def vtk_dir(self, value: str | Path) -> None:
+        self._set_dir("vtk_dir", value)
 
     @property
     def zero_pad(self) -> int:

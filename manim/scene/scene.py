@@ -206,6 +206,15 @@ class Scene:
             if renderer is None:
                 renderer = OpenGLRenderer()
 
+        if config.renderer == RendererType.VTK and renderer is None:
+            # VTK renderer - import lazily to avoid issues if VTK not installed
+            from ..vtk.vtk_renderer import VTKRenderer
+
+            renderer = VTKRenderer(
+                camera_class=self.camera_class,
+                skip_animations=self.skip_animations,
+            )
+
         if renderer is None:
             self.renderer: CairoRenderer | OpenGLRenderer = CairoRenderer(
                 # TODO: Is it a suitable approach to make an instance of

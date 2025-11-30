@@ -171,7 +171,7 @@ render_options = option_group(
             [renderer_type.value for renderer_type in RendererType],
             case_sensitive=False,
         ),
-        help="Select a renderer for your Scene.",
+        help="Select a renderer for your Scene (cairo, opengl, or vtk).",
         default="cairo",
     ),
     option(
@@ -211,5 +211,20 @@ render_options = option_group(
         is_flag=True,
         help="Use shaders for OpenGLVMobject stroke which are compatible with transformation matrices.",
         default=None,
+    ),
+    # VTK-specific options
+    option(
+        "--vtk-export",
+        "vtk_export",
+        is_flag=True,
+        default=None,
+        help="Export scene to VTK format (.vtp/.vtm) after rendering. Requires --renderer vtk.",
+    ),
+    option(
+        "--vtk-time-series",
+        "vtk_time_series",
+        is_flag=True,
+        default=None,
+        help="Export VTK time series (.pvd) for animation playback in ParaView. Requires --renderer vtk.",
     ),
 )

@@ -277,6 +277,7 @@ class RendererType(Enum):
 
     CAIRO = "cairo"  #: A renderer based on the cairo backend.
     OPENGL = "opengl"  #: An OpenGL-based renderer.
+    VTK = "vtk"  #: A VTK-based renderer for scientific visualization and export.
 
 
 class LineJointType(Enum):
