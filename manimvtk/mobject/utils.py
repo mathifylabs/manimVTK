@@ -38,7 +38,7 @@ def get_mobject_class() -> type:
         >>> get_mobject_class().__name__ in ['Mobject', 'OpenGLMobject']
         True
     """
-    if config.renderer == RendererType.CAIRO:
+    if config.renderer in (RendererType.CAIRO, RendererType.VTK):
         return Mobject
     if config.renderer == RendererType.OPENGL:
         return OpenGLMobject
@@ -68,7 +68,7 @@ def get_vectorized_mobject_class() -> type:
         >>> get_vectorized_mobject_class().__name__ in ['VMobject', 'OpenGLVMobject']
         True
     """
-    if config.renderer == RendererType.CAIRO:
+    if config.renderer in (RendererType.CAIRO, RendererType.VTK):
         return VMobject
     if config.renderer == RendererType.OPENGL:
         return OpenGLVMobject
@@ -98,7 +98,7 @@ def get_point_mobject_class() -> type:
         >>> get_point_mobject_class().__name__ in ['PMobject', 'OpenGLPMobject']
         True
     """
-    if config.renderer == RendererType.CAIRO:
+    if config.renderer in (RendererType.CAIRO, RendererType.VTK):
         return PMobject
     if config.renderer == RendererType.OPENGL:
         return OpenGLPMobject

@@ -831,7 +831,7 @@ class Text(SVGMobject):
     def init_colors(self, propagate_colors: bool = True) -> Self:
         if config.renderer == RendererType.OPENGL:
             super().init_colors()
-        elif config.renderer == RendererType.CAIRO:
+        elif config.renderer in (RendererType.CAIRO, RendererType.VTK):
             super().init_colors(propagate_colors=propagate_colors)
         return self
 

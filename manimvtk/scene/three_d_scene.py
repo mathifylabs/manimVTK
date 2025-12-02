@@ -116,7 +116,7 @@ class ThreeDScene(Scene):
         # can begin and end smoothly
         about: str = about.lower()
         try:
-            if config.renderer == RendererType.CAIRO:
+            if config.renderer in (RendererType.CAIRO, RendererType.VTK):
                 trackers = {
                     "theta": self.camera.theta_tracker,
                     "phi": self.camera.phi_tracker,
@@ -141,7 +141,7 @@ class ThreeDScene(Scene):
         """This method stops all ambient camera rotation."""
         about: str = about.lower()
         try:
-            if config.renderer == RendererType.CAIRO:
+            if config.renderer in (RendererType.CAIRO, RendererType.VTK):
                 trackers = {
                     "theta": self.camera.theta_tracker,
                     "phi": self.camera.phi_tracker,
@@ -249,7 +249,7 @@ class ThreeDScene(Scene):
         """
         anims = []
 
-        if config.renderer == RendererType.CAIRO:
+        if config.renderer in (RendererType.CAIRO, RendererType.VTK):
             self.camera: ThreeDCamera
             value_tracker_pairs = [
                 (phi, self.camera.phi_tracker),
@@ -306,7 +306,7 @@ class ThreeDScene(Scene):
         # it is required to redraw every object. These lines remove frame_center from the Scene once
         # its animation is done, ensuring that manim does not think that it is moving. Since the
         # frame_center is never actually drawn, this shouldn't break anything.
-        if frame_center is not None and config.renderer == RendererType.CAIRO:
+        if frame_center is not None and config.renderer in (RendererType.CAIRO, RendererType.VTK):
             self.remove(self.camera._frame_center)
 
     def get_moving_mobjects(self, *animations: Animation):
@@ -345,7 +345,7 @@ class ThreeDScene(Scene):
                 use_static_center_func : bool
                 center_func : function
         """
-        if config.renderer == RendererType.CAIRO:
+        if config.renderer in (RendererType.CAIRO, RendererType.VTK):
             self.add(*mobjects)
             self.renderer.camera.add_fixed_orientation_mobjects(*mobjects, **kwargs)
         elif config.renderer == RendererType.OPENGL:
@@ -366,7 +366,7 @@ class ThreeDScene(Scene):
         *mobjects
             The Mobjects whose orientation must be fixed.
         """
-        if config.renderer == RendererType.CAIRO:
+        if config.renderer in (RendererType.CAIRO, RendererType.VTK):
             self.add(*mobjects)
             self.camera: ThreeDCamera
             self.camera.add_fixed_in_frame_mobjects(*mobjects)
@@ -388,7 +388,7 @@ class ThreeDScene(Scene):
         *mobjects
             The Mobjects whose orientation must be unfixed.
         """
-        if config.renderer == RendererType.CAIRO:
+        if config.renderer in (RendererType.CAIRO, RendererType.VTK):
             self.renderer.camera.remove_fixed_orientation_mobjects(*mobjects)
         elif config.renderer == RendererType.OPENGL:
             for mob in mobjects:
@@ -407,7 +407,7 @@ class ThreeDScene(Scene):
         *mobjects
             The Mobjects whose position and orientation must be unfixed.
         """
-        if config.renderer == RendererType.CAIRO:
+        if config.renderer in (RendererType.CAIRO, RendererType.VTK):
             self.renderer.camera.remove_fixed_in_frame_mobjects(*mobjects)
         elif config.renderer == RendererType.OPENGL:
             for mob in mobjects:
