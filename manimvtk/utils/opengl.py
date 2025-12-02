@@ -5,14 +5,14 @@ from typing import TYPE_CHECKING
 import numpy as np
 import numpy.linalg as linalg
 
-from manim._config import config
-from manim.typing import ManimFloat
+from manimvtk._config import config
+from manimvtk.typing import ManimFloat
 
 if TYPE_CHECKING:
     import numpy.typing as npt
     from typing_extensions import TypeAlias
 
-    from manim.typing import MatrixMN, Point3D
+    from manimvtk.typing import MatrixMN, Point3D
 
 
 depth = 20
