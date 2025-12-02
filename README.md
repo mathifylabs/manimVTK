@@ -219,6 +219,54 @@ from manim.vtk import add_vector_field
 add_vector_field(polydata, "velocity", velocity_vectors)
 ```
 
+## 🧪 Testing
+
+### Running the Test Suite
+
+The project includes a comprehensive test suite for VTK functionality with 61 tests covering:
+- **VTK Mobject Adapter**: Conversion of Manim mobjects to VTK PolyData
+- **VTK Exporter**: File export (.vtp, .vtm, .pvd, .vtkjs)
+- **VTK Renderer**: Renderer initialization and scene handling
+
+To run the tests:
+
+```bash
+# Install dev dependencies
+pip install -e ".[vtk]"
+pip install pytest pytest-cov pytest-xdist
+
+# Run VTK tests (headless environments require xvfb)
+xvfb-run -a pytest tests/test_vtk/ -v
+
+# Run with display available
+pytest tests/test_vtk/ -v
+```
+
+### VTK Example Scenes
+
+Try the example scenes in `example_scenes/vtk_examples.py` to verify VTK functionality:
+
+```bash
+# Basic 2D example with VTK export
+manim -pql example_scenes/vtk_examples.py Circle2DExample --vtk-export
+
+# 3D surface example
+manim -pql example_scenes/vtk_examples.py ParametricSurfaceExample --vtk-export
+
+# Time series export for ParaView
+manim -pql example_scenes/vtk_examples.py AnimatedCircle --vtk-time-series
+
+# List all available example scenes
+python -c "from example_scenes.vtk_examples import EXAMPLE_SCENES; print([s.__name__ for s in EXAMPLE_SCENES])"
+```
+
+Available example categories:
+- **Basic 2D**: Circle2DExample, Square2DExample, MultipleShapes2D, PolygonExample
+- **Basic 3D**: Sphere3DExample, Cube3DExample, ParametricSurfaceExample, TorusSurface
+- **Animated**: AnimatedCircle, SquareToCircleVTK, Rotating3DObject, GrowingSurface
+- **Scientific**: WaveSurface, PressureFieldVisualization, VelocityFieldArrows
+- **Edge Cases**: EmptyScene, ManyShapes, TinyMobject, LargeMobject
+
 ## 🤝 Contributing
 
 Contributions are welcome! This fork is particularly interested in:
