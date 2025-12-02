@@ -3,7 +3,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from manim import AddTextLetterByLetter, Text
+from manimvtk import AddTextLetterByLetter, Text
 
 
 def test_non_empty_text_creation():

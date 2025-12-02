@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from manim import get_dir_layout, get_video_metadata, logger
+from manimvtk import get_dir_layout, get_video_metadata, logger
 
 
 def get_section_dir_layout(dirpath: Path) -> list[str]:

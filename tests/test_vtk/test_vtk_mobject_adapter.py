@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import numpy as np
 
-from manim import Circle, Cube, Dot, Line, Polygon, Rectangle, Sphere, Square, Surface
-from manim.vtk import (
+from manimvtk import Circle, Cube, Dot, Line, Polygon, Rectangle, Sphere, Square, Surface
+from manimvtk.vtk import (
     mobject_to_vtk_polydata,
     surface_to_vtk_polydata,
     vmobject_to_vtk_polydata,
@@ -62,7 +62,7 @@ class TestVMobjectToVTKPolyData:
 
     def test_empty_mobject_conversion(self):
         """Test that an empty mobject doesn't cause errors."""
-        from manim.mobject.types.vectorized_mobject import VMobject
+        from manimvtk.mobject.types.vectorized_mobject import VMobject
 
         empty = VMobject()
         polydata = vmobject_to_vtk_polydata(empty)
@@ -145,7 +145,7 @@ class TestScalarAndVectorFields:
 
     def test_add_scalar_field(self):
         """Test adding a scalar field to PolyData."""
-        from manim.vtk.vtk_mobject_adapter import add_scalar_field
+        from manimvtk.vtk.vtk_mobject_adapter import add_scalar_field
 
         circle = Circle()
         polydata = vmobject_to_vtk_polydata(circle)
@@ -161,7 +161,7 @@ class TestScalarAndVectorFields:
 
     def test_add_vector_field(self):
         """Test adding a vector field to PolyData."""
-        from manim.vtk.vtk_mobject_adapter import add_vector_field
+        from manimvtk.vtk.vtk_mobject_adapter import add_vector_field
 
         circle = Circle()
         polydata = vmobject_to_vtk_polydata(circle)

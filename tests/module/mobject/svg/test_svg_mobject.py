@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from manim import *
+from manimvtk import *
 from tests.helpers.path_utils import get_svg_resource
 
 

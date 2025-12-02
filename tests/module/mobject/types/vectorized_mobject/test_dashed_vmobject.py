@@ -1,5 +1,5 @@
-from manim import ORIGIN, UR, Arrow, DashedVMobject, VGroup
-from manim.mobject.geometry.tips import ArrowTip, StealthTip
+from manimvtk import ORIGIN, UR, Arrow, DashedVMobject, VGroup
+from manimvtk.mobject.geometry.tips import ArrowTip, StealthTip
 
 
 def _collect_tips(mobject):

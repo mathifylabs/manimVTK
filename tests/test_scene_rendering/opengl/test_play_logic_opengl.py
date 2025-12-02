@@ -5,7 +5,7 @@ from unittest.mock import Mock
 
 import pytest
 
-from manim import (
+from manimvtk import (
     Scene,
     ValueTracker,
     np,

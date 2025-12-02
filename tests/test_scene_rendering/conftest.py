@@ -6,8 +6,8 @@ import pytest
 
 
 @pytest.fixture
-def manim_cfg_file():
-    return Path(__file__).parent / "manim.cfg"
+def manimvtk.cfg_file():
+    return Path(__file__).parent / "manimvtk.cfg"
 
 
 @pytest.fixture

@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from manim import capture
+from manimvtk import capture
 
 plugin_pyproject_template = textwrap.dedent(
     """\
@@ -18,7 +18,7 @@ plugin_pyproject_template = textwrap.dedent(
     description = "A fantastic Manim plugin"
     requires-python = ">=3.9"
 
-    [project.entry-points."manim.plugins"]
+    [project.entry-points."manimvtk.plugins"]
     "{plugin_name}" = "{plugin_entrypoint}"
 
     [build-system]
@@ -29,7 +29,7 @@ plugin_pyproject_template = textwrap.dedent(
 
 plugin_init_template = textwrap.dedent(
     """\
-    from manim import *
+    from manimvtk import *
     {all_dec}
     class {class_name}(VMobject):
         def __init__(self):
@@ -61,7 +61,7 @@ def simple_scenes_path():
 
 
 def cfg_file_create(cfg_file_contents, path):
-    file_loc = (path / "manim.cfg").absolute()
+    file_loc = (path / "manimvtk.cfg").absolute()
     file_loc.write_text(cfg_file_contents)
     return file_loc
 
@@ -83,7 +83,7 @@ def test_plugin_warning(tmp_path, python_version, simple_scenes_path):
     command = [
         python_version,
         "-m",
-        "manim",
+        "manimvtk",
         "-ql",
         "--media_dir",
         str(cfg_file.parent),

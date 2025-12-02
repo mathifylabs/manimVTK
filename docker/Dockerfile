@@ -31,18 +31,18 @@ RUN wget -O /tmp/install-tl-unx.tar.gz http://mirror.ctan.org/systems/texlive/tl
         mathastext microtype multitoc physics prelim2e preview ragged2e relsize rsfs \
         setspace standalone tipa wasy wasysym xcolor xetex xkeyval
 
-# clone and build manim
-COPY . /opt/manim
-WORKDIR /opt/manim
+# clone and build manimvtk
+COPY . /opt/manimvtk
+WORKDIR /opt/manimvtk
 RUN pip install --no-cache .[jupyterlab]
 
 RUN pip install -r docs/requirements.txt
 
-ARG NB_USER=manimuser
+ARG NB_USER=manimvtkuser
 ARG NB_UID=1000
 ENV USER=${NB_USER}
 ENV NB_UID=${NB_UID}
-ENV HOME=/manim
+ENV HOME=/manimvtk
 
 RUN adduser --disabled-password \
     --gecos "Default user" \

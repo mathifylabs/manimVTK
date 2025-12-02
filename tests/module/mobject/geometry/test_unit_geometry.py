@@ -4,7 +4,7 @@ import logging
 
 import numpy as np
 
-from manim import (
+from manimvtk import (
     DEGREES,
     DOWN,
     LEFT,

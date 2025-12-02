@@ -3,7 +3,7 @@ from __future__ import annotations
 from contextlib import redirect_stdout
 from io import StringIO
 
-from manim.mobject.text.text_mobject import MarkupText, Text
+from manimvtk.mobject.text.text_mobject import MarkupText, Text
 
 
 def test_font_size():

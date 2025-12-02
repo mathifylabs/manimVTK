@@ -6,9 +6,9 @@ import av
 import numpy as np
 import pytest
 
-from manim import DR, Circle, Create, Scene, Star, tempconfig
-from manim.scene.scene_file_writer import to_av_frame_rate
-from manim.utils.commands import capture, get_video_metadata
+from manimvtk import DR, Circle, Create, Scene, Star, tempconfig
+from manimvtk.scene.scene_file_writer import to_av_frame_rate
+from manimvtk.utils.commands import capture, get_video_metadata
 
 
 class StarScene(Scene):
@@ -168,7 +168,7 @@ def test_unicode_partial_movie(config, tmpdir, simple_scenes_path):
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "--media_dir",
         str(tmpdir / unicode_str),
         str(simple_scenes_path),

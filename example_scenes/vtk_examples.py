@@ -21,7 +21,7 @@ Examples are organized by complexity:
 4. Scientific visualization examples
 """
 
-from manim import *
+from manimvtk import *
 
 # =============================================================================
 # Basic 2D Shape Examples

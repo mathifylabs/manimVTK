@@ -7,9 +7,9 @@ import pytest
 from click.testing import CliRunner
 from PIL import Image
 
-from manim import capture, get_video_metadata
-from manim.__main__ import __version__, main
-from manim.utils.file_ops import add_version_before_extension
+from manimvtk import capture, get_video_metadata
+from manimvtk.__main__ import __version__, main
+from manimvtk.utils.file_ops import add_version_before_extension
 
 from ..utils.video_tester import video_comparison
 
@@ -19,12 +19,12 @@ from ..utils.video_tester import video_comparison
     "SquareToCircleWithDefaultValues.json",
     "videos/simple_scenes/1080p60/SquareToCircle.mp4",
 )
-def test_basic_scene_with_default_values(tmp_path, manim_cfg_file, simple_scenes_path):
+def test_basic_scene_with_default_values(tmp_path, manimvtk.cfg_file, simple_scenes_path):
     scene_name = "SquareToCircle"
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "--media_dir",
         str(tmp_path),
         str(simple_scenes_path),
@@ -35,7 +35,7 @@ def test_basic_scene_with_default_values(tmp_path, manim_cfg_file, simple_scenes
 
 
 @pytest.mark.slow
-def test_resolution_flag(tmp_path, manim_cfg_file, simple_scenes_path):
+def test_resolution_flag(tmp_path, manimvtk.cfg_file, simple_scenes_path):
     scene_name = "NoAnimations"
     # test different separators
     resolutions = [
@@ -52,7 +52,7 @@ def test_resolution_flag(tmp_path, manim_cfg_file, simple_scenes_path):
         command = [
             sys.executable,
             "-m",
-            "manim",
+            "manimvtk",
             "--media_dir",
             str(tmp_path),
             "--resolution",
@@ -76,12 +76,12 @@ def test_resolution_flag(tmp_path, manim_cfg_file, simple_scenes_path):
     "SquareToCircleWithlFlag.json",
     "videos/simple_scenes/480p15/SquareToCircle.mp4",
 )
-def test_basic_scene_l_flag(tmp_path, manim_cfg_file, simple_scenes_path):
+def test_basic_scene_l_flag(tmp_path, manimvtk.cfg_file, simple_scenes_path):
     scene_name = "SquareToCircle"
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "-ql",
         "--media_dir",
         str(tmp_path),
@@ -102,7 +102,7 @@ def test_n_flag(tmp_path, simple_scenes_path):
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "-ql",
         "-n 3,6",
         "--media_dir",
@@ -115,12 +115,12 @@ def test_n_flag(tmp_path, simple_scenes_path):
 
 
 @pytest.mark.slow
-def test_s_flag_no_animations(tmp_path, manim_cfg_file, simple_scenes_path):
+def test_s_flag_no_animations(tmp_path, manimvtk.cfg_file, simple_scenes_path):
     scene_name = "NoAnimations"
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "-ql",
         "-s",
         "--media_dir",
@@ -139,12 +139,12 @@ def test_s_flag_no_animations(tmp_path, manim_cfg_file, simple_scenes_path):
 
 
 @pytest.mark.slow
-def test_s_flag(tmp_path, manim_cfg_file, simple_scenes_path):
+def test_s_flag(tmp_path, manimvtk.cfg_file, simple_scenes_path):
     scene_name = "SquareToCircle"
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "-ql",
         "-s",
         "--media_dir",
@@ -163,12 +163,12 @@ def test_s_flag(tmp_path, manim_cfg_file, simple_scenes_path):
 
 
 @pytest.mark.slow
-def test_s_flag_opengl_renderer(tmp_path, manim_cfg_file, simple_scenes_path):
+def test_s_flag_opengl_renderer(tmp_path, manimvtk.cfg_file, simple_scenes_path):
     scene_name = "SquareToCircle"
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "-ql",
         "-s",
         "--renderer",
@@ -189,12 +189,12 @@ def test_s_flag_opengl_renderer(tmp_path, manim_cfg_file, simple_scenes_path):
 
 
 @pytest.mark.slow
-def test_r_flag(tmp_path, manim_cfg_file, simple_scenes_path):
+def test_r_flag(tmp_path, manimvtk.cfg_file, simple_scenes_path):
     scene_name = "SquareToCircle"
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "-ql",
         "-s",
         "--media_dir",
@@ -217,11 +217,11 @@ def test_r_flag(tmp_path, manim_cfg_file, simple_scenes_path):
 
 
 @pytest.mark.slow
-def test_a_flag(tmp_path, manim_cfg_file, infallible_scenes_path):
+def test_a_flag(tmp_path, manimvtk.cfg_file, infallible_scenes_path):
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "-ql",
         "--media_dir",
         str(tmp_path),
@@ -252,12 +252,12 @@ def test_a_flag(tmp_path, manim_cfg_file, infallible_scenes_path):
 
 
 @pytest.mark.slow
-def test_custom_folders(tmp_path, manim_cfg_file, simple_scenes_path):
+def test_custom_folders(tmp_path, manimvtk.cfg_file, simple_scenes_path):
     scene_name = "SquareToCircle"
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "-ql",
         "-s",
         "--media_dir",
@@ -283,7 +283,7 @@ def test_custom_output_name_gif(tmp_path, simple_scenes_path):
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "-ql",
         "--media_dir",
         str(tmp_path),
@@ -326,7 +326,7 @@ def test_custom_output_name_mp4(tmp_path, simple_scenes_path):
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "-ql",
         "--media_dir",
         str(tmp_path),
@@ -385,13 +385,13 @@ def test_dash_as_filename(tmp_path):
 
 
 @pytest.mark.slow
-def test_gif_format_output(tmp_path, manim_cfg_file, simple_scenes_path):
+def test_gif_format_output(tmp_path, manimvtk.cfg_file, simple_scenes_path):
     """Test only gif created with manim version in file name when --format gif is set"""
     scene_name = "SquareToCircle"
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "-ql",
         "--media_dir",
         str(tmp_path),
@@ -417,13 +417,13 @@ def test_gif_format_output(tmp_path, manim_cfg_file, simple_scenes_path):
 
 
 @pytest.mark.slow
-def test_mp4_format_output(tmp_path, manim_cfg_file, simple_scenes_path):
+def test_mp4_format_output(tmp_path, manimvtk.cfg_file, simple_scenes_path):
     """Test only mp4 created without manim version in file name when --format mp4 is set"""
     scene_name = "SquareToCircle"
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "-ql",
         "--media_dir",
         str(tmp_path),
@@ -453,7 +453,7 @@ def test_mp4_format_output(tmp_path, manim_cfg_file, simple_scenes_path):
 @pytest.mark.slow
 def test_videos_not_created_when_png_format_set(
     tmp_path,
-    manim_cfg_file,
+    manimvtk.cfg_file,
     simple_scenes_path,
 ):
     """Test mp4 and gifs are not created when --format png is set"""
@@ -461,7 +461,7 @@ def test_videos_not_created_when_png_format_set(
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "-ql",
         "--media_dir",
         str(tmp_path),
@@ -491,7 +491,7 @@ def test_videos_not_created_when_png_format_set(
 @pytest.mark.slow
 def test_images_are_created_when_png_format_set(
     tmp_path,
-    manim_cfg_file,
+    manimvtk.cfg_file,
     simple_scenes_path,
 ):
     """Test images are created in media directory when --format png is set"""
@@ -499,7 +499,7 @@ def test_images_are_created_when_png_format_set(
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "-ql",
         "--media_dir",
         str(tmp_path),
@@ -518,7 +518,7 @@ def test_images_are_created_when_png_format_set(
 @pytest.mark.slow
 def test_images_are_created_when_png_format_set_for_opengl(
     tmp_path,
-    manim_cfg_file,
+    manimvtk.cfg_file,
     simple_scenes_path,
 ):
     """Test images are created in media directory when --format png is set for opengl"""
@@ -526,7 +526,7 @@ def test_images_are_created_when_png_format_set_for_opengl(
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "-ql",
         "--renderer",
         "opengl",
@@ -547,7 +547,7 @@ def test_images_are_created_when_png_format_set_for_opengl(
 @pytest.mark.slow
 def test_images_are_zero_padded_when_zero_pad_set(
     tmp_path,
-    manim_cfg_file,
+    manimvtk.cfg_file,
     simple_scenes_path,
 ):
     """Test images are zero padded when --format png and --zero_pad n are set"""
@@ -555,7 +555,7 @@ def test_images_are_zero_padded_when_zero_pad_set(
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "-ql",
         "--media_dir",
         str(tmp_path),
@@ -581,7 +581,7 @@ def test_images_are_zero_padded_when_zero_pad_set(
 @pytest.mark.slow
 def test_images_are_zero_padded_when_zero_pad_set_for_opengl(
     tmp_path,
-    manim_cfg_file,
+    manimvtk.cfg_file,
     simple_scenes_path,
 ):
     """Test images are zero padded when --format png and --zero_pad n are set with the opengl renderer"""
@@ -589,7 +589,7 @@ def test_images_are_zero_padded_when_zero_pad_set_for_opengl(
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "-ql",
         "--renderer",
         "opengl",
@@ -615,13 +615,13 @@ def test_images_are_zero_padded_when_zero_pad_set_for_opengl(
 
 
 @pytest.mark.slow
-def test_webm_format_output(tmp_path, manim_cfg_file, simple_scenes_path):
+def test_webm_format_output(tmp_path, manimvtk.cfg_file, simple_scenes_path):
     """Test only webm created when --format webm is set"""
     scene_name = "SquareToCircle"
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "-ql",
         "--media_dir",
         str(tmp_path),
@@ -651,7 +651,7 @@ def test_webm_format_output(tmp_path, manim_cfg_file, simple_scenes_path):
 @pytest.mark.slow
 def test_default_format_output_for_transparent_flag(
     tmp_path,
-    manim_cfg_file,
+    manimvtk.cfg_file,
     simple_scenes_path,
 ):
     """Test .mov is created by default when transparent flag is set"""
@@ -659,7 +659,7 @@ def test_default_format_output_for_transparent_flag(
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "-ql",
         "--media_dir",
         str(tmp_path),
@@ -686,13 +686,13 @@ def test_default_format_output_for_transparent_flag(
 
 
 @pytest.mark.slow
-def test_mov_can_be_set_as_output_format(tmp_path, manim_cfg_file, simple_scenes_path):
+def test_mov_can_be_set_as_output_format(tmp_path, manimvtk.cfg_file, simple_scenes_path):
     """Test .mov is created by when set using --format mov arg"""
     scene_name = "SquareToCircle"
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "-ql",
         "--media_dir",
         str(tmp_path),
@@ -724,9 +724,9 @@ def test_mov_can_be_set_as_output_format(tmp_path, manim_cfg_file, simple_scenes
     "InputFileViaCfg.json",
     "videos/simple_scenes/480p15/SquareToCircle.mp4",
 )
-def test_input_file_via_cfg(tmp_path, manim_cfg_file, simple_scenes_path):
+def test_input_file_via_cfg(tmp_path, manimvtk.cfg_file, simple_scenes_path):
     scene_name = "SquareToCircle"
-    (tmp_path / "manim.cfg").write_text(
+    (tmp_path / "manimvtk.cfg").write_text(
         f"""
 [CLI]
 input_file = {simple_scenes_path}
@@ -736,7 +736,7 @@ input_file = {simple_scenes_path}
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "-ql",
         "--media_dir",
         ".",
@@ -762,7 +762,7 @@ dry_run = true
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "--config_file",
         str(config_file),
         "--media_dir",

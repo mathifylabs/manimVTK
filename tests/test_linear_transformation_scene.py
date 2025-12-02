@@ -1,4 +1,4 @@
-from manim import RIGHT, UP, LinearTransformationScene, Vector, VGroup
+from manimvtk import RIGHT, UP, LinearTransformationScene, Vector, VGroup
 
 __module_test__ = "vector_space_scene"
 

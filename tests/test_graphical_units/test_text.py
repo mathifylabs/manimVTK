@@ -1,4 +1,4 @@
-from manim import RED, MarkupText, Text, VMobject
+from manimvtk import RED, MarkupText, Text, VMobject
 
 __module_test__ = "text"
 

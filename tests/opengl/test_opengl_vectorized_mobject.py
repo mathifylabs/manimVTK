@@ -3,9 +3,9 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from manim import Circle, Line, Square, VDict, VGroup, VMobject
-from manim.mobject.opengl.opengl_mobject import OpenGLMobject
-from manim.mobject.opengl.opengl_vectorized_mobject import OpenGLVMobject
+from manimvtk import Circle, Line, Square, VDict, VGroup, VMobject
+from manimvtk.mobject.opengl.opengl_mobject import OpenGLMobject
+from manimvtk.mobject.opengl.opengl_vectorized_mobject import OpenGLVMobject
 
 
 def test_opengl_vmobject_add(using_opengl_renderer):

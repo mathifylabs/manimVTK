@@ -4,7 +4,7 @@ import struct
 import wave
 from pathlib import Path
 
-from manim import Scene
+from manimvtk import Scene
 
 
 def test_add_sound(tmpdir):

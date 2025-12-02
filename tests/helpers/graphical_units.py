@@ -8,9 +8,9 @@ from pathlib import Path
 
 import numpy as np
 
-from manim.scene.scene import Scene
+from manimvtk.scene.scene import Scene
 
-logger = logging.getLogger("manim")
+logger = logging.getLogger("manimvtk")
 
 
 def set_test_scene(scene_object: type[Scene], module_name: str, config):

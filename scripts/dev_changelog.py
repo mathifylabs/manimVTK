@@ -57,7 +57,7 @@ from git import Repo
 from github import Github
 from tqdm import tqdm
 
-from manim.constants import CONTEXT_SETTINGS, EPILOG
+from manimvtk.constants import CONTEXT_SETTINGS, EPILOG
 
 this_repo = Repo(str(Path(__file__).resolve().parent.parent))
 

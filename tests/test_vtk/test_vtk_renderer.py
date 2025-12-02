@@ -8,9 +8,9 @@ from unittest.mock import MagicMock
 import numpy as np
 import pytest
 
-from manim import Circle, Square, tempconfig
-from manim.scene.scene import Scene
-from manim.vtk import VTKRenderer
+from manimvtk import Circle, Square, tempconfig
+from manimvtk.scene.scene import Scene
+from manimvtk.vtk import VTKRenderer
 
 
 class SimpleTestScene(Scene):

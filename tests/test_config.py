@@ -6,8 +6,8 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from manim import WHITE, Scene, Square, Tex, Text, tempconfig
-from manim._config.utils import ManimConfig
+from manimvtk import WHITE, Scene, Square, Tex, Text, tempconfig
+from manimvtk._config.utils import ManimConfig
 from tests.assert_utils import assert_dir_exists, assert_dir_filled, assert_file_exists
 
 

@@ -3,9 +3,9 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from manim import PI
-from manim.mobject.opengl.opengl_geometry import OpenGLTriangle
-from manim.mobject.opengl.opengl_mobject import OpenGLMobject
+from manimvtk import PI
+from manimvtk.mobject.opengl.opengl_geometry import OpenGLTriangle
+from manimvtk.mobject.opengl.opengl_mobject import OpenGLMobject
 
 
 def test_opengl_mobject_add(using_opengl_renderer):

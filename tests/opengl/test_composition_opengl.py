@@ -2,13 +2,13 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock
 
-from manim.animation.animation import Animation, Wait
-from manim.animation.composition import AnimationGroup, Succession
-from manim.animation.fading import FadeIn, FadeOut
-from manim.constants import DOWN, UP
-from manim.mobject.geometry.arc import Circle
-from manim.mobject.geometry.line import Line
-from manim.mobject.geometry.polygram import Square
+from manimvtk.animation.animation import Animation, Wait
+from manimvtk.animation.composition import AnimationGroup, Succession
+from manimvtk.animation.fading import FadeIn, FadeOut
+from manimvtk.constants import DOWN, UP
+from manimvtk.mobject.geometry.arc import Circle
+from manimvtk.mobject.geometry.line import Line
+from manimvtk.mobject.geometry.polygram import Square
 
 
 def test_succession_timing(using_opengl_renderer):

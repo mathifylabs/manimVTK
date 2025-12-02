@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import numpy as np
 
-from manim.mobject.graphing.coordinate_systems import Axes, ThreeDAxes
-from manim.mobject.graphing.scale import LogBase
+from manimvtk.mobject.graphing.coordinate_systems import Axes, ThreeDAxes
+from manimvtk.mobject.graphing.scale import LogBase
 
 
 def test_axes_origin_shift():

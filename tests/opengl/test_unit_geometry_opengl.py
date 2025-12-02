@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from manim import Sector
+from manimvtk import Sector
 
 
 def test_get_arc_center(using_opengl_renderer):

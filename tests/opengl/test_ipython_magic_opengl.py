@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 
-from manim.utils.ipython_magic import _generate_file_name
+from manimvtk.utils.ipython_magic import _generate_file_name
 
 
 def test_jupyter_file_naming(config, using_opengl_renderer):

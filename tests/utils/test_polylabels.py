@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from manim.utils.polylabel import Cell, Polygon, polylabel
+from manimvtk.utils.polylabel import Cell, Polygon, polylabel
 
 
 # Test simple square and square with a hole for inside/outside logic

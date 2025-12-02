@@ -4,7 +4,7 @@ import types
 
 import pytest
 
-from manim.mobject.mobject import Mobject
+from manimvtk.mobject.mobject import Mobject
 
 
 def test_generic_set():

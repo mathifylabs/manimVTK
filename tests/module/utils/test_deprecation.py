@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from manim.utils.deprecation import deprecated, deprecated_params
+from manimvtk.utils.deprecation import deprecated, deprecated_params
 
 
 def _get_caplog_record_msg(manim_caplog):

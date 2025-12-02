@@ -1,18 +1,18 @@
 <p align="center">
     <a href="https://www.manim.community/"><img src="https://raw.githubusercontent.com/ManimCommunity/manim/main/logo/cropped.png"></a>
     <br />
-    <h1 align="center">Manim-VTK</h1>
+    <h1 align="center">ManimVTK</h1>
     <h3 align="center">Scientific Visualization meets Mathematical Animation</h3>
     <br />
     <p align="center">
-    <a href="https://github.com/mathifylabs/manimVTK"><img src="https://img.shields.io/badge/fork-manim--vtk-blue?style=flat&logo=github" alt="GitHub Fork"></a>
+    <a href="https://github.com/mathifylabs/manimVTK"><img src="https://img.shields.io/badge/fork-manimvtk-blue?style=flat&logo=github" alt="GitHub Fork"></a>
     <a href="http://choosealicense.com/licenses/mit/"><img src="https://img.shields.io/badge/license-MIT-red.svg?style=flat" alt="MIT License"></a>
     <a href="https://www.python.org/"><img src="https://img.shields.io/badge/python-3.9+-blue.svg" alt="Python 3.9+"></a>
     </p>
 </p>
 <hr />
 
-**Manim-VTK** is a fork of [Manim Community](https://www.manim.community/) that integrates VTK (Visualization Toolkit) for scientific visualization and export capabilities. It keeps Manim's elegant syntax and animation system while adding the ability to:
+**ManimVTK** is a fork of [Manim Community](https://www.manim.community/) that integrates VTK (Visualization Toolkit) for scientific visualization and export capabilities. It keeps Manim's elegant syntax and animation system while adding the ability to:
 
 - **Export VTK assets** for visualization in ParaView, PyVista, and vtk.js
 - **Render with VTK** for high-quality shaded surfaces
@@ -25,10 +25,10 @@ Users can now render scenes with VTK and export scientific visualization data:
 
 ```bash
 # Export both an MP4 video AND VTK scene files
-manim -pqh MyScene --renderer vtk --vtk-export
+manimvtk -pqh MyScene --renderer vtk --vtk-export
 
 # Export time series for ParaView animation scrubbing
-manim MyScene --renderer vtk --vtk-time-series
+manimvtk MyScene --renderer vtk --vtk-time-series
 ```
 
 ## 🚀 Quick Start
@@ -37,7 +37,7 @@ manim MyScene --renderer vtk --vtk-time-series
 
 #### Prerequisites (Linux only)
 
-Manim depends on [ManimPango](https://github.com/ManimCommunity/ManimPango), which requires system dependencies on Linux since pre-built wheels are not available. Install them first:
+ManimVTK depends on [ManimPango](https://github.com/ManimCommunity/ManimPango), which requires system dependencies on Linux since pre-built wheels are not available. Install them first:
 
 **Debian/Ubuntu (including Google Colab):**
 ```bash
@@ -54,7 +54,7 @@ sudo dnf install pango-devel pkg-config python3-devel
 sudo pacman -S pango pkgconf
 ```
 
-#### Install Manim-VTK
+#### Install ManimVTK
 
 ```bash
 # Clone the repository
@@ -68,10 +68,16 @@ pip install -e ".[vtk]"
 pip install -e ".[scientific]"
 ```
 
+Or install from PyPI:
+
+```bash
+pip install manimvtk[vtk]
+```
+
 ### Basic Usage
 
 ```python
-from manim import *
+from manimvtk import *
 
 class CFDVisualization(Scene):
     def construct(self):
@@ -91,7 +97,7 @@ class CFDVisualization(Scene):
 Render with VTK export:
 
 ```bash
-manim -pqh example.py CFDVisualization --renderer vtk --vtk-export
+manimvtk -pqh example.py CFDVisualization --renderer vtk --vtk-export
 ```
 
 This produces:
@@ -134,8 +140,8 @@ Load the `.pvd` file in ParaView to scrub through animations using its native ti
 ### CFD Visualization
 
 ```python
-from manim import *
-from manim.vtk import add_scalar_field, add_vector_field
+from manimvtk import *
+from manimvtk.vtk import add_scalar_field, add_vector_field
 
 class PressureField(Scene):
     def construct(self):
@@ -160,7 +166,7 @@ The exported `.vtkjs` files can be embedded in web applications using vtk.js, pe
 
 ## 🏗 Architecture
 
-Manim-VTK adds a new renderer layer:
+ManimVTK adds a new renderer layer:
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -202,7 +208,7 @@ Manim-VTK adds a new renderer layer:
 Attach scalar data (pressure, temperature) to VTK exports:
 
 ```python
-from manim.vtk import add_scalar_field
+from manimvtk.vtk import add_scalar_field
 
 # After creating polydata
 add_scalar_field(polydata, "pressure", pressure_values)
@@ -213,7 +219,7 @@ add_scalar_field(polydata, "pressure", pressure_values)
 Attach velocity/force fields for glyphs and streamlines:
 
 ```python
-from manim.vtk import add_vector_field
+from manimvtk.vtk import add_vector_field
 
 # Attach velocity (U, V, W components)
 add_vector_field(polydata, "velocity", velocity_vectors)
@@ -248,13 +254,13 @@ Try the example scenes in `example_scenes/vtk_examples.py` to verify VTK functio
 
 ```bash
 # Basic 2D example with VTK export
-manim -pql example_scenes/vtk_examples.py Circle2DExample --vtk-export
+manimvtk -pql example_scenes/vtk_examples.py Circle2DExample --vtk-export
 
 # 3D surface example
-manim -pql example_scenes/vtk_examples.py ParametricSurfaceExample --vtk-export
+manimvtk -pql example_scenes/vtk_examples.py ParametricSurfaceExample --vtk-export
 
 # Time series export for ParaView
-manim -pql example_scenes/vtk_examples.py AnimatedCircle --vtk-time-series
+manimvtk -pql example_scenes/vtk_examples.py AnimatedCircle --vtk-time-series
 
 # List all available example scenes
 python -c "from example_scenes.vtk_examples import EXAMPLE_SCENES; print([s.__name__ for s in EXAMPLE_SCENES])"

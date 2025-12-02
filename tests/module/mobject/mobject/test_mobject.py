@@ -3,7 +3,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from manim import DL, PI, UR, Circle, Mobject, Rectangle, Square, Triangle, VGroup
+from manimvtk import DL, PI, UR, Circle, Mobject, Rectangle, Square, Triangle, VGroup
 
 
 def test_mobject_add():
