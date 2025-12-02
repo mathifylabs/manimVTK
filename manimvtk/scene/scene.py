@@ -1324,7 +1324,7 @@ class Scene:
             animation._setup_scene(self)
             animation.begin()
 
-        if config.renderer == RendererType.CAIRO:
+        if config.renderer in (RendererType.CAIRO, RendererType.VTK):
             # Paint all non-moving objects onto the screen, so they don't
             # have to be rendered every frame
             (
