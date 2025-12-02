@@ -284,12 +284,14 @@ class VTKRenderer:
 
         if self.skip_animations:
             logger.debug(f"Skipping animation {self.num_plays}")
+            hash_current_animation = None
             self.time += scene.duration
         else:
             logger.info(f"VTK Renderer: Animation {self.num_plays}")
+            hash_current_animation = f"vtk_{self.num_plays:05}"
 
-        self.file_writer.add_partial_movie_file(f"vtk_{self.num_plays:05}")
-        self.animations_hashes.append(f"vtk_{self.num_plays:05}")
+        self.file_writer.add_partial_movie_file(hash_current_animation)
+        self.animations_hashes.append(hash_current_animation)
 
         self.file_writer.begin_animation(not self.skip_animations)
         scene.begin_animations()
@@ -447,7 +449,7 @@ class VTKRenderer:
         Returns
         -------
         PixelArray
-            NumPy array of pixel values (height x width x 3).
+            NumPy array of pixel values (height x width x 4) in RGBA format.
         """
         # Fall back to Cairo camera if VTK rendering isn't available
         if not self._vtk_rendering_available or self._render_window is None:
@@ -458,10 +460,10 @@ class VTKRenderer:
         # Render
         self._render_window.Render()
 
-        # Capture to numpy array
+        # Capture to numpy array with RGBA format for video encoding compatibility
         window_to_image = vtk.vtkWindowToImageFilter()
         window_to_image.SetInput(self._render_window)
-        window_to_image.SetInputBufferTypeToRGB()
+        window_to_image.SetInputBufferTypeToRGBA()
         window_to_image.Update()
 
         # Convert to numpy
@@ -471,13 +473,18 @@ class VTKRenderer:
         vtk_array = vtk_image.GetPointData().GetScalars()
         num_components = vtk_array.GetNumberOfComponents()
 
-        np_array = np.zeros((height, width, num_components), dtype=np.uint8)
+        # Ensure we have 4 components (RGBA) for video encoding
+        np_array = np.zeros((height, width, 4), dtype=np.uint8)
 
         for y in range(height):
             for x in range(width):
                 idx = y * width + x
-                for c in range(num_components):
+                for c in range(min(num_components, 4)):
                     np_array[height - 1 - y, x, c] = int(vtk_array.GetComponent(idx, c))
+
+        # Set alpha to 255 if VTK only provided RGB (do this outside the loops for efficiency)
+        if num_components < 4:
+            np_array[:, :, 3] = 255
 
         # Also store in Cairo camera for compatibility
         if hasattr(self.camera, "pixel_array"):
@@ -485,7 +492,7 @@ class VTKRenderer:
             if np_array.shape[:2] != self.camera.pixel_array.shape[:2]:
                 pass  # Let camera handle its own array
             else:
-                self.camera.pixel_array[:, :, :3] = np_array
+                self.camera.pixel_array[:, :, :] = np_array
 
         return np_array
 
