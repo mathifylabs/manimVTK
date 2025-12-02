@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from manim import capture
+from manimvtk import capture
 
 plugin_pyproject_template = textwrap.dedent(
     """\
@@ -29,7 +29,7 @@ plugin_pyproject_template = textwrap.dedent(
 
 plugin_init_template = textwrap.dedent(
     """\
-    from manim import *
+    from manimvtk import *
     {all_dec}
     class {class_name}(VMobject):
         def __init__(self):
@@ -83,7 +83,7 @@ def test_plugin_warning(tmp_path, python_version, simple_scenes_path):
     command = [
         python_version,
         "-m",
-        "manim",
+        "manimvtk",
         "-ql",
         "--media_dir",
         str(cfg_file.parent),

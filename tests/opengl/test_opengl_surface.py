@@ -1,7 +1,7 @@
 import numpy as np
 
-from manim.mobject.opengl.opengl_surface import OpenGLSurface
-from manim.mobject.opengl.opengl_three_dimensions import OpenGLSurfaceMesh
+from manimvtk.mobject.opengl.opengl_surface import OpenGLSurface
+from manimvtk.mobject.opengl.opengl_three_dimensions import OpenGLSurfaceMesh
 
 
 def test_surface_initialization(using_opengl_renderer):

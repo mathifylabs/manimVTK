@@ -4,7 +4,7 @@ import sys
 
 import pytest
 
-from manim import capture
+from manimvtk import capture
 from tests.assert_utils import assert_dir_exists, assert_dir_not_exists
 
 from ..utils.video_tester import video_comparison
@@ -20,7 +20,7 @@ def test_no_sections(tmp_path, manim_cfg_file, simple_scenes_path):
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "-ql",
         "--media_dir",
         str(tmp_path),
@@ -45,7 +45,7 @@ def test_sections(tmp_path, manim_cfg_file, simple_scenes_path):
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "-ql",
         "--save_sections",
         "--media_dir",
@@ -71,7 +71,7 @@ def test_many_sections(tmp_path, manim_cfg_file, simple_scenes_path):
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "-ql",
         "--save_sections",
         "--media_dir",
@@ -93,7 +93,7 @@ def test_skip_animations(tmp_path, manim_cfg_file, simple_scenes_path):
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "-ql",
         "--save_sections",
         "--media_dir",

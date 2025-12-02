@@ -2,11 +2,11 @@ from __future__ import annotations
 
 import numpy as np
 
-from manim import BLACK, RED, WHITE, ManimColor, Mobject, Scene, VMobject
+from manimvtk import BLACK, RED, WHITE, ManimColor, Mobject, Scene, VMobject
 
 
 def test_import_color():
-    import manim.utils.color as C
+    import manimvtk.utils.color as C
 
     C.WHITE
 

@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from manim import Circle, Dot, Square
-from manim.vtk import VTKExporter
+from manimvtk import Circle, Dot, Square
+from manimvtk.vtk import VTKExporter
 
 
 class TestVTKExporterInitialization:

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 
-from manim import *
+from manimvtk import *
 
 # To watch one of these scenes, run the following:
 # python --quality m manim -p example_scenes.py SquareToCircle

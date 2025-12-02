@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import pytest
 
-from manim import DiGraph, Graph, LabeledLine, Scene, Text, tempconfig
-from manim.mobject.graph import _layouts
+from manimvtk import DiGraph, Graph, LabeledLine, Scene, Text, tempconfig
+from manimvtk.mobject.graph import _layouts
 
 
 def test_graph_creation():

@@ -4,7 +4,7 @@ Configuration
 Module Index
 ------------
 
-.. currentmodule:: manim
+.. currentmodule:: manimvtk
 
 .. autosummary::
    :toctree: ../reference

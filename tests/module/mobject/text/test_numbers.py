@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from manim import RED, DecimalNumber, Integer
+from manimvtk import RED, DecimalNumber, Integer
 
 
 def test_font_size():

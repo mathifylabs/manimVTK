@@ -6,7 +6,7 @@ from functools import wraps
 from pathlib import Path
 from typing import Any
 
-from manim import get_video_metadata
+from manimvtk import get_video_metadata
 
 from ..assert_utils import assert_shallow_dict_compare
 from ..helpers.video_utils import get_section_dir_layout, get_section_index

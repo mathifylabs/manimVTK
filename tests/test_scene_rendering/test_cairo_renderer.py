@@ -4,7 +4,7 @@ from unittest.mock import Mock, patch
 
 import pytest
 
-from manim import *
+from manimvtk import *
 
 from ..assert_utils import assert_file_exists
 from .simple_scenes import *
@@ -75,7 +75,7 @@ def test_hash_logic_is_not_called_when_caching_is_disabled(
 
 
 def test_hash_logic_is_called_when_caching_is_enabled(using_temp_config):
-    from manim.renderer.cairo_renderer import get_hash_from_play_call
+    from manimvtk.renderer.cairo_renderer import get_hash_from_play_call
 
     with patch(
         "manim.renderer.cairo_renderer.get_hash_from_play_call",

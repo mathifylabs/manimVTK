@@ -5,7 +5,7 @@ import math
 import numpy as np
 import pytest
 
-from manim import (
+from manimvtk import (
     LEFT,
     ORIGIN,
     PI,
@@ -20,7 +20,7 @@ from manim import (
     config,
     tempconfig,
 )
-from manim import CoordinateSystem as CS
+from manimvtk import CoordinateSystem as CS
 
 
 def test_initial_config():

@@ -8,16 +8,16 @@ from unittest.mock import patch
 
 from click.testing import CliRunner
 
-from manim import __version__, capture
-from manim.__main__ import main
-from manim.cli.checkhealth.checks import HEALTH_CHECKS
+from manimvtk import __version__, capture
+from manimvtk.__main__ import main
+from manimvtk.cli.checkhealth.checks import HEALTH_CHECKS
 
 
 def test_manim_version():
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "--version",
     ]
     out, err, exit_code = capture(command)
@@ -28,7 +28,7 @@ def test_manim_version():
 def test_manim_cfg_subcommand():
     command = ["cfg"]
     runner = CliRunner()
-    result = runner.invoke(main, command, prog_name="manim")
+    result = runner.invoke(main, command, prog_name="manimvtk")
     expected_output = f"""\
 Manim Community v{__version__}
 
@@ -52,7 +52,7 @@ Made with <3 by Manim Community developers.
 def test_manim_plugins_subcommand():
     command = ["plugins"]
     runner = CliRunner()
-    result = runner.invoke(main, command, prog_name="manim")
+    result = runner.invoke(main, command, prog_name="manimvtk")
     expected_output = f"""\
 Manim Community v{__version__}
 
@@ -103,7 +103,7 @@ def test_manim_checkhealth_failing_subcommand():
 def test_manim_init_subcommand():
     command = ["init"]
     runner = CliRunner()
-    result = runner.invoke(main, command, prog_name="manim")
+    result = runner.invoke(main, command, prog_name="manimvtk")
     expected_output = f"""\
 Manim Community v{__version__}
 
@@ -127,7 +127,7 @@ def test_manim_init_project(tmp_path):
     command = ["init", "project", "--default", "testproject"]
     runner = CliRunner()
     with runner.isolated_filesystem(temp_dir=tmp_path) as tmp_dir:
-        result = runner.invoke(main, command, prog_name="manim", input="Default\n")
+        result = runner.invoke(main, command, prog_name="manimvtk", input="Default\n")
         assert not result.exception
         assert (Path(tmp_dir) / "testproject/main.py").exists()
         assert (Path(tmp_dir) / "testproject/manim.cfg").exists()
@@ -139,14 +139,14 @@ def test_manim_init_scene(tmp_path):
     runner = CliRunner()
     with runner.isolated_filesystem(temp_dir=tmp_path) as tmp_dir:
         result = runner.invoke(
-            main, command_named, prog_name="manim", input="Default\n"
+            main, command_named, prog_name="manimvtk", input="Default\n"
         )
         assert not result.exception
         assert (Path(tmp_dir) / "my_awesome_file.py").exists()
         file_content = (Path(tmp_dir) / "my_awesome_file.py").read_text()
         assert "NamedFileTestScene(Scene):" in file_content
         result = runner.invoke(
-            main, command_unnamed, prog_name="manim", input="Default\n"
+            main, command_unnamed, prog_name="manimvtk", input="Default\n"
         )
         assert (Path(tmp_dir) / "main.py").exists()
         file_content = (Path(tmp_dir) / "main.py").read_text()

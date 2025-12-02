@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from manim import FadeIn, Scene
+from manimvtk import FadeIn, Scene
 
 
 def test_animation_zero_total_run_time():

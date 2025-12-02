@@ -7,9 +7,9 @@ import pytest
 from click.testing import CliRunner
 from PIL import Image
 
-from manim import capture, get_video_metadata
-from manim.__main__ import __version__, main
-from manim.utils.file_ops import add_version_before_extension
+from manimvtk import capture, get_video_metadata
+from manimvtk.__main__ import __version__, main
+from manimvtk.utils.file_ops import add_version_before_extension
 
 from ..utils.video_tester import video_comparison
 
@@ -24,7 +24,7 @@ def test_basic_scene_with_default_values(tmp_path, manim_cfg_file, simple_scenes
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "--media_dir",
         str(tmp_path),
         str(simple_scenes_path),
@@ -52,7 +52,7 @@ def test_resolution_flag(tmp_path, manim_cfg_file, simple_scenes_path):
         command = [
             sys.executable,
             "-m",
-            "manim",
+            "manimvtk",
             "--media_dir",
             str(tmp_path),
             "--resolution",
@@ -81,7 +81,7 @@ def test_basic_scene_l_flag(tmp_path, manim_cfg_file, simple_scenes_path):
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "-ql",
         "--media_dir",
         str(tmp_path),
@@ -102,7 +102,7 @@ def test_n_flag(tmp_path, simple_scenes_path):
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "-ql",
         "-n 3,6",
         "--media_dir",
@@ -120,7 +120,7 @@ def test_s_flag_no_animations(tmp_path, manim_cfg_file, simple_scenes_path):
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "-ql",
         "-s",
         "--media_dir",
@@ -144,7 +144,7 @@ def test_s_flag(tmp_path, manim_cfg_file, simple_scenes_path):
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "-ql",
         "-s",
         "--media_dir",
@@ -168,7 +168,7 @@ def test_s_flag_opengl_renderer(tmp_path, manim_cfg_file, simple_scenes_path):
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "-ql",
         "-s",
         "--renderer",
@@ -194,7 +194,7 @@ def test_r_flag(tmp_path, manim_cfg_file, simple_scenes_path):
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "-ql",
         "-s",
         "--media_dir",
@@ -221,7 +221,7 @@ def test_a_flag(tmp_path, manim_cfg_file, infallible_scenes_path):
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "-ql",
         "--media_dir",
         str(tmp_path),
@@ -257,7 +257,7 @@ def test_custom_folders(tmp_path, manim_cfg_file, simple_scenes_path):
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "-ql",
         "-s",
         "--media_dir",
@@ -283,7 +283,7 @@ def test_custom_output_name_gif(tmp_path, simple_scenes_path):
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "-ql",
         "--media_dir",
         str(tmp_path),
@@ -326,7 +326,7 @@ def test_custom_output_name_mp4(tmp_path, simple_scenes_path):
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "-ql",
         "--media_dir",
         str(tmp_path),
@@ -391,7 +391,7 @@ def test_gif_format_output(tmp_path, manim_cfg_file, simple_scenes_path):
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "-ql",
         "--media_dir",
         str(tmp_path),
@@ -423,7 +423,7 @@ def test_mp4_format_output(tmp_path, manim_cfg_file, simple_scenes_path):
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "-ql",
         "--media_dir",
         str(tmp_path),
@@ -461,7 +461,7 @@ def test_videos_not_created_when_png_format_set(
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "-ql",
         "--media_dir",
         str(tmp_path),
@@ -499,7 +499,7 @@ def test_images_are_created_when_png_format_set(
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "-ql",
         "--media_dir",
         str(tmp_path),
@@ -526,7 +526,7 @@ def test_images_are_created_when_png_format_set_for_opengl(
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "-ql",
         "--renderer",
         "opengl",
@@ -555,7 +555,7 @@ def test_images_are_zero_padded_when_zero_pad_set(
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "-ql",
         "--media_dir",
         str(tmp_path),
@@ -589,7 +589,7 @@ def test_images_are_zero_padded_when_zero_pad_set_for_opengl(
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "-ql",
         "--renderer",
         "opengl",
@@ -621,7 +621,7 @@ def test_webm_format_output(tmp_path, manim_cfg_file, simple_scenes_path):
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "-ql",
         "--media_dir",
         str(tmp_path),
@@ -659,7 +659,7 @@ def test_default_format_output_for_transparent_flag(
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "-ql",
         "--media_dir",
         str(tmp_path),
@@ -692,7 +692,7 @@ def test_mov_can_be_set_as_output_format(tmp_path, manim_cfg_file, simple_scenes
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "-ql",
         "--media_dir",
         str(tmp_path),
@@ -736,7 +736,7 @@ input_file = {simple_scenes_path}
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "-ql",
         "--media_dir",
         ".",
@@ -762,7 +762,7 @@ dry_run = true
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "--config_file",
         str(config_file),
         "--media_dir",

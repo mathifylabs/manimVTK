@@ -33,7 +33,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
           path: dist/*.tar.gz
-          name: manim.tar.gz
+          name: manimvtk.tar.gz
     - name: Install Dependency
       run: pip install requests
     - name: Get Upload URL
@@ -51,7 +51,7 @@ jobs:
               "Accept":"application/vnd.github.v3+json",
               "Authorization": f"token {access_token}"
           }
-          url = f"https://api.github.com/repos/ManimCommunity/manim/releases/tags/{ref_tag}"
+          url = f"https://api.github.com/repos/mathifylabs/manimVTK/releases/tags/{ref_tag}"
           c = requests.get(url,headers=headers)
           upload_url=c.json()['upload_url']
           with open(os.getenv('GITHUB_OUTPUT'), 'w') as f:
@@ -65,6 +65,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/manim-${{ steps.create_release.outputs.tag_name }}.tar.gz
-          asset_name: manim-${{ steps.create_release.outputs.tag_name }}.tar.gz
+          asset_path: dist/manimvtk-${{ steps.create_release.outputs.tag_name }}.tar.gz
+          asset_name: manimvtk-${{ steps.create_release.outputs.tag_name }}.tar.gz
           asset_content_type: application/gzip

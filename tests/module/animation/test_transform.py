@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from manim import Circle, ReplacementTransform, Scene, Square, VGroup
+from manimvtk import Circle, ReplacementTransform, Scene, Square, VGroup
 
 
 def test_no_duplicate_references():

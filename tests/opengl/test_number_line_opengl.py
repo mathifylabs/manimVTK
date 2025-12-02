@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import numpy as np
 
-from manim import NumberLine
-from manim.mobject.text.numbers import Integer
+from manimvtk import NumberLine
+from manimvtk.mobject.text.numbers import Integer
 
 
 def test_unit_vector():

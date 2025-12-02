@@ -1,8 +1,8 @@
 from pathlib import Path
 
-import manim.utils.opengl as opengl
-from manim import *
-from manim.opengl import *
+import manimvtk.utils.opengl as opengl
+from manimvtk import *
+from manimvtk.opengl import *
 
 # Copied from https://3b1b.github.io/manim/getting_started/example_scenes.html#surfaceexample.
 # Lines that do not yet work with the Community Version are commented.

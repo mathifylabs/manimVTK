@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from manim import MovingCamera, Square
+from manimvtk import MovingCamera, Square
 
 
 def test_movingcamera_auto_zoom():

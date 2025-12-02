@@ -16,7 +16,7 @@ query-filters:
     - exclude:
           id: py/unsafe-cyclic-import
 paths:
-    - manim
+    - manimvtk
 paths-ignore:
     - tests/
     - example_scenes/

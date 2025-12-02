@@ -8,7 +8,7 @@ import cairo
 import moderngl
 import pytest
 
-import manim
+import manimvtk
 
 
 def pytest_report_header(config):
@@ -79,9 +79,9 @@ def temp_media_dir(tmpdir, monkeypatch, request):
 
 @pytest.fixture
 def manim_caplog(caplog):
-    logger = logging.getLogger("manim")
+    logger = logging.getLogger("manimvtk")
     logger.propagate = True
-    caplog.set_level(logging.INFO, logger="manim")
+    caplog.set_level(logging.INFO, logger="manimvtk")
     yield caplog
     logger.propagate = False
 

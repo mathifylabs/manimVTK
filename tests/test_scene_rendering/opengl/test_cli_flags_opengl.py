@@ -7,9 +7,9 @@ import pytest
 from click.testing import CliRunner
 from PIL import Image
 
-from manim import capture, get_video_metadata
-from manim.__main__ import __version__, main
-from manim.utils.file_ops import add_version_before_extension
+from manimvtk import capture, get_video_metadata
+from manimvtk.__main__ import __version__, main
+from manimvtk.utils.file_ops import add_version_before_extension
 from tests.utils.video_tester import video_comparison
 
 
@@ -23,7 +23,7 @@ def test_basic_scene_with_default_values(tmp_path, manim_cfg_file, simple_scenes
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "--renderer",
         "opengl",
         "--write_to_movie",
@@ -54,7 +54,7 @@ def test_resolution_flag(tmp_path, manim_cfg_file, simple_scenes_path):
         command = [
             sys.executable,
             "-m",
-            "manim",
+            "manimvtk",
             "--media_dir",
             str(tmp_path),
             "--resolution",
@@ -83,7 +83,7 @@ def test_basic_scene_l_flag(tmp_path, manim_cfg_file, simple_scenes_path):
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "--renderer",
         "opengl",
         "-ql",
@@ -107,7 +107,7 @@ def test_n_flag(tmp_path, simple_scenes_path):
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "-ql",
         "--renderer",
         "opengl",
@@ -128,7 +128,7 @@ def test_s_flag_no_animations(tmp_path, manim_cfg_file, simple_scenes_path):
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "--renderer",
         "opengl",
         "-ql",
@@ -154,7 +154,7 @@ def test_image_output_for_static_scene(tmp_path, manim_cfg_file, simple_scenes_p
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "--renderer",
         "opengl",
         "-ql",
@@ -182,7 +182,7 @@ def test_no_image_output_with_interactive_embed(
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "--renderer",
         "opengl",
         "-ql",
@@ -211,7 +211,7 @@ def test_no_default_image_output_with_non_static_scene(
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "--renderer",
         "opengl",
         "-ql",
@@ -240,7 +240,7 @@ def test_image_output_for_static_scene_with_write_to_movie(
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "--write_to_movie",
         "--renderer",
         "opengl",
@@ -266,7 +266,7 @@ def test_s_flag(tmp_path, manim_cfg_file, simple_scenes_path):
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "--renderer",
         "opengl",
         "-ql",
@@ -292,7 +292,7 @@ def test_r_flag(tmp_path, manim_cfg_file, simple_scenes_path):
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "--renderer",
         "opengl",
         "-ql",
@@ -321,7 +321,7 @@ def test_a_flag(tmp_path, manim_cfg_file, infallible_scenes_path):
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "--renderer",
         "opengl",
         "--write_to_movie",
@@ -360,7 +360,7 @@ def test_custom_folders(tmp_path, manim_cfg_file, simple_scenes_path):
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "--renderer",
         "opengl",
         "-ql",
@@ -414,7 +414,7 @@ def test_gif_format_output(tmp_path, manim_cfg_file, simple_scenes_path):
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "--renderer",
         "opengl",
         "-ql",
@@ -448,7 +448,7 @@ def test_mp4_format_output(tmp_path, manim_cfg_file, simple_scenes_path):
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "--renderer",
         "opengl",
         "-ql",
@@ -488,7 +488,7 @@ def test_videos_not_created_when_png_format_set(
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "--renderer",
         "opengl",
         "-ql",
@@ -528,7 +528,7 @@ def test_images_are_created_when_png_format_set(
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "--renderer",
         "opengl",
         "-ql",
@@ -557,7 +557,7 @@ def test_images_are_zero_padded_when_zero_pad_set(
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "--renderer",
         "opengl",
         "-ql",
@@ -589,7 +589,7 @@ def test_webm_format_output(tmp_path, manim_cfg_file, simple_scenes_path):
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "--renderer",
         "opengl",
         "-ql",
@@ -629,7 +629,7 @@ def test_default_format_output_for_transparent_flag(
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "--renderer",
         "opengl",
         "-ql",
@@ -665,7 +665,7 @@ def test_mov_can_be_set_as_output_format(tmp_path, manim_cfg_file, simple_scenes
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "--renderer",
         "opengl",
         "-ql",

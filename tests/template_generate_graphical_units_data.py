@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from manim import *
+from manimvtk import *
 from tests.helpers.graphical_units import set_test_scene
 
 # Note: DO NOT COMMIT THIS FILE. The purpose of this template is to produce control data for graphical_units_data. As

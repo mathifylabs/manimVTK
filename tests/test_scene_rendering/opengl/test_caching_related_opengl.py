@@ -4,7 +4,7 @@ import sys
 
 import pytest
 
-from manim import capture
+from manimvtk import capture
 
 from ...utils.video_tester import video_comparison
 
@@ -20,7 +20,7 @@ def test_wait_skip(tmp_path, manim_cfg_file, simple_scenes_path):
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "--renderer",
         "opengl",
         "--write_to_movie",
@@ -47,7 +47,7 @@ def test_play_skip(tmp_path, manim_cfg_file, simple_scenes_path):
     command = [
         sys.executable,
         "-m",
-        "manim",
+        "manimvtk",
         "--renderer",
         "opengl",
         "--write_to_movie",

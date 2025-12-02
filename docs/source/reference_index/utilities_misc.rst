@@ -4,7 +4,7 @@ Utilities and other modules
 Module Index
 ------------
 
-.. currentmodule:: manim
+.. currentmodule:: manimvtk
 
 .. autosummary::
    :toctree: ../reference

@@ -1,12 +1,12 @@
 import numpy as np
 import pytest
 
-from manim.mobject.text.code_mobject import Code
-from manim.utils.color.core import ManimColor
+from manimvtk.mobject.text.code_mobject import Code
+from manimvtk.utils.color.core import ManimColor
 
 
 def test_code_initialization_from_string():
-    code_string = """from manim import Scene, Square
+    code_string = """from manimvtk import Scene, Square
 
 class FadeInSquare(Scene):
     def construct(self):

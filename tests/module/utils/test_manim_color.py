@@ -5,7 +5,7 @@ import colorsys
 import numpy as np
 import numpy.testing as nt
 
-from manim.utils.color import (
+from manimvtk.utils.color import (
     BLACK,
     HSV,
     RED,
@@ -14,7 +14,7 @@ from manim.utils.color import (
     ManimColor,
     ManimColorDType,
 )
-from manim.utils.color.XKCD import GREEN
+from manimvtk.utils.color.XKCD import GREEN
 
 
 def test_init_with_int() -> None:

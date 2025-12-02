@@ -11,8 +11,8 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
-import manim
-from manim.utils.docbuild.module_parsing import parse_module_attributes
+import manimvtk
+from manimvtk.utils.docbuild.module_parsing import parse_module_attributes
 
 # -- Path setup --------------------------------------------------------------
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -25,7 +25,7 @@ sys.path.insert(0, os.path.abspath("."))
 
 # -- Project information -----------------------------------------------------
 
-project = "Manim"
+project = "ManimVTK"
 copyright = f"2020-{datetime.now().year}, The Manim Community Dev Team"  # noqa: A001
 author = "The Manim Community Dev Team"
 
@@ -44,9 +44,9 @@ extensions = [
     "sphinx.ext.extlinks",
     "sphinx.ext.viewcode",
     "sphinxext.opengraph",
-    "manim.utils.docbuild.manim_directive",
-    "manim.utils.docbuild.autocolor_directive",
-    "manim.utils.docbuild.autoaliasattr_directive",
+    "manimvtk.utils.docbuild.manim_directive",
+    "manimvtk.utils.docbuild.autocolor_directive",
+    "manimvtk.utils.docbuild.autoaliasattr_directive",
     "sphinx.ext.graphviz",
     "sphinx.ext.inheritance_diagram",
     "sphinxcontrib.programoutput",
@@ -71,7 +71,7 @@ redirects = {
 ALIAS_DOCS_DICT = parse_module_attributes()[0]
 autodoc_typehints = "description"
 autodoc_type_aliases = {
-    alias_name: f"~manim.{module}.{alias_name}"
+    alias_name: f"~manimvtk.{module}.{alias_name}"
     for module, module_dict in ALIAS_DOCS_DICT.items()
     for category_dict in module_dict.values()
     for alias_name in category_dict
@@ -121,7 +121,7 @@ html_favicon = str(Path("_static/favicon.ico"))
 html_static_path = ["_static"]
 
 html_theme_options = {
-    "source_repository": "https://github.com/ManimCommunity/manim/",
+    "source_repository": "https://github.com/mathifylabs/manimVTK/",
     "source_branch": "main",
     "source_directory": "docs/source/",
     "light_logo": "manim-logo-sidebar.svg",
@@ -151,7 +151,7 @@ html_theme_options = {
         "color-foreground-secondary": "#ffffffd9",
     },
 }
-html_title = f"Manim Community v{manim.__version__}"
+html_title = f"ManimVTK v{manimvtk.__version__}"
 
 # This specifies any additional css files that will override the theme's
 html_css_files = ["custom.css"]
@@ -160,12 +160,12 @@ latex_engine = "lualatex"
 
 # external links
 extlinks = {
-    "issue": ("https://github.com/ManimCommunity/manim/issues/%s", "#%s"),
-    "pr": ("https://github.com/ManimCommunity/manim/pull/%s", "#%s"),
+    "issue": ("https://github.com/mathifylabs/manimVTK/issues/%s", "#%s"),
+    "pr": ("https://github.com/mathifylabs/manimVTK/pull/%s", "#%s"),
 }
 
 # opengraph settings
-ogp_site_name = "Manim Community | Documentation"
+ogp_site_name = "ManimVTK | Documentation"
 ogp_site_url = "https://docs.manim.community/"
 ogp_social_cards = {
     "image": "_static/logo.png",

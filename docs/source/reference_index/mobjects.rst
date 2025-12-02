@@ -1,7 +1,7 @@
 Mobjects
 ========
 
-.. currentmodule:: manim
+.. currentmodule:: manimvtk
 
 .. autosummary::
    :toctree: ../reference

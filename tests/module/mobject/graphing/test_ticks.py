@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from manim import PI, Axes, NumberLine
+from manimvtk import PI, Axes, NumberLine
 
 
 def test_duplicate_ticks_removed_for_axes():

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from manim import *
+from manimvtk import *
 from tests.assert_utils import assert_dir_exists, assert_file_not_exists
 from tests.utils.video_tester import *
 
