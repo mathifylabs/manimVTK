@@ -218,7 +218,7 @@ class SingleStringMathTex(SVGMobject):
             submobject.color = self.color
             if config.renderer == RendererType.OPENGL:
                 submobject.init_colors()
-            elif config.renderer == RendererType.CAIRO:
+            elif config.renderer in (RendererType.CAIRO, RendererType.VTK):
                 submobject.init_colors(propagate_colors=propagate_colors)
         return self
 
