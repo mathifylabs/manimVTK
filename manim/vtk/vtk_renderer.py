@@ -481,9 +481,10 @@ class VTKRenderer:
                 idx = y * width + x
                 for c in range(min(num_components, 4)):
                     np_array[height - 1 - y, x, c] = int(vtk_array.GetComponent(idx, c))
-                # Set alpha to 255 if VTK only provided RGB
-                if num_components < 4:
-                    np_array[height - 1 - y, x, 3] = 255
+
+        # Set alpha to 255 if VTK only provided RGB (do this outside the loops for efficiency)
+        if num_components < 4:
+            np_array[:, :, 3] = 255
 
         # Also store in Cairo camera for compatibility
         if hasattr(self.camera, "pixel_array"):
