@@ -111,7 +111,7 @@ def python_version():
 
 @pytest.fixture
 def reset_cfg_file():
-    cfgfilepath = Path(__file__).parent / "test_cli" / "manim.cfg"
+    cfgfilepath = Path(__file__).parent / "test_cli" / "manimvtk.cfg"
     original = cfgfilepath.read_text()
     yield
     cfgfilepath.write_text(original)

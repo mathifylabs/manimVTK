@@ -78,45 +78,45 @@ def healthcheck(
 
 
 @healthcheck(
-    description="Checking whether manim is on your PATH",
+    description="Checking whether manimvtk is on your PATH",
     recommendation=(
-        "The command <manim> is currently not on your system's PATH.\n\n"
-        "You can work around this by calling the manim module directly "
-        "via <python -m manim> instead of just <manim>.\n\n"
+        "The command <manimvtk> is currently not on your system's PATH.\n\n"
+        "You can work around this by calling the manimvtk module directly "
+        "via <python -m manimvtk> instead of just <manimvtk>.\n\n"
         "To fix the PATH issue properly: "
         "Usually, the Python package installer pip issues a warning "
         "during the installation which contains more information. "
-        "Consider reinstalling manim via <pip uninstall manim> "
-        "followed by <pip install manim> to see the warning again, "
+        "Consider reinstalling manimvtk via <pip uninstall manimvtk> "
+        "followed by <pip install manimvtk> to see the warning again, "
         "then consult the internet on how to modify your system's "
         "PATH variable."
     ),
 )
 def is_manim_on_path() -> bool:
-    """Check whether ``manim`` is in ``PATH``.
+    """Check whether ``manimvtk`` is in ``PATH``.
 
     Returns
     -------
     :class:`bool`
-        Whether ``manim`` is in ``PATH`` or not.
+        Whether ``manimvtk`` is in ``PATH`` or not.
     """
     path_to_manim = shutil.which("manimvtk")
     return path_to_manim is not None
 
 
 @healthcheck(
-    description="Checking whether the executable belongs to manim",
+    description="Checking whether the executable belongs to manimvtk",
     recommendation=(
-        "The command <manim> does not belong to your installed version "
-        "of this library, it likely belongs to manimgl / manimlib.\n\n"
-        "Run manim via <python -m manim> or via <manimce>, or uninstall "
-        "and reinstall manim via <pip install --upgrade "
-        "--force-reinstall manim> to fix this."
+        "The command <manimvtk> does not belong to your installed version "
+        "of this library, it likely belongs to manimgl / manimlib / manim.\n\n"
+        "Run manimvtk via <python -m manimvtk>, or uninstall "
+        "and reinstall manimvtk via <pip install --upgrade "
+        "--force-reinstall manimvtk> to fix this."
     ),
     skip_on_failed=[is_manim_on_path],
 )
 def is_manim_executable_associated_to_this_library() -> bool:
-    """Check whether the ``manim`` executable in ``PATH`` is associated to this
+    """Check whether the ``manimvtk`` executable in ``PATH`` is associated to this
     library. To verify this, the executable should look like this:
 
     .. code-block:: python
@@ -132,7 +132,7 @@ def is_manim_executable_associated_to_this_library() -> bool:
     Returns
     -------
     :class:`bool`
-        Whether the ``manim`` executable in ``PATH`` is associated to this
+        Whether the ``manimvtk`` executable in ``PATH`` is associated to this
         library or not.
     """
     path_to_manim = shutil.which("manimvtk")
@@ -143,7 +143,7 @@ def is_manim_executable_associated_to_this_library() -> bool:
     # first condition below corresponds to the executable being
     # some sort of python script. second condition happens when
     # the executable is actually a Windows batch file.
-    return b"manim.__main__" in manim_exec or b'"%~dp0\\manim"' in manim_exec
+    return b"manimvtk.__main__" in manim_exec or b'"%~dp0\\manimvtk"' in manim_exec
 
 
 @healthcheck(
@@ -173,7 +173,7 @@ def is_latex_available() -> bool:
 @healthcheck(
     description="Checking whether dvisvgm is available",
     recommendation=(
-        "Manim could find <latex>, but not <dvisvgm> on your system's "
+        "ManimVTK could find <latex>, but not <dvisvgm> on your system's "
         "PATH. Make sure your installed LaTeX distribution comes with "
         "dvisvgm and consider installing a larger distribution if it "
         "does not."

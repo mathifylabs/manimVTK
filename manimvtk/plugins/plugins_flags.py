@@ -18,7 +18,7 @@ __all__ = ["list_plugins"]
 def get_plugins() -> dict[str, Any]:
     plugins: dict[str, Any] = {
         entry_point.name: entry_point.load()
-        for entry_point in entry_points(group="manim.plugins")
+        for entry_point in entry_points(group="manimvtk.plugins")
     }
     return plugins
 

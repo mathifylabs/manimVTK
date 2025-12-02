@@ -23,7 +23,7 @@ __all__ = [
 
 parser = make_config_parser()
 
-# Logger usage: accessible globally as `manim.logger` or via `logging.getLogger("manimvtk")`.
+# Logger usage: accessible globally as `manimvtk.logger` or via `logging.getLogger("manimvtk")`.
 # For printing, use `manimvtk.console.print()` instead of the built-in `print()`.
 # For error output, use `error_console`, which prints to stderr.
 logger, console, error_console = make_logger(

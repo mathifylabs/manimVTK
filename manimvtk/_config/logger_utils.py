@@ -1,7 +1,7 @@
 """Utilities to create and set the logger.
 
-Manim's logger can be accessed as ``manim.logger``, or as
-``logging.getLogger("manimvtk")``, once the library has been imported.  Manim also
+ManimVTK's logger can be accessed as ``manimvtk.logger``, or as
+``logging.getLogger("manimvtk")``, once the library has been imported.  ManimVTK also
 exports a second object, ``console``, which should be used to print on screen
 messages that need not be logged.
 

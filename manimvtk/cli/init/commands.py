@@ -123,7 +123,7 @@ def project(default_settings: bool, **kwargs: Any) -> None:
     else:
         project_name.mkdir()
         new_cfg: dict[str, Any] = {}
-        new_cfg_path = Path.resolve(project_name / "manim.cfg")
+        new_cfg_path = Path.resolve(project_name / "manimvtk.cfg")
 
         if not default_settings:
             for key, value in CFG_DEFAULTS.items():

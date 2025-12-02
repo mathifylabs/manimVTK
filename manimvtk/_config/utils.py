@@ -79,10 +79,10 @@ def config_file_paths() -> list[Path]:
     """
     library_wide = Path.resolve(Path(__file__).parent / "default.cfg")
     if sys.platform.startswith("win32"):
-        user_wide = Path.home() / "AppData" / "Roaming" / "Manim" / "manim.cfg"
+        user_wide = Path.home() / "AppData" / "Roaming" / "ManimVTK" / "manimvtk.cfg"
     else:
         user_wide = Path.home() / ".config" / "manimvtk" / "manimvtk.cfg"
-    folder_wide = Path("manim.cfg")
+    folder_wide = Path("manimvtk.cfg")
     return [library_wide, user_wide, folder_wide]
 
 

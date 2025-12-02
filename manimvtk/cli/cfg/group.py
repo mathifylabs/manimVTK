@@ -311,8 +311,8 @@ Are you sure you want to continue? (y/n)""",
             directory_path.mkdir(parents=True)
 
         ctx.invoke(write)
-        from_path = Path.cwd() / "manim.cfg"
-        to_path = directory_path / "manim.cfg"
+        from_path = Path.cwd() / "manimvtk.cfg"
+        to_path = directory_path / "manimvtk.cfg"
 
         console.print(f"Exported final Config at {from_path} to {to_path}.")
     else:

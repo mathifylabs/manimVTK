@@ -18,7 +18,7 @@ plugin_pyproject_template = textwrap.dedent(
     description = "A fantastic Manim plugin"
     requires-python = ">=3.9"
 
-    [project.entry-points."manim.plugins"]
+    [project.entry-points."manimvtk.plugins"]
     "{plugin_name}" = "{plugin_entrypoint}"
 
     [build-system]
@@ -61,7 +61,7 @@ def simple_scenes_path():
 
 
 def cfg_file_create(cfg_file_contents, path):
-    file_loc = (path / "manim.cfg").absolute()
+    file_loc = (path / "manimvtk.cfg").absolute()
     file_loc.write_text(cfg_file_contents)
     return file_loc
 

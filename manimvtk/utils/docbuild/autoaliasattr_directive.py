@@ -100,7 +100,7 @@ class AliasAttrDocumenter(Directive):
     def run(self) -> list[nodes.Element]:
         module_name = self.arguments[0]
         # not present in the keys of the DICTs
-        module_name = module_name.removeprefix("manim.")
+        module_name = module_name.removeprefix("manimvtk.")
         module_alias_dict = ALIAS_DOCS_DICT.get(module_name, None)
         module_attrs_list = DATA_DICT.get(module_name, None)
         module_typevars = TYPEVAR_DICT.get(module_name, None)

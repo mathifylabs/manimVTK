@@ -296,7 +296,7 @@ def copy_template_files(
     if not template_scene_path.exists():
         raise FileNotFoundError(f"{template_scene_path} : file does not exist")
 
-    copyfile(template_cfg_path, Path.resolve(project_dir / "manim.cfg"))
+    copyfile(template_cfg_path, Path.resolve(project_dir / "manimvtk.cfg"))
     console.print("\n\t[green]copied[/green] [blue]manim.cfg[/blue]\n")
     copyfile(template_scene_path, Path.resolve(project_dir / "main.py"))
     console.print("\n\t[green]copied[/green] [blue]main.py[/blue]\n")
