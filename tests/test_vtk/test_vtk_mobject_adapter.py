@@ -4,7 +4,17 @@ from __future__ import annotations
 
 import numpy as np
 
-from manimvtk import Circle, Cube, Dot, Line, Polygon, Rectangle, Sphere, Square, Surface
+from manimvtk import (
+    Circle,
+    Cube,
+    Dot,
+    Line,
+    Polygon,
+    Rectangle,
+    Sphere,
+    Square,
+    Surface,
+)
 from manimvtk.vtk import (
     mobject_to_vtk_polydata,
     surface_to_vtk_polydata,
@@ -195,3 +205,68 @@ class Test3DMobjectConversion:
         polydata = mobject_to_vtk_polydata(cube)
 
         assert polydata is not None
+
+
+class TestVGroupConversion:
+    """Tests for VGroup (container) conversion to VTK PolyData."""
+
+    def test_vgroup_with_circles_conversion(self):
+        """Test that a VGroup with circles is correctly converted."""
+        from manimvtk import VGroup
+
+        shapes = VGroup()
+        for _ in range(3):
+            shapes.add(Circle(radius=0.5))
+
+        polydata = vmobject_to_vtk_polydata(shapes)
+
+        assert polydata is not None
+        # VGroup should have points from all child circles
+        assert polydata.GetNumberOfPoints() > 0
+        # Each circle has 32 points, so 3 circles = 96 points
+        assert polydata.GetNumberOfPoints() == 96
+
+    def test_vgroup_has_cells(self):
+        """Test that VGroup conversion preserves cell information."""
+        from manimvtk import VGroup
+
+        shapes = VGroup(Circle(radius=0.5), Square(side_length=1.0))
+        polydata = vmobject_to_vtk_polydata(shapes)
+
+        assert polydata is not None
+        # Should have cells from both shapes
+        assert polydata.GetNumberOfCells() > 0
+
+    def test_nested_vgroup_conversion(self):
+        """Test that nested VGroups are correctly flattened."""
+        from manimvtk import Triangle, VGroup
+
+        group1 = VGroup(Circle(radius=0.5), Square(side_length=1))
+        group2 = VGroup(Triangle())
+        all_shapes = VGroup(group1, group2)
+
+        polydata = vmobject_to_vtk_polydata(all_shapes)
+
+        assert polydata is not None
+        assert polydata.GetNumberOfPoints() > 0
+        # Should contain geometry from all nested shapes
+
+    def test_empty_vgroup_conversion(self):
+        """Test that an empty VGroup doesn't cause errors."""
+        from manimvtk import VGroup
+
+        empty_group = VGroup()
+        polydata = vmobject_to_vtk_polydata(empty_group)
+
+        assert polydata is not None
+        assert polydata.GetNumberOfPoints() == 0
+
+    def test_mixed_vgroup_with_mobject_dispatcher(self):
+        """Test that VGroup works with the generic dispatcher."""
+        from manimvtk import VGroup
+
+        shapes = VGroup(Circle(radius=0.3), Rectangle(width=1, height=0.5))
+        polydata = mobject_to_vtk_polydata(shapes)
+
+        assert polydata is not None
+        assert polydata.GetNumberOfPoints() > 0
