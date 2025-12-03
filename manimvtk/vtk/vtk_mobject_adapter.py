@@ -63,7 +63,8 @@ def vmobject_to_vtk_polydata(mobj: VMobject) -> Any:
 
     # If the mobject has no direct points but has submobjects (like VGroup),
     # collect geometry from all child mobjects with points
-    if len(pts) == 0 and hasattr(mobj, "submobjects") and len(mobj.submobjects) > 0:
+    submobjects = getattr(mobj, "submobjects", [])
+    if len(pts) == 0 and len(submobjects) > 0:
         return _vgroup_to_vtk_polydata(mobj)
 
     if len(pts) == 0:
