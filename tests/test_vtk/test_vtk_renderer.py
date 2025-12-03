@@ -371,7 +371,6 @@ class TestVTKRendererEdgeCases:
             assert abs(renderer.time - initial_time - duration) < 0.1
 
 
-
 class TestVTKRendererThreeDScene:
     """Tests for VTK renderer with ThreeDScene."""
 
@@ -429,10 +428,6 @@ class TestVTKRendererThreeDScene:
                     self.add(sphere)
 
             scene = TestThreeDScene(renderer=renderer)
-
-            # Add a sphere to the scene
-            sphere = Sphere(radius=1)
-            scene.add(sphere)
 
             # Export should work
             filepath = renderer.export_vtk(scene)
