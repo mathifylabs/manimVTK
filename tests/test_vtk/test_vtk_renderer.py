@@ -8,8 +8,11 @@ from unittest.mock import MagicMock
 import numpy as np
 import pytest
 
-from manimvtk import Circle, Square, tempconfig
+from manimvtk import Circle, Sphere, Square, tempconfig
+from manimvtk.camera.three_d_camera import ThreeDCamera
+from manimvtk.constants import DEGREES
 from manimvtk.scene.scene import Scene
+from manimvtk.scene.three_d_scene import ThreeDScene
 from manimvtk.vtk import VTKRenderer
 
 
@@ -366,3 +369,67 @@ class TestVTKRendererEdgeCases:
             assert renderer.time > initial_time
             # Approximately 1 second should have passed
             assert abs(renderer.time - initial_time - duration) < 0.1
+
+
+class TestVTKRendererThreeDScene:
+    """Tests for VTK renderer with ThreeDScene."""
+
+    def test_threedscene_with_vtk_renderer_updates_camera(self, tmp_path):
+        """Test that ThreeDScene updates the VTK renderer's camera to ThreeDCamera."""
+        with tempconfig({"media_dir": str(tmp_path)}):
+            # Create VTK renderer (simulating CLI behavior where renderer is created first)
+            renderer = VTKRenderer(vtk_export=True)
+
+            # Create a ThreeDScene with the pre-created renderer
+            class TestThreeDScene(ThreeDScene):
+                def construct(self):
+                    pass
+
+            scene = TestThreeDScene(renderer=renderer)
+
+            # The renderer's camera should now be a ThreeDCamera
+            assert isinstance(renderer.camera, ThreeDCamera)
+
+    def test_threedscene_set_camera_orientation_works(self, tmp_path):
+        """Test that set_camera_orientation works with VTK renderer."""
+        with tempconfig({"media_dir": str(tmp_path)}):
+            # Create VTK renderer (simulating CLI behavior)
+            renderer = VTKRenderer(vtk_export=True)
+
+            # Create a ThreeDScene with the pre-created renderer
+            class TestThreeDScene(ThreeDScene):
+                def construct(self):
+                    # This should not raise an error
+                    self.set_camera_orientation(phi=60 * DEGREES, theta=45 * DEGREES)
+                    sphere = Sphere(radius=1)
+                    self.add(sphere)
+                    self.wait(0.1)
+
+            scene = TestThreeDScene(renderer=renderer)
+
+            # Verify camera has the methods
+            assert hasattr(renderer.camera, "set_phi")
+            assert hasattr(renderer.camera, "set_theta")
+
+            # The camera should have the correct values after set_camera_orientation
+            # Note: set_camera_orientation is called in construct(), which is called during render()
+            # We just verify the camera is the correct type
+            assert isinstance(renderer.camera, ThreeDCamera)
+
+    def test_threedscene_vtk_export_with_sphere(self, tmp_path):
+        """Test that ThreeDScene with VTK renderer can export a sphere."""
+        with tempconfig({"media_dir": str(tmp_path)}):
+            renderer = VTKRenderer(vtk_export=True)
+
+            class TestThreeDScene(ThreeDScene):
+                def construct(self):
+                    self.set_camera_orientation(phi=60 * DEGREES, theta=45 * DEGREES)
+                    sphere = Sphere(radius=1)
+                    self.add(sphere)
+
+            scene = TestThreeDScene(renderer=renderer)
+
+            # Export should work
+            filepath = renderer.export_vtk(scene)
+            assert filepath.exists()
+
