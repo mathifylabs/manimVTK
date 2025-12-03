@@ -61,6 +61,12 @@ def vmobject_to_vtk_polydata(mobj: VMobject) -> Any:
     # Get points from the mobject
     pts = mobj.points  # Shape: (N, 3)
 
+    # If the mobject has no direct points but has submobjects (like VGroup),
+    # collect geometry from all child mobjects with points
+    submobjects = getattr(mobj, "submobjects", [])
+    if len(pts) == 0 and len(submobjects) > 0:
+        return _vgroup_to_vtk_polydata(mobj)
+
     if len(pts) == 0:
         polydata = vtk.vtkPolyData()
         polydata.SetPoints(points)
@@ -122,6 +128,49 @@ def _create_polygon_from_points(vtk: Any, polys: Any, num_points: int) -> None:
     for i in range(num_points):
         polygon.GetPointIds().SetId(i, i)
     polys.InsertNextCell(polygon)
+
+
+def _vgroup_to_vtk_polydata(mobj: VMobject) -> Any:
+    """Convert a VGroup (container of VMobjects) to VTK PolyData.
+
+    This function handles VGroups by recursively collecting geometry from
+    all child mobjects that have points, and combining them into a single
+    PolyData using vtkAppendPolyData.
+
+    Parameters
+    ----------
+    mobj : VMobject
+        The VGroup or container mobject to convert.
+
+    Returns
+    -------
+    vtkPolyData
+        A VTK PolyData object containing the combined geometry of all children.
+    """
+    vtk = _get_vtk()
+
+    # Use family_members_with_points to get all leaf mobjects with actual geometry
+    members_with_points = mobj.family_members_with_points()
+
+    if not members_with_points:
+        # No geometry found, return empty PolyData
+        return vtk.vtkPolyData()
+
+    # Use vtkAppendPolyData to combine all child geometries
+    append_filter = vtk.vtkAppendPolyData()
+
+    for child in members_with_points:
+        # Recursively convert each child to PolyData
+        child_polydata = vmobject_to_vtk_polydata(child)
+        if child_polydata.GetNumberOfPoints() > 0:
+            append_filter.AddInputData(child_polydata)
+
+    if append_filter.GetNumberOfInputConnections(0) == 0:
+        # No valid geometry was added
+        return vtk.vtkPolyData()
+
+    append_filter.Update()
+    return append_filter.GetOutput()
 
 
 def surface_to_vtk_polydata(

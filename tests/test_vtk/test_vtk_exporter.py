@@ -317,3 +317,106 @@ class TestVTKFileContent:
         tree = ET.parse(filepath)
         root = tree.getroot()
         assert root.tag == "VTKFile"
+
+
+class TestVGroupExport:
+    """Tests for VGroup (grouped mobjects) export functionality."""
+
+    def test_export_vgroup_with_circles(self, tmp_path):
+        """Test exporting a VGroup of circles produces valid output."""
+        from manimvtk import VGroup
+
+        exporter = VTKExporter(tmp_path, "VGroupTest")
+        shapes = VGroup()
+        for _ in range(3):
+            shapes.add(Circle(radius=0.5))
+
+        filepath = exporter.export_scene_static([shapes])
+
+        assert filepath.exists()
+        assert filepath.suffix == ".vtp"
+        # Check file has content (not empty)
+        assert filepath.stat().st_size > 0
+
+    def test_export_vgroup_has_geometry(self, tmp_path):
+        """Test that exported VGroup file contains actual geometry data."""
+        import xml.etree.ElementTree as ET
+
+        from manimvtk import VGroup
+
+        exporter = VTKExporter(tmp_path, "VGroupTest")
+        shapes = VGroup(Circle(radius=0.5), Square(side_length=1.0))
+
+        filepath = exporter.export_scene_static([shapes])
+
+        # Parse the VTP file to verify it has points
+        tree = ET.parse(filepath)
+        root = tree.getroot()
+        assert root.tag == "VTKFile"
+
+        # Find the Points element and verify it has data
+        polydata = root.find(".//PolyData")
+        assert polydata is not None
+        piece = polydata.find("Piece")
+        assert piece is not None
+        num_points = int(piece.get("NumberOfPoints", "0"))
+        assert num_points > 0  # VGroup should have exported child geometry
+
+    def test_export_nested_vgroup(self, tmp_path):
+        """Test exporting nested VGroups (groups containing groups)."""
+        from manimvtk import Triangle, VGroup
+
+        exporter = VTKExporter(tmp_path, "NestedVGroupTest")
+
+        group1 = VGroup(Circle(radius=0.5), Square(side_length=1))
+        group2 = VGroup(Triangle())
+        all_shapes = VGroup(group1, group2)
+
+        filepath = exporter.export_scene_static([all_shapes])
+
+        assert filepath.exists()
+        assert filepath.suffix == ".vtp"
+        assert filepath.stat().st_size > 0
+
+    def test_export_multiple_vgroups_as_multiblock(self, tmp_path):
+        """Test exporting multiple VGroups creates a MultiBlock file."""
+        from manimvtk import VGroup
+
+        exporter = VTKExporter(tmp_path, "MultiVGroupTest")
+
+        vg1 = VGroup(Circle(radius=0.3), Circle(radius=0.4))
+        vg2 = VGroup(Square(side_length=0.5))
+
+        filepath = exporter.export_scene_static([vg1, vg2])
+
+        assert filepath.exists()
+        assert filepath.suffix == ".vtm"  # Multiple mobjects use MultiBlock
+
+    def test_export_vgroup_time_series(self, tmp_path):
+        """Test VGroup export works in time series mode."""
+        from manimvtk import VGroup
+
+        exporter = VTKExporter(tmp_path, "TimeSeriesVGroup")
+        shapes = VGroup(Circle(radius=0.5), Square(side_length=1))
+
+        # Export multiple frames
+        for i in range(3):
+            filepath = exporter.export_frame([shapes], time=i * 0.1)
+            assert filepath.exists()
+            assert filepath.stat().st_size > 0
+
+        pvd_path = exporter.write_pvd()
+        assert pvd_path.exists()
+        assert "TimeSeriesVGroup_00000.vtp" in pvd_path.read_text()
+
+    def test_export_empty_vgroup(self, tmp_path):
+        """Test exporting an empty VGroup doesn't crash."""
+        from manimvtk import VGroup
+
+        exporter = VTKExporter(tmp_path, "EmptyVGroupTest")
+        empty_group = VGroup()
+
+        filepath = exporter.export_scene_static([empty_group])
+
+        assert filepath.exists()
+        # Empty VGroup should produce a valid but empty VTP file
