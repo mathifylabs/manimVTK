@@ -224,6 +224,15 @@ class Scene:
             )
         else:
             self.renderer = renderer
+            # Update the renderer's camera if a different camera class is needed
+            # This handles the case where a VTK renderer is created by the CLI
+            # before the scene is initialized (e.g., when using ThreeDScene with
+            # the --renderer vtk option)
+            if (
+                self.camera_class != Camera
+                and not isinstance(self.renderer.camera, self.camera_class)
+            ):
+                self.renderer.camera = self.camera_class()
         self.renderer.init_scene(self)
 
         self.mobjects: list[Mobject] = []
