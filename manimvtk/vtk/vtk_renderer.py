@@ -589,6 +589,15 @@ class VTKRenderer:
         scene : Scene
             The completed scene.
         """
+        # Ensure exporter is available when export is requested. In some edge cases
+        # (for example, when initialization failed early), the exporter may not
+        # have been created even though the export flags are set. Recreate it here
+        # so we still persist geometry instead of silently leaving empty folders.
+        if (self.vtk_export or self.vtk_time_series) and self._exporter is None:
+            vtk_dir = Path(config.get_dir("media_dir")) / "vtk" / scene.__class__.__name__
+            self._exporter = VTKExporter(vtk_dir, scene.__class__.__name__)
+            logger.info(f"VTK export enabled (fallback). Output directory: {vtk_dir}")
+
         # Export final VTK if enabled
         if self.vtk_export and self._exporter is not None:
             all_mobjects = list(scene.mobjects) + list(scene.foreground_mobjects)
