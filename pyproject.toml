@@ -1,9 +1,9 @@
 [project]
 name = "manimvtk"
-version = "0.19.0.post1"
+version = "0.19.0.post4"
 description = "Animation engine for explanatory math videos with VTK scientific visualization support."
 authors = [
-  {name = "José Alvarez, Manim VTK Developer", email = "jose@mathify.dev"},
+  {name = "José Alvarez (Mathify.dev)", email = "jose@mathify.dev"},
   {name = "The Manim Community Developers", email = "contact@manim.community"},
   {name = "Grant '3Blue1Brown' Sanderson", email = "grant@3blue1brown.com"},
 ]
@@ -63,13 +63,10 @@ dependencies = [
 
 [project.urls]
 repository = "https://github.com/mathifylabs/manimVTK"
-documentation = "https://docs.manim.community/"
-homepage = "https://www.manim.community/"
+documentation = "https://manimvtk.mathify.dev"
+homepage = "https://manimvtk.mathify.dev"
 "Bug Tracker" = "https://github.com/mathifylabs/manimVTK/issues"
-"Changelog" = "https://docs.manim.community/en/stable/changelog.html"
-"X / Twitter" = "https://x.com/manim_community"
-"Bluesky" = "https://bsky.app/profile/manim.community"
-"Discord" = "https://www.manim.community/discord/"
+"X / Twitter" = "https://x.com/mathify_dev"
 
 [project.optional-dependencies]
 gui = [
