@@ -1,5 +1,5 @@
 <p align="center">
-    <a href="https://www.manim.community/"><img src="https://raw.githubusercontent.com/ManimCommunity/manim/main/logo/cropped.png"></a>
+    <a href="https://manimvtk.mathify.dev"><img src="https://raw.githubusercontent.com/mathifylabs/manimvtk/main/logo/cropped.png"></a>
     <br />
     <h1 align="center">ManimVTK</h1>
     <h3 align="center">Scientific Visualization meets Mathematical Animation</h3>
@@ -40,16 +40,19 @@ manimvtk MyScene --renderer vtk --vtk-time-series
 ManimVTK depends on [ManimPango](https://github.com/ManimCommunity/ManimPango), which requires system dependencies on Linux since pre-built wheels are not available. Install them first:
 
 **Debian/Ubuntu (including Google Colab):**
+
 ```bash
 sudo apt install libpango1.0-dev pkg-config python3-dev
 ```
 
 **Fedora:**
+
 ```bash
 sudo dnf install pango-devel pkg-config python3-devel
 ```
 
 **Arch Linux:**
+
 ```bash
 sudo pacman -S pango pkgconf
 ```
@@ -89,7 +92,7 @@ class CFDVisualization(Scene):
             resolution=(50, 50),
         )
         surface.set_color(BLUE)
-        
+
         self.play(Create(surface))
         self.wait()
 ```
@@ -101,6 +104,7 @@ manimvtk -pqh example.py CFDVisualization --renderer vtk --vtk-export
 ```
 
 This produces:
+
 - `media/videos/example/1080p60/CFDVisualization.mp4` - Standard video output
 - `media/vtk/CFDVisualization/CFDVisualization_final.vtm` - VTK MultiBlock file
 
@@ -109,6 +113,7 @@ This produces:
 ### Static Export (`--vtk-export`)
 
 Exports the final scene state to VTK format:
+
 - Single mobject: `.vtp` (PolyData)
 - Multiple mobjects: `.vtm` (MultiBlock)
 
@@ -129,10 +134,10 @@ Load the `.pvd` file in ParaView to scrub through animations using its native ti
 
 ## 🔧 CLI Options
 
-| Option | Description |
-|--------|-------------|
-| `--renderer vtk` | Use VTK renderer |
-| `--vtk-export` | Export final scene to VTK format |
+| Option              | Description                          |
+| ------------------- | ------------------------------------ |
+| `--renderer vtk`    | Use VTK renderer                     |
+| `--vtk-export`      | Export final scene to VTK format     |
 | `--vtk-time-series` | Export all frames as VTK time series |
 
 ## 💡 Use Cases
@@ -151,7 +156,7 @@ class PressureField(Scene):
             u_range=[-2, 2],
             v_range=[-2, 2],
         )
-        
+
         # Color by pressure (handled in VTK export)
         self.add(surface)
         self.wait()
@@ -160,6 +165,7 @@ class PressureField(Scene):
 ### Interactive Web Viewing
 
 The exported `.vtkjs` files can be embedded in web applications using vtk.js, perfect for:
+
 - Educational platforms
 - Research presentations
 - Interactive documentation
@@ -193,13 +199,13 @@ ManimVTK adds a new renderer layer:
 
 ## 📊 Supported Mobjects
 
-| Mobject Type | VTK Export | Notes |
-|--------------|------------|-------|
-| `VMobject` (2D shapes) | ✅ | Converted to PolyData with colors |
-| `Surface` | ✅ | Full mesh with UV coordinates |
-| `Sphere`, `Cube`, etc. | ✅ | 3D primitives |
-| `ParametricSurface` | ✅ | Parametric surfaces |
-| `VGroup` | ✅ | Exported as MultiBlock |
+| Mobject Type           | VTK Export | Notes                             |
+| ---------------------- | ---------- | --------------------------------- |
+| `VMobject` (2D shapes) | ✅         | Converted to PolyData with colors |
+| `Surface`              | ✅         | Full mesh with UV coordinates     |
+| `Sphere`, `Cube`, etc. | ✅         | 3D primitives                     |
+| `ParametricSurface`    | ✅         | Parametric surfaces               |
+| `VGroup`               | ✅         | Exported as MultiBlock            |
 
 ## 🔬 Scientific Features
 
@@ -230,6 +236,7 @@ add_vector_field(polydata, "velocity", velocity_vectors)
 ### Running the Test Suite
 
 The project includes a comprehensive test suite for VTK functionality with 61 tests covering:
+
 - **VTK Mobject Adapter**: Conversion of Manim mobjects to VTK PolyData
 - **VTK Exporter**: File export (.vtp, .vtm, .pvd, .vtkjs)
 - **VTK Renderer**: Renderer initialization and scene handling
@@ -267,6 +274,7 @@ python -c "from example_scenes.vtk_examples import EXAMPLE_SCENES; print([s.__na
 ```
 
 Available example categories:
+
 - **Basic 2D**: Circle2DExample, Square2DExample, MultipleShapes2D, PolygonExample
 - **Basic 3D**: Sphere3DExample, Cube3DExample, ParametricSurfaceExample, TorusSurface
 - **Animated**: AnimatedCircle, SquareToCircleVTK, Rotating3DObject, GrowingSurface
@@ -276,6 +284,7 @@ Available example categories:
 ## 🤝 Contributing
 
 Contributions are welcome! This fork is particularly interested in:
+
 - Additional mobject → VTK conversions
 - vtk.js web viewer improvements
 - CFD-specific visualization features
@@ -286,6 +295,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 ## 📄 License
 
 The software is double-licensed under the MIT license:
+
 - Copyright by 3blue1brown LLC (see LICENSE)
 - Copyright by Manim Community Developers (see LICENSE.community)
 - Copyright by Mathify Labs for VTK extensions

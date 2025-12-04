@@ -3,9 +3,9 @@ name = "manimvtk"
 version = "0.19.0.post1"
 description = "Animation engine for explanatory math videos with VTK scientific visualization support."
 authors = [
+  {name = "José Alvarez, Manim VTK Developer", email = "jose@mathify.dev"},
   {name = "The Manim Community Developers", email = "contact@manim.community"},
   {name = "Grant '3Blue1Brown' Sanderson", email = "grant@3blue1brown.com"},
-  {name = "Mathify Labs", email = "contact@mathify.io"},
 ]
 license = "MIT"
 readme = "README.md"
