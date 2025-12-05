@@ -15,7 +15,7 @@ import urllib.error
 import urllib.request
 from argparse import Namespace
 from pathlib import Path
-from typing import Any, cast
+from typing import TYPE_CHECKING, Any, cast
 
 import cloup
 
@@ -34,7 +34,49 @@ from manimvtk.cli.render.render_options import render_options
 from manimvtk.constants import EPILOG, RendererType
 from manimvtk.utils.module_ops import scene_classes_from_file
 
+if TYPE_CHECKING:
+    from manimvtk.scene.scene import Scene
+
 __all__ = ["render"]
+
+
+def _export_vtk_files(scene: Scene, vtk_export: bool, vtk_time_series: bool) -> None:
+    """Export VTK files for a scene after rendering.
+
+    This function is called when using Cairo or OpenGL renderer with
+    --vtk-export flag to export VTK format files.
+
+    Parameters
+    ----------
+    scene : Scene
+        The rendered scene.
+    vtk_export : bool
+        Whether to export static VTK files.
+    vtk_time_series : bool
+        Whether to export VTK time series files.
+    """
+    if not vtk_export and not vtk_time_series:
+        return
+
+    from manimvtk.vtk.vtk_exporter import VTKExporter
+
+    vtk_dir = Path(config.get_dir("media_dir")) / "vtk" / scene.__class__.__name__
+    exporter = VTKExporter(vtk_dir, scene.__class__.__name__)
+
+    all_mobjects = list(scene.mobjects) + list(scene.foreground_mobjects)
+
+    if vtk_export:
+        filepath = exporter.export_scene_static(all_mobjects)
+        logger.info(f"VTK static export: {filepath}")
+
+    if vtk_time_series:
+        # For time series with Cairo, we can only export the final frame
+        # since Cairo doesn't have frame-by-frame hooks like VTK renderer
+        exporter.export_frame(all_mobjects, time=0.0, frame_number=0)
+        pvd_path = exporter.write_pvd()
+        logger.info(f"VTK time series export: {pvd_path}")
+        html_path = exporter.generate_html_viewer()
+        logger.info(f"VTK HTML viewer: {html_path}")
 
 
 class ClickArgs(Namespace):
@@ -122,6 +164,9 @@ def render(**kwargs: Any) -> ClickArgs | dict[str, Any]:
     elif config.renderer == RendererType.OPENGL:
         from manimvtk.renderer.opengl_renderer import OpenGLRenderer
 
+        vtk_export = getattr(click_args, "vtk_export", False) or False
+        vtk_time_series = getattr(click_args, "vtk_time_series", False) or False
+
         try:
             renderer = OpenGLRenderer()
             keep_running = True
@@ -130,6 +175,9 @@ def render(**kwargs: Any) -> ClickArgs | dict[str, Any]:
                     with tempconfig({}):
                         scene = SceneClass(renderer)
                         rerun = scene.render()
+                        # Export VTK files if requested (works with any renderer)
+                        if not rerun:
+                            _export_vtk_files(scene, vtk_export, vtk_time_series)
                     if rerun or config["write_all"]:
                         renderer.num_plays = 0
                         continue
@@ -143,11 +191,16 @@ def render(**kwargs: Any) -> ClickArgs | dict[str, Any]:
             error_console.print_exception()
             sys.exit(1)
     else:
+        vtk_export = getattr(click_args, "vtk_export", False) or False
+        vtk_time_series = getattr(click_args, "vtk_time_series", False) or False
+
         for SceneClass in scene_classes_from_file(file):
             try:
                 with tempconfig({}):
                     scene = SceneClass()
                     scene.render()
+                    # Export VTK files if requested (works with any renderer)
+                    _export_vtk_files(scene, vtk_export, vtk_time_series)
             except Exception:
                 error_console.print_exception()
                 sys.exit(1)
