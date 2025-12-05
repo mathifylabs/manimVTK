@@ -218,13 +218,13 @@ render_options = option_group(
         "vtk_export",
         is_flag=True,
         default=None,
-        help="Export scene to VTK format (.vtp/.vtm) after rendering. Requires --renderer vtk.",
+        help="Export scene to VTK format (.vtp/.vtm) after rendering. Works with any renderer.",
     ),
     option(
         "--vtk-time-series",
         "vtk_time_series",
         is_flag=True,
         default=None,
-        help="Export VTK time series (.pvd) for animation playback in ParaView. Requires --renderer vtk.",
+        help="Export VTK time series (.pvd) for animation playback in ParaView. Works with any renderer.",
     ),
 )
