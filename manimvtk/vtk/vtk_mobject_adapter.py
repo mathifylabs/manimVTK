@@ -37,8 +37,72 @@ def _get_vtk():
         ) from e
 
 
+def _should_export_as_lines(mobj: VMobject) -> bool:
+    """Check if mobject should be exported as VTK lines rather than polygons.
+
+    Mobjects with visible stroke but no/low fill are better represented as
+    polylines in VTK for proper visualization of axes, lines, and curves.
+
+    Parameters
+    ----------
+    mobj : VMobject
+        The VMobject to check.
+
+    Returns
+    -------
+    bool
+        True if the mobject should be exported as lines, False otherwise.
+    """
+    try:
+        stroke_opacity = mobj.get_stroke_opacity()
+        fill_opacity = mobj.get_fill_opacity()
+        stroke_width = mobj.get_stroke_width()
+
+        # If has visible stroke but no/low fill, export as lines
+        has_visible_stroke = stroke_opacity > 0.01 and stroke_width > 0
+        has_visible_fill = fill_opacity > 0.01
+
+        return has_visible_stroke and not has_visible_fill
+    except (AttributeError, TypeError):
+        return False
+
+
+def _sample_bezier_curves(
+    mobj: VMobject, samples_per_curve: int = 10
+) -> list[np.ndarray]:
+    """Sample points along the bezier curves of a VMobject.
+
+    Parameters
+    ----------
+    mobj : VMobject
+        The VMobject to sample.
+    samples_per_curve : int
+        Number of sample points per bezier curve segment.
+
+    Returns
+    -------
+    list[np.ndarray]
+        List of sampled points along the curves.
+    """
+    try:
+        num_curves = mobj.get_num_curves()
+        if num_curves == 0:
+            # Return the raw points if no curves defined
+            return list(mobj.points)
+
+        total_samples = samples_per_curve * num_curves + 1
+        t_values = np.linspace(0, 1, total_samples)
+        return [mobj.point_from_proportion(t) for t in t_values]
+    except (AttributeError, TypeError, ZeroDivisionError):
+        # Fallback to raw points
+        return list(mobj.points)
+
+
 def vmobject_to_vtk_polydata(mobj: VMobject) -> Any:
     """Convert a VMobject (2D shape) to VTK PolyData.
+
+    This function handles both filled shapes (exported as polygons) and
+    stroke-based shapes like lines and axes (exported as polylines).
 
     Parameters
     ----------
@@ -54,6 +118,7 @@ def vmobject_to_vtk_polydata(mobj: VMobject) -> Any:
 
     points = vtk.vtkPoints()
     polys = vtk.vtkCellArray()
+    lines = vtk.vtkCellArray()
     colors = vtk.vtkUnsignedCharArray()
     colors.SetNumberOfComponents(4)
     colors.SetName("Colors")
@@ -72,47 +137,84 @@ def vmobject_to_vtk_polydata(mobj: VMobject) -> Any:
         polydata.SetPoints(points)
         return polydata
 
-    # Add points to vtkPoints
-    for p in pts:
-        points.InsertNextPoint(float(p[0]), float(p[1]), float(p[2]))
+    # Determine if this should be exported as lines (stroke-based) or polygons (fill-based)
+    export_as_lines = _should_export_as_lines(mobj)
 
-    # Try to get triangulation if available
-    try:
-        triangulation = mobj.get_triangulation()
-        if triangulation is not None and len(triangulation) > 0:
-            # Use triangulation indices
-            for i in range(0, len(triangulation), 3):
-                if i + 2 < len(triangulation):
-                    triangle = vtk.vtkTriangle()
-                    triangle.GetPointIds().SetId(0, int(triangulation[i]))
-                    triangle.GetPointIds().SetId(1, int(triangulation[i + 1]))
-                    triangle.GetPointIds().SetId(2, int(triangulation[i + 2]))
-                    polys.InsertNextCell(triangle)
-        else:
-            # Fallback: create polygon from points
+    if export_as_lines:
+        # Sample bezier curves for smooth line representation
+        sampled_pts = _sample_bezier_curves(mobj)
+
+        # Add sampled points to vtkPoints
+        for p in sampled_pts:
+            points.InsertNextPoint(float(p[0]), float(p[1]), float(p[2]))
+
+        # Create a polyline from all sampled points
+        if len(sampled_pts) >= 2:
+            polyline = vtk.vtkPolyLine()
+            polyline.GetPointIds().SetNumberOfIds(len(sampled_pts))
+            for i in range(len(sampled_pts)):
+                polyline.GetPointIds().SetId(i, i)
+            lines.InsertNextCell(polyline)
+
+        # Get stroke color for lines
+        try:
+            color = mobj.get_stroke_color()
+            rgba = color.to_rgba() if hasattr(color, "to_rgba") else [1.0, 1.0, 1.0, 1.0]
+            stroke_opacity = mobj.get_stroke_opacity() if hasattr(mobj, "get_stroke_opacity") else 1.0
+            rgba_int = [int(c * 255) for c in rgba[:3]] + [int(stroke_opacity * 255)]
+        except Exception:
+            rgba_int = [255, 255, 255, 255]
+
+        # Add colors for each sampled point
+        for _ in range(len(sampled_pts)):
+            colors.InsertNextTuple4(*rgba_int)
+
+    else:
+        # Export as polygons (filled shapes)
+        # Add points to vtkPoints
+        for p in pts:
+            points.InsertNextPoint(float(p[0]), float(p[1]), float(p[2]))
+
+        # Try to get triangulation if available
+        try:
+            triangulation = mobj.get_triangulation()
+            if triangulation is not None and len(triangulation) > 0:
+                # Use triangulation indices
+                for i in range(0, len(triangulation), 3):
+                    if i + 2 < len(triangulation):
+                        triangle = vtk.vtkTriangle()
+                        triangle.GetPointIds().SetId(0, int(triangulation[i]))
+                        triangle.GetPointIds().SetId(1, int(triangulation[i + 1]))
+                        triangle.GetPointIds().SetId(2, int(triangulation[i + 2]))
+                        polys.InsertNextCell(triangle)
+            else:
+                # Fallback: create polygon from points
+                _create_polygon_from_points(vtk, polys, len(pts))
+        except (AttributeError, TypeError):
+            # No triangulation available, create simple polygon
             _create_polygon_from_points(vtk, polys, len(pts))
-    except (AttributeError, TypeError):
-        # No triangulation available, create simple polygon
-        _create_polygon_from_points(vtk, polys, len(pts))
 
-    # Get color information
-    try:
-        color = mobj.get_color()
-        rgba = color.to_rgba() if hasattr(color, "to_rgba") else [1.0, 1.0, 1.0, 1.0]
-        rgba_int = [int(c * 255) for c in rgba[:3]] + [
-            int(mobj.get_fill_opacity() * 255 if hasattr(mobj, "get_fill_opacity") else 255)
-        ]
-    except Exception:
-        rgba_int = [255, 255, 255, 255]
+        # Get fill color information
+        try:
+            color = mobj.get_color()
+            rgba = color.to_rgba() if hasattr(color, "to_rgba") else [1.0, 1.0, 1.0, 1.0]
+            rgba_int = [int(c * 255) for c in rgba[:3]] + [
+                int(mobj.get_fill_opacity() * 255 if hasattr(mobj, "get_fill_opacity") else 255)
+            ]
+        except Exception:
+            rgba_int = [255, 255, 255, 255]
 
-    # Add colors for each point
-    for _ in range(len(pts)):
-        colors.InsertNextTuple4(*rgba_int)
+        # Add colors for each point
+        for _ in range(len(pts)):
+            colors.InsertNextTuple4(*rgba_int)
 
     # Create PolyData
     polydata = vtk.vtkPolyData()
     polydata.SetPoints(points)
-    polydata.SetPolys(polys)
+    if polys.GetNumberOfCells() > 0:
+        polydata.SetPolys(polys)
+    if lines.GetNumberOfCells() > 0:
+        polydata.SetLines(lines)
     polydata.GetPointData().SetScalars(colors)
 
     return polydata
