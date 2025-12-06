@@ -1,0 +1,59 @@
+---
+title: "Configuration"
+description: "Configuring ManimVTK settings"
+---
+
+## Configuration File
+
+Create `manim.cfg` in your project directory:
+
+```ini
+[CLI]
+renderer = vtk
+quality = high
+frame_rate = 60
+background_color = BLACK
+
+[output]
+video_dir = {media_dir}/videos/{module_name}/{quality}
+vtk_dir = {media_dir}/vtk
+```
+
+## Configuration Options
+
+### CLI Options
+
+- `renderer`: cairo, opengl, or vtk
+- `quality`: low, medium, high, fourk
+- `frame_rate`: Frames per second
+- `background_color`: Scene background
+
+### Output Paths
+
+- `video_dir`: Where videos are saved
+- `images_dir`: Where images are saved
+- `vtk_dir`: Where VTK exports are saved
+
+## Per-Scene Configuration
+
+```python
+class MyScene(Scene):
+    def construct(self):
+        # Access config
+        config.frame_rate = 30
+        config.background_color = WHITE
+        
+        # Your scene code
+        pass
+```
+
+## See Also
+
+<CardGroup cols={2}>
+  <Card title="CLI Options" icon="terminal" href="/advanced/cli-options">
+    Command-line reference
+  </Card>
+  <Card title="Quick Start" icon="rocket" href="/quickstart">
+    Getting started
+  </Card>
+</CardGroup>

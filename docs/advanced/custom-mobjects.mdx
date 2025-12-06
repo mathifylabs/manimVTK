@@ -1,0 +1,30 @@
+---
+title: "Custom Mobjects"
+description: "Creating custom mobject classes"
+---
+
+## Creating Custom Mobjects
+
+Extend VMobject or Mobject to create custom shapes:
+
+```python
+from manimvtk import *
+
+class CustomStar(VMobject):
+    def __init__(self, points=5, **kwargs):
+        super().__init__(**kwargs)
+        # Define your shape logic
+        angles = np.linspace(0, TAU, points * 2 + 1)
+        vertices = [
+            [np.cos(a), np.sin(a), 0] * (2 if i % 2 else 1)
+            for i, a in enumerate(angles[:-1])
+        ]
+        self.set_points_as_corners(vertices)
+        self.close_path()
+```
+
+## See Also
+
+<Card title="Mobjects Guide" icon="shapes" href="/concepts/mobjects">
+  Mobjects concepts
+</Card>

@@ -1,0 +1,84 @@
+---
+title: "Mobjects Overview"
+description: "Complete reference for Manim Objects (Mobjects)"
+---
+
+## Mobject Types
+
+ManimVTK provides a rich set of mobject classes for creating visual elements.
+
+<CardGroup cols={2}>
+  <Card title="Geometry" icon="shapes" href="/api-reference/mobjects/geometry">
+    2D geometric shapes: Circle, Square, Line, Arc, Polygon, etc.
+  </Card>
+  <Card title="3D Objects" icon="cube" href="/api-reference/mobjects/3d-objects">
+    3D primitives and surfaces: Sphere, Cube, Surface, etc.
+  </Card>
+  <Card title="Text" icon="font" href="/api-reference/mobjects/text">
+    Text and mathematical equations: Text, Tex, MathTex
+  </Card>
+  <Card title="Graphs" icon="chart-line" href="/api-reference/mobjects/graphs">
+    Coordinate systems, axes, and graphs
+  </Card>
+</CardGroup>
+
+## Base Classes
+
+### Mobject
+
+The base class for all Manim objects.
+
+**Common methods:**
+- `shift(vector)` - Move relative to current position
+- `move_to(point)` - Move to absolute position
+- `scale(factor)` - Scale by factor
+- `rotate(angle)` - Rotate by angle
+- `set_color(color)` - Set color
+- `copy()` - Create a copy
+
+### VMobject
+
+Vectorized mobject for 2D shapes.
+
+**Additional methods:**
+- `set_stroke(color, width, opacity)` - Set stroke properties
+- `set_fill(color, opacity)` - Set fill properties
+- `get_points()` - Get bezier curve points
+
+### VGroup
+
+Container for grouping multiple mobjects.
+
+**Methods:**
+- `add(*mobjects)` - Add mobjects to group
+- `remove(*mobjects)` - Remove mobjects
+- `arrange(direction, buff)` - Arrange in a line
+- `arrange_in_grid(rows, cols, buff)` - Arrange in grid
+
+## Common Patterns
+
+```python
+# Create and style
+circle = Circle(radius=1, color=BLUE, fill_opacity=0.5)
+
+# Transform
+circle.shift(RIGHT * 2).scale(1.5).rotate(PI/4)
+
+# Group
+shapes = VGroup(circle, Square(), Triangle())
+shapes.arrange(RIGHT, buff=1)
+```
+
+## See Also
+
+<CardGroup cols={3}>
+  <Card title="Mobjects Guide" icon="book" href="/concepts/mobjects">
+    Conceptual guide
+  </Card>
+  <Card title="Examples" icon="play" href="/examples/basic-2d">
+    See examples
+  </Card>
+  <Card title="Animations" icon="wand-magic-sparkles" href="/api-reference/animations/overview">
+    Animate mobjects
+  </Card>
+</CardGroup>

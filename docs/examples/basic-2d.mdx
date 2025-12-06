@@ -1,0 +1,308 @@
+---
+title: "Basic 2D Examples"
+description: "Simple 2D shape and animation examples"
+---
+
+## Introduction
+
+Start with these basic 2D examples to learn ManimVTK fundamentals. These examples use the default Cairo renderer and are perfect for beginners.
+
+## Simple Shapes
+
+### Circle Example
+
+```python
+from manimvtk import *
+
+class CircleExample(Scene):
+    def construct(self):
+        circle = Circle(radius=2, color=BLUE, fill_opacity=0.5)
+        self.play(Create(circle))
+        self.wait()
+```
+
+**Render:**
+```bash
+manimvtk -pql examples.py CircleExample
+```
+
+### Multiple Shapes
+
+```python
+from manimvtk import *
+
+class MultipleShapes(Scene):
+    def construct(self):
+        # Create shapes
+        circle = Circle(radius=1, color=BLUE)
+        square = Square(side_length=1.5, color=RED)
+        triangle = Triangle(color=GREEN)
+        
+        # Arrange horizontally
+        shapes = VGroup(circle, square, triangle)
+        shapes.arrange(RIGHT, buff=1)
+        
+        # Animate
+        self.play(Create(shapes))
+        self.wait()
+```
+
+### Colored Shapes
+
+```python
+from manimvtk import *
+
+class ColoredShapes(Scene):
+    def construct(self):
+        # Create a grid of colored circles
+        colors = [RED, ORANGE, YELLOW, GREEN, BLUE, PURPLE]
+        circles = VGroup(*[
+            Circle(radius=0.5, color=color, fill_opacity=0.7)
+            for color in colors
+        ])
+        circles.arrange_in_grid(rows=2, cols=3, buff=0.5)
+        
+        # Animate creation with lag
+        self.play(LaggedStart(*[Create(c) for c in circles], lag_ratio=0.2))
+        self.wait()
+```
+
+## Transformations
+
+### Square to Circle
+
+```python
+from manimvtk import *
+
+class SquareToCircle(Scene):
+    def construct(self):
+        square = Square(color=BLUE, fill_opacity=0.5)
+        circle = Circle(color=RED, fill_opacity=0.5)
+        
+        self.play(Create(square))
+        self.wait()
+        self.play(Transform(square, circle))
+        self.wait()
+```
+
+### Movement and Rotation
+
+```python
+from manimvtk import *
+
+class MovementExample(Scene):
+    def construct(self):
+        square = Square(color=BLUE)
+        
+        # Create
+        self.play(Create(square))
+        
+        # Move right
+        self.play(square.animate.shift(RIGHT * 3))
+        
+        # Rotate
+        self.play(square.animate.rotate(PI / 4))
+        
+        # Scale
+        self.play(square.animate.scale(1.5))
+        
+        self.wait()
+```
+
+## Text and Labels
+
+### Simple Text
+
+```python
+from manimvtk import *
+
+class TextExample(Scene):
+    def construct(self):
+        text = Text("Hello, ManimVTK!", font_size=48, color=BLUE)
+        self.play(Write(text))
+        self.wait()
+```
+
+### Mathematical Equations
+
+```python
+from manimvtk import *
+
+class EquationExample(Scene):
+    def construct(self):
+        # Pythagorean theorem
+        equation = MathTex(r"a^2 + b^2 = c^2")
+        
+        # Write equation
+        self.play(Write(equation))
+        self.wait()
+        
+        # Transform to specific example
+        example = MathTex(r"3^2 + 4^2 = 5^2")
+        self.play(Transform(equation, example))
+        self.wait()
+```
+
+### Labeled Shapes
+
+```python
+from manimvtk import *
+
+class LabeledShapes(Scene):
+    def construct(self):
+        circle = Circle(radius=1.5, color=BLUE)
+        label = Text("Circle", font_size=36).next_to(circle, UP)
+        
+        group = VGroup(circle, label)
+        
+        self.play(Create(circle))
+        self.play(Write(label))
+        self.wait()
+```
+
+## Animation Techniques
+
+### Fade In and Out
+
+```python
+from manimvtk import *
+
+class FadeExample(Scene):
+    def construct(self):
+        shapes = VGroup(*[
+            Square(side_length=1).shift(direction * 2)
+            for direction in [LEFT, ORIGIN, RIGHT]
+        ])
+        
+        # Fade in
+        self.play(FadeIn(shapes))
+        self.wait()
+        
+        # Fade out one by one
+        for shape in shapes:
+            self.play(FadeOut(shape))
+        self.wait()
+```
+
+### Indicate and Flash
+
+```python
+from manimvtk import *
+
+class IndicateExample(Scene):
+    def construct(self):
+        squares = VGroup(*[Square() for _ in range(3)])
+        squares.arrange(RIGHT, buff=1)
+        
+        self.add(squares)
+        self.wait()
+        
+        # Indicate middle square
+        self.play(Indicate(squares[1]))
+        self.wait()
+        
+        # Flash effect
+        self.play(Flash(squares[0].get_center()))
+        self.wait()
+```
+
+### Growing Animations
+
+```python
+from manimvtk import *
+
+class GrowExample(Scene):
+    def construct(self):
+        shapes = VGroup(
+            Circle(color=BLUE),
+            Square(color=RED).shift(RIGHT * 2.5),
+            Triangle(color=GREEN).shift(LEFT * 2.5)
+        )
+        
+        # Grow from center
+        self.play(*[GrowFromCenter(shape) for shape in shapes])
+        self.wait()
+        
+        # Shrink to center
+        self.play(*[ShrinkToCenter(shape) for shape in shapes])
+```
+
+## Groups and Arrangements
+
+### Arranging in Grid
+
+```python
+from manimvtk import *
+
+class GridArrangement(Scene):
+    def construct(self):
+        # Create 12 squares
+        squares = VGroup(*[Square(side_length=0.5) for _ in range(12)])
+        
+        # Arrange in 3x4 grid
+        squares.arrange_in_grid(rows=3, cols=4, buff=0.3)
+        
+        # Color by row
+        for i, row in enumerate([squares[0:4], squares[4:8], squares[8:12]]):
+            row.set_color([RED, GREEN, BLUE][i])
+        
+        self.play(Create(squares))
+        self.wait()
+```
+
+### Circular Arrangement
+
+```python
+from manimvtk import *
+
+class CircularArrangement(Scene):
+    def construct(self):
+        dots = VGroup(*[Dot() for _ in range(8)])
+        dots.arrange_in_circle(radius=2)
+        
+        self.play(LaggedStart(*[GrowFromCenter(dot) for dot in dots], lag_ratio=0.1))
+        self.wait()
+```
+
+## VTK Export Examples
+
+### Export 2D Shapes
+
+```python
+from manimvtk import *
+
+class Export2DShapes(Scene):
+    def construct(self):
+        shapes = VGroup(
+            Circle(radius=1, color=BLUE, fill_opacity=0.5),
+            Square(side_length=1.5, color=RED, fill_opacity=0.5),
+            Triangle(color=GREEN, fill_opacity=0.5)
+        ).arrange(RIGHT, buff=1)
+        
+        self.play(Create(shapes))
+        self.wait()
+```
+
+**Render with VTK export:**
+```bash
+manimvtk -pql examples.py Export2DShapes --vtk-export
+```
+
+This creates both a video and VTK files for further visualization.
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="3D Examples" icon="cube" href="/examples/basic-3d">
+    Explore 3D visualization examples
+  </Card>
+  <Card title="Animations Examples" icon="play" href="/examples/animations">
+    Advanced animation techniques
+  </Card>
+  <Card title="Mobjects Guide" icon="shapes" href="/concepts/mobjects">
+    Learn more about mobjects
+  </Card>
+  <Card title="Animations Guide" icon="wand-magic-sparkles" href="/concepts/animations">
+    Master animation techniques
+  </Card>
+</CardGroup>

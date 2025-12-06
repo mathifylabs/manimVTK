@@ -1,0 +1,54 @@
+---
+title: "Animations Overview"
+description: "Complete reference for ManimVTK animations"
+---
+
+## Animation Categories
+
+<CardGroup cols={2}>
+  <Card title="Creation" icon="plus" href="/api-reference/animations/creation">
+    Create, Write, FadeIn, GrowFromCenter
+  </Card>
+  <Card title="Transform" icon="arrows-rotate" href="/api-reference/animations/transform">
+    Transform, ReplacementTransform, MoveToTarget
+  </Card>
+  <Card title="Movement" icon="arrows-alt" href="/api-reference/animations/movement">
+    Shift, Rotate, Scale
+  </Card>
+  <Card title="Indication" icon="hand-point-up" href="/api-reference/animations/indication">
+    Indicate, Flash, Wiggle, Circumscribe
+  </Card>
+</CardGroup>
+
+## Playing Animations
+
+```python
+self.play(AnimationClass(mobject, **kwargs))
+```
+
+**Common parameters:**
+- `run_time` (float): Duration in seconds
+- `rate_func` (function): Timing function
+- `lag_ratio` (float): For grouped animations
+
+## The .animate Syntax
+
+```python
+self.play(mobject.animate.method())
+```
+
+**Example:**
+```python
+self.play(circle.animate.shift(RIGHT).scale(2).set_color(RED))
+```
+
+## See Also
+
+<CardGroup cols={2}>
+  <Card title="Animations Guide" icon="book" href="/concepts/animations">
+    Conceptual guide
+  </Card>
+  <Card title="Examples" icon="play" href="/examples/animations">
+    Animation examples
+  </Card>
+</CardGroup>

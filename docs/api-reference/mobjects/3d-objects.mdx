@@ -1,0 +1,105 @@
+---
+title: "3D Objects"
+description: "3D primitives and surfaces reference"
+---
+
+## 3D Primitives
+
+### Sphere
+
+```python
+Sphere(radius=1, resolution=(20, 20), **kwargs)
+```
+
+Creates a 3D sphere.
+
+**Parameters:**
+- `radius` (float): Sphere radius
+- `resolution` (tuple): (u_res, v_res) mesh resolution
+
+**Example:**
+```python
+sphere = Sphere(radius=1.5, resolution=(40, 40), color=BLUE)
+```
+
+### Cube
+
+```python
+Cube(side_length=2, **kwargs)
+```
+
+### Cone
+
+```python
+Cone(base_radius=1, height=2, **kwargs)
+```
+
+### Cylinder
+
+```python
+Cylinder(radius=1, height=2, **kwargs)
+```
+
+## Surfaces
+
+### Surface
+
+```python
+Surface(
+    func,
+    u_range=[-1, 1],
+    v_range=[-1, 1],
+    resolution=(10, 10),
+    **kwargs
+)
+```
+
+Creates a parametric surface.
+
+**Parameters:**
+- `func`: Function (u, v) → [x, y, z]
+- `u_range`: Range for parameter u
+- `v_range`: Range for parameter v
+- `resolution`: Mesh resolution
+
+**Example:**
+```python
+import numpy as np
+
+surface = Surface(
+    lambda u, v: np.array([u, v, u**2 - v**2]),
+    u_range=[-2, 2],
+    v_range=[-2, 2],
+    resolution=(30, 30)
+)
+```
+
+### ParametricSurface
+
+```python
+ParametricSurface(func, **kwargs)
+```
+
+## 3D Axes
+
+### ThreeDAxes
+
+```python
+ThreeDAxes(
+    x_range=[-6, 6, 1],
+    y_range=[-5, 5, 1],
+    z_range=[-4, 4, 1],
+    **kwargs
+)
+```
+
+## See Also
+
+<CardGroup cols={2}>
+  <Card title="3D Examples" icon="cube" href="/examples/basic-3d">
+    3D visualization examples
+  </Card>
+  <Card title="VTK Export" icon="file-export" href="/vtk/export">
+    Export 3D objects to VTK
+  </Card>
+</CardGroup>

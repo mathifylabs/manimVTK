@@ -1,0 +1,232 @@
+---
+title: "Basic 3D Examples"
+description: "3D objects and visualization examples"
+---
+
+## Introduction
+
+3D examples in ManimVTK leverage ThreeDScene for camera control and work best with the VTK or OpenGL renderer.
+
+## Basic 3D Objects
+
+### Sphere Example
+
+```python
+from manimvtk import *
+
+class SphereExample(ThreeDScene):
+    def construct(self):
+        # Set camera angle
+        self.set_camera_orientation(phi=60 * DEGREES, theta=30 * DEGREES)
+        
+        # Create sphere
+        sphere = Sphere(radius=1.5, resolution=(20, 20))
+        sphere.set_color(BLUE)
+        
+        self.play(Create(sphere))
+        self.wait()
+```
+
+**Render:**
+```bash
+manimvtk -pql examples.py SphereExample --renderer vtk
+```
+
+### Multiple 3D Objects
+
+```python
+from manimvtk import *
+
+class Multiple3DObjects(ThreeDScene):
+    def construct(self):
+        self.set_camera_orientation(phi=70 * DEGREES, theta=30 * DEGREES)
+        
+        # Create objects
+        sphere = Sphere(radius=0.5, color=BLUE).shift(LEFT * 2)
+        cube = Cube(side_length=1, color=RED)
+        cone = Cone(base_radius=0.5, height=1, color=GREEN).shift(RIGHT * 2)
+        
+        objects = VGroup(sphere, cube, cone)
+        
+        self.play(Create(objects))
+        self.begin_ambient_camera_rotation(rate=0.1)
+        self.wait(5)
+        self.stop_ambient_camera_rotation()
+```
+
+## Parametric Surfaces
+
+### Wave Surface
+
+```python
+from manimvtk import *
+import numpy as np
+
+class WaveSurface(ThreeDScene):
+    def construct(self):
+        surface = Surface(
+            lambda u, v: np.array([
+                u,
+                v,
+                np.sin(u) * np.cos(v)
+            ]),
+            u_range=[-2, 2],
+            v_range=[-2, 2],
+            resolution=(40, 40)
+        )
+        surface.set_color_by_gradient(BLUE, GREEN, RED)
+        
+        self.set_camera_orientation(phi=60 * DEGREES, theta=-45 * DEGREES)
+        self.play(Create(surface), run_time=2)
+        self.wait()
+```
+
+### Torus
+
+```python
+from manimvtk import *
+import numpy as np
+
+class TorusExample(ThreeDScene):
+    def construct(self):
+        torus = Surface(
+            lambda u, v: np.array([
+                (2 + np.cos(v)) * np.cos(u),
+                (2 + np.cos(v)) * np.sin(u),
+                np.sin(v)
+            ]),
+            u_range=[0, TAU],
+            v_range=[0, TAU],
+            resolution=(40, 40)
+        )
+        torus.set_color_by_gradient(BLUE, PURPLE, RED)
+        
+        self.set_camera_orientation(phi=60 * DEGREES, theta=45 * DEGREES)
+        self.play(Create(torus))
+        self.begin_ambient_camera_rotation(rate=0.15)
+        self.wait(6)
+```
+
+## 3D Animations
+
+### Rotating Cube
+
+```python
+from manimvtk import *
+
+class RotatingCube(ThreeDScene):
+    def construct(self):
+        cube = Cube(side_length=2, fill_opacity=0.7)
+        cube.set_color_by_gradient(BLUE, GREEN, YELLOW)
+        
+        self.set_camera_orientation(phi=60 * DEGREES, theta=30 * DEGREES)
+        
+        self.play(Create(cube))
+        self.play(Rotate(cube, angle=TAU, axis=UP, run_time=4))
+        self.wait()
+```
+
+### Growing Sphere
+
+```python
+from manimvtk import *
+
+class GrowingSphere(ThreeDScene):
+    def construct(self):
+        sphere = Sphere(radius=0.5, color=BLUE)
+        
+        self.set_camera_orientation(phi=60 * DEGREES)
+        
+        self.play(GrowFromCenter(sphere))
+        self.play(sphere.animate.scale(3), run_time=2)
+        self.wait()
+```
+
+## Camera Movement
+
+### Orbiting Camera
+
+```python
+from manimvtk import *
+
+class OrbitingCamera(ThreeDScene):
+    def construct(self):
+        axes = ThreeDAxes()
+        sphere = Sphere(radius=1, color=BLUE)
+        
+        self.add(axes, sphere)
+        
+        # Start from front
+        self.set_camera_orientation(phi=60 * DEGREES, theta=0)
+        self.wait()
+        
+        # Orbit 360 degrees
+        self.move_camera(theta=360 * DEGREES, run_time=8)
+        self.wait()
+```
+
+### Camera Zoom
+
+```python
+from manimvtk import *
+
+class CameraZoom(ThreeDScene):
+    def construct(self):
+        cube = Cube()
+        self.add(cube)
+        
+        # Start far away
+        self.set_camera_orientation(phi=60 * DEGREES, distance=10)
+        self.wait()
+        
+        # Zoom in
+        self.move_camera(distance=4, run_time=3)
+        self.wait()
+```
+
+## VTK Export for ParaView
+
+### Export 3D Surface
+
+```python
+from manimvtk import *
+import numpy as np
+
+class ExportSurface(ThreeDScene):
+    def construct(self):
+        surface = Surface(
+            lambda u, v: np.array([u, v, u**2 - v**2]),
+            u_range=[-2, 2],
+            v_range=[-2, 2],
+            resolution=(30, 30)
+        )
+        surface.set_color_by_gradient(BLUE, RED)
+        
+        self.set_camera_orientation(phi=60 * DEGREES)
+        self.play(Create(surface))
+        self.wait()
+```
+
+**Render with VTK export:**
+```bash
+manimvtk -pqh examples.py ExportSurface --renderer vtk --vtk-export
+```
+
+Open the resulting `.vtp` file in ParaView for further analysis.
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Scientific Examples" icon="flask" href="/examples/scientific">
+    Scientific visualization examples
+  </Card>
+  <Card title="3D API Reference" icon="cube" href="/api-reference/mobjects/3d-objects">
+    Complete 3D objects reference
+  </Card>
+  <Card title="VTK Renderer" icon="display" href="/vtk/renderer">
+    VTK renderer features
+  </Card>
+  <Card title="Camera Guide" icon="camera" href="/concepts/cameras">
+    Master camera control
+  </Card>
+</CardGroup>
