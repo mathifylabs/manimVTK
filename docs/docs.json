@@ -123,8 +123,8 @@
     }
   },
   "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    "light": "/logo/light.png",
+    "dark": "/logo/dark.png"
   },
   "navbar": {
     "links": [
@@ -154,7 +154,7 @@
   "footer": {
     "socials": {
       "github": "https://github.com/mathifylabs/manimVTK",
-      "x": "https://twitter.com/3blue1brown"
+      "x": "https://twitter.com/mathify_dev"
     }
   }
 }
