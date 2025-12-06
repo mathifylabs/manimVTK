@@ -161,5 +161,6 @@ jobs:
           uv run python -m pytest -v --cov-append --ignore-glob="*opengl*" --doctest-modules manimvtk
 
       - name: Run doctests in rst files
+        if: hashFiles('docs/Makefile') != ''
         run: |
           cd docs && uv run make doctest O=-tskip-manim
