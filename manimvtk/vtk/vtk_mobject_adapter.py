@@ -23,6 +23,13 @@ __all__ = [
     "add_vector_field",
 ]
 
+# Constants for stroke/fill detection
+MIN_VISIBLE_OPACITY = 0.01
+"""Minimum opacity threshold for considering a stroke or fill as visible."""
+
+SAMPLES_PER_BEZIER_CURVE = 10
+"""Number of sample points per bezier curve segment when exporting as lines."""
+
 
 def _get_vtk():
     """Lazy import of VTK to avoid import errors when VTK is not installed."""
@@ -59,8 +66,8 @@ def _should_export_as_lines(mobj: VMobject) -> bool:
         stroke_width = mobj.get_stroke_width()
 
         # If has visible stroke but no/low fill, export as lines
-        has_visible_stroke = stroke_opacity > 0.01 and stroke_width > 0
-        has_visible_fill = fill_opacity > 0.01
+        has_visible_stroke = stroke_opacity > MIN_VISIBLE_OPACITY and stroke_width > 0
+        has_visible_fill = fill_opacity > MIN_VISIBLE_OPACITY
 
         return has_visible_stroke and not has_visible_fill
     except (AttributeError, TypeError):
@@ -68,7 +75,7 @@ def _should_export_as_lines(mobj: VMobject) -> bool:
 
 
 def _sample_bezier_curves(
-    mobj: VMobject, samples_per_curve: int = 10
+    mobj: VMobject, samples_per_curve: int = SAMPLES_PER_BEZIER_CURVE
 ) -> list[np.ndarray]:
     """Sample points along the bezier curves of a VMobject.
 
@@ -161,7 +168,9 @@ def vmobject_to_vtk_polydata(mobj: VMobject) -> Any:
             color = mobj.get_stroke_color()
             rgba = color.to_rgba() if hasattr(color, "to_rgba") else [1.0, 1.0, 1.0, 1.0]
             stroke_opacity = mobj.get_stroke_opacity() if hasattr(mobj, "get_stroke_opacity") else 1.0
-            rgba_int = [int(c * 255) for c in rgba[:3]] + [int(stroke_opacity * 255)]
+            # Combine color's alpha with stroke opacity
+            combined_opacity = rgba[3] * stroke_opacity if len(rgba) > 3 else stroke_opacity
+            rgba_int = [int(c * 255) for c in rgba[:3]] + [int(combined_opacity * 255)]
         except Exception:
             rgba_int = [255, 255, 255, 255]
 
