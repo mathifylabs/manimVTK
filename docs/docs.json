@@ -1,68 +1,106 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Mint Starter Kit",
+  "name": "ManimVTK",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#3b82f6",
+    "light": "#60a5fa",
+    "dark": "#2563eb"
   },
   "favicon": "/favicon.svg",
   "navigation": {
     "tabs": [
       {
-        "tab": "Guides",
+        "tab": "Documentation",
         "groups": [
           {
-            "group": "Getting started",
+            "group": "Getting Started",
             "pages": [
               "index",
               "quickstart",
-              "development"
+              "installation"
             ]
           },
           {
-            "group": "Customization",
+            "group": "VTK Features",
             "pages": [
-              "essentials/settings",
-              "essentials/navigation"
+              "vtk/overview",
+              "vtk/renderer",
+              "vtk/export",
+              "vtk/time-series",
+              "vtk/paraview"
             ]
           },
           {
-            "group": "Writing content",
+            "group": "Core Concepts",
             "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/reusable-snippets"
+              "concepts/scenes",
+              "concepts/mobjects",
+              "concepts/animations",
+              "concepts/cameras",
+              "concepts/renderers"
             ]
           },
           {
-            "group": "AI tools",
+            "group": "Examples",
             "pages": [
-              "ai-tools/cursor",
-              "ai-tools/claude-code",
-              "ai-tools/windsurf"
+              "examples/basic-2d",
+              "examples/basic-3d",
+              "examples/animations",
+              "examples/scientific"
+            ]
+          },
+          {
+            "group": "Advanced Topics",
+            "pages": [
+              "advanced/custom-mobjects",
+              "advanced/custom-animations",
+              "advanced/configuration",
+              "advanced/cli-options"
             ]
           }
         ]
       },
       {
-        "tab": "API reference",
+        "tab": "API Reference",
         "groups": [
           {
-            "group": "API documentation",
+            "group": "Mobjects",
             "pages": [
-              "api-reference/introduction"
+              "api-reference/mobjects/overview",
+              "api-reference/mobjects/geometry",
+              "api-reference/mobjects/3d-objects",
+              "api-reference/mobjects/text",
+              "api-reference/mobjects/graphs"
             ]
           },
           {
-            "group": "Endpoint examples",
+            "group": "Animations",
             "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              "api-reference/animations/overview",
+              "api-reference/animations/creation",
+              "api-reference/animations/transform",
+              "api-reference/animations/movement",
+              "api-reference/animations/indication"
+            ]
+          },
+          {
+            "group": "VTK Module",
+            "pages": [
+              "api-reference/vtk/vtk-renderer",
+              "api-reference/vtk/vtk-exporter",
+              "api-reference/vtk/vtk-adapter",
+              "api-reference/vtk/scalar-fields",
+              "api-reference/vtk/vector-fields"
+            ]
+          },
+          {
+            "group": "Scene & Camera",
+            "pages": [
+              "api-reference/scene/scene",
+              "api-reference/scene/camera",
+              "api-reference/scene/moving-camera",
+              "api-reference/scene/three-d-scene"
             ]
           }
         ]
@@ -71,14 +109,19 @@
     "global": {
       "anchors": [
         {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
+          "anchor": "GitHub",
+          "href": "https://github.com/mathifylabs/manimVTK",
+          "icon": "github"
         },
         {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
+          "anchor": "Community",
+          "href": "https://www.manim.community/",
+          "icon": "users"
+        },
+        {
+          "anchor": "Examples",
+          "href": "https://github.com/mathifylabs/manimVTK/tree/main/example_scenes",
+          "icon": "play"
         }
       ]
     }
@@ -90,14 +133,14 @@
   "navbar": {
     "links": [
       {
-        "label": "Support",
-        "href": "mailto:hi@mintlify.com"
+        "label": "PyPI",
+        "href": "https://pypi.org/project/manimvtk/"
       }
     ],
     "primary": {
       "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
+      "label": "Get Started",
+      "href": "/quickstart"
     }
   },
   "contextual": {
@@ -114,9 +157,8 @@
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
+      "github": "https://github.com/mathifylabs/manimVTK",
+      "x": "https://twitter.com/3blue1brown"
     }
   }
 }

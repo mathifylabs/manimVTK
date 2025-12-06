@@ -1,97 +1,189 @@
 ---
-title: "Introduction"
-description: "Welcome to the new home for your documentation"
+title: "Welcome to ManimVTK"
+description: "Scientific Visualization meets Mathematical Animation"
 ---
 
-## Setting up
+<img
+  className="block dark:hidden"
+  src="/images/manimvtk-banner-light.svg"
+  alt="ManimVTK Logo"
+/>
+<img
+  className="hidden dark:block"
+  src="/images/manimvtk-banner-dark.svg"
+  alt="ManimVTK Logo"
+/>
 
-Get your documentation site up and running in minutes.
+## What is ManimVTK?
+
+**ManimVTK** is a powerful fork of [Manim Community](https://www.manim.community/) that combines the elegant animation syntax of Manim with VTK (Visualization Toolkit) for scientific visualization and export capabilities.
+
+Create stunning mathematical animations and export them as interactive 3D datasets for use in ParaView, PyVista, and vtk.js.
+
+<CardGroup cols={2}>
+  <Card
+    title="Quick Start"
+    icon="rocket"
+    href="/quickstart"
+  >
+    Get started with ManimVTK in minutes
+  </Card>
+  <Card
+    title="VTK Features"
+    icon="cube"
+    href="/vtk/overview"
+  >
+    Explore VTK export and rendering capabilities
+  </Card>
+  <Card
+    title="Examples"
+    icon="play"
+    href="/examples/basic-2d"
+  >
+    Browse examples from 2D to scientific visualization
+  </Card>
+  <Card
+    title="API Reference"
+    icon="code"
+    href="/api-reference/mobjects/overview"
+  >
+    Comprehensive API documentation
+  </Card>
+</CardGroup>
+
+## Key Features
+
+<AccordionGroup>
+  <Accordion icon="film" title="Mathematical Animation">
+    Create elegant animations using Manim's intuitive syntax. Animate geometric shapes, mathematical functions, graphs, and complex transformations with ease.
+  </Accordion>
+
+  <Accordion icon="cube" title="VTK Export">
+    Export your scenes to VTK formats (.vtp, .vtm, .pvd) for visualization in ParaView and other scientific tools. Perfect for CFD, FEA, and research presentations.
+  </Accordion>
+
+  <Accordion icon="chart-line" title="Scientific Visualization">
+    Attach scalar fields (pressure, temperature) and vector fields (velocity, forces) to your exported VTK data for advanced scientific visualization.
+  </Accordion>
+
+  <Accordion icon="clock" title="Time Series Export">
+    Export frame-by-frame VTK files with ParaView Data (.pvd) collection files. Scrub through animations using ParaView's native time slider.
+  </Accordion>
+
+  <Accordion icon="globe" title="Interactive Web Viewing">
+    Generate vtk.js compatible datasets for embedding interactive 3D visualizations in web applications and documentation.
+  </Accordion>
+</AccordionGroup>
+
+## Quick Example
+
+Here's a simple example that creates an animated surface and exports it to VTK format:
+
+```python
+from manimvtk import *
+
+class WaveSurface(Scene):
+    def construct(self):
+        # Create a parametric surface
+        surface = Surface(
+            lambda u, v: np.array([
+                u, 
+                v, 
+                np.sin(u) * np.cos(v)
+            ]),
+            u_range=[-2, 2],
+            v_range=[-2, 2],
+            resolution=(50, 50),
+        )
+        surface.set_color(BLUE)
+        
+        # Animate the surface
+        self.play(Create(surface))
+        self.wait()
+```
+
+**Render with VTK export:**
+
+```bash
+manimvtk -pqh example.py WaveSurface --renderer vtk --vtk-export
+```
+
+**Output:**
+- `media/videos/example/1080p60/WaveSurface.mp4` - Video animation
+- `media/vtk/WaveSurface/WaveSurface_final.vtm` - VTK MultiBlock file
+
+## Use Cases
+
+<CardGroup cols={2}>
+  <Card title="Educational Content" icon="graduation-cap">
+    Create engaging math and physics explanations with beautiful animations
+  </Card>
+  <Card title="CFD Visualization" icon="water">
+    Visualize computational fluid dynamics simulations with scalar and vector fields
+  </Card>
+  <Card title="Research Presentations" icon="presentation-screen">
+    Generate publication-quality animations and interactive 3D datasets
+  </Card>
+  <Card title="Web Applications" icon="browser">
+    Embed interactive 3D visualizations using vtk.js exports
+  </Card>
+</CardGroup>
+
+## Architecture
+
+ManimVTK extends Manim's renderer architecture with VTK support:
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                    Manim Core                           │
+│  (Scene, Mobject, Animation, play, etc.)               │
+└─────────────────────────────────────────────────────────┘
+                            │
+                            ▼
+┌─────────────────────────────────────────────────────────┐
+│               Renderer Abstraction                       │
+│  ┌─────────────┐ ┌─────────────┐ ┌─────────────────┐   │
+│  │CairoRenderer│ │OpenGLRenderer│ │ VTKRenderer ✨  │   │
+│  └─────────────┘ └─────────────┘ └─────────────────┘   │
+└─────────────────────────────────────────────────────────┘
+                            │
+                            ▼
+┌─────────────────────────────────────────────────────────┐
+│            VTK Export / Viewer Layer                    │
+│  • File export (.vtp, .vtm, .pvd)                      │
+│  • Manim → VTK conversion                              │
+│  • Scalar/Vector field support                         │
+└─────────────────────────────────────────────────────────┘
+```
+
+## Getting Started
+
+Ready to create your first animation? Follow our quick start guide:
 
 <Card
-  title="Start here"
+  title="Installation & Quick Start"
   icon="rocket"
   href="/quickstart"
   horizontal
 >
-  Follow our three step quickstart guide.
+  Install ManimVTK and create your first scene
 </Card>
 
-## Make it yours
+## Community & Support
 
-Design a docs site that looks great and empowers your users.
-
-<Columns cols={2}>
+<CardGroup cols={2}>
   <Card
-    title="Edit locally"
-    icon="pen-to-square"
-    href="/development"
+    title="GitHub Repository"
+    icon="github"
+    href="https://github.com/mathifylabs/manimVTK"
   >
-    Edit your docs locally and preview them in real time.
+    View source code, report issues, and contribute
   </Card>
   <Card
-    title="Customize your site"
-    icon="palette"
-    href="/essentials/settings"
+    title="Manim Community"
+    icon="users"
+    href="https://www.manim.community/"
   >
-    Customize the design and colors of your site to match your brand.
+    Join the broader Manim community
   </Card>
-    <Card
-    title="Set up navigation"
-    icon="map"
-    href="/essentials/navigation"
-  >
-    Organize your docs to help users find what they need and succeed with your product.
-  </Card>
-  <Card
-    title="API documentation"
-    icon="terminal"
-    href="/api-reference/introduction"
-  >
-    Auto-generate API documentation from OpenAPI specifications.
-  </Card>
-</Columns>
-
-## Create beautiful pages
-
-Everything you need to create world-class documentation.
-
-<Columns cols={2}>
-  <Card
-    title="Write with MDX"
-    icon="pen-fancy"
-    href="/essentials/markdown"
-  >
-    Use MDX to style your docs pages.
-  </Card>
-  <Card
-    title="Code samples"
-    icon="code"
-    href="/essentials/code"
-  >
-    Add sample code to demonstrate how to use your product.
-  </Card>
-  <Card
-    title="Images"
-    icon="image"
-    href="/essentials/images"
-  >
-    Display images and other media.
-  </Card>
-  <Card
-    title="Reusable snippets"
-    icon="recycle"
-    href="/essentials/reusable-snippets"
-  >
-    Write once and reuse across your docs.
-  </Card>
-</Columns>
-
-## Need inspiration?
-
-<Card
-  title="See complete examples"
-  icon="stars"
-  href="https://mintlify.com/customers"
->
-  Browse our showcase of exceptional documentation sites.
-</Card>
+</CardGroup>
