@@ -1,0 +1,68 @@
+---
+title: "CLI Options"
+description: "Complete command-line interface reference"
+---
+
+## Basic Usage
+
+```bash
+manimvtk [OPTIONS] FILE [SCENES]
+```
+
+## Quality Options
+
+| Option | Description |
+|--------|-------------|
+| `-ql` | Low quality (480p, 15fps) |
+| `-qm` | Medium quality (720p, 30fps) |
+| `-qh` | High quality (1080p, 60fps) |
+| `-qk` | 4K quality (2160p, 60fps) |
+
+## Output Options
+
+| Option | Description |
+|--------|-------------|
+| `-p` | Preview after rendering |
+| `-s` | Save last frame as image |
+| `-a` | Render all scenes in file |
+| `-o FILENAME` | Output filename |
+
+## Renderer Options
+
+| Option | Description |
+|--------|-------------|
+| `--renderer {cairo,opengl,vtk}` | Select renderer |
+
+## VTK Export Options
+
+| Option | Description |
+|--------|-------------|
+| `--vtk-export` | Export final scene to VTK |
+| `--vtk-time-series` | Export frame-by-frame VTK |
+
+## Examples
+
+```bash
+# High quality with preview
+manimvtk -pqh scene.py MyScene
+
+# VTK export
+manimvtk -pqh scene.py MyScene --renderer vtk --vtk-export
+
+# Time series for ParaView
+manimvtk -pqm scene.py MyScene --vtk-time-series
+
+# All scenes, low quality
+manimvtk -aql scene.py
+```
+
+## See Also
+
+<CardGroup cols={2}>
+  <Card title="Configuration" icon="gear" href="/advanced/configuration">
+    Config file settings
+  </Card>
+  <Card title="Quick Start" icon="rocket" href="/quickstart">
+    Getting started guide
+  </Card>
+</CardGroup>

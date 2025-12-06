@@ -1,0 +1,462 @@
+---
+title: "VTK Export"
+description: "Export Manim scenes to VTK file formats"
+---
+
+## Introduction
+
+ManimVTK allows you to export your animations to VTK (Visualization Toolkit) file formats, enabling visualization in ParaView, PyVista, and other scientific tools.
+
+<Info>
+  **VTK export works with any renderer** - you can use Cairo, OpenGL, or VTK renderer and still export to VTK formats.
+</Info>
+
+## Export Methods
+
+### Static Export (Final Frame)
+
+Export the final state of your scene:
+
+```bash
+manimvtk -pqh scene.py MyScene --vtk-export
+```
+
+**Output formats:**
+- Single mobject → `.vtp` (VTK PolyData)
+- Multiple mobjects → `.vtm` (VTK MultiBlock Dataset)
+
+### Time Series Export (All Frames)
+
+Export every frame as a VTK file:
+
+```bash
+manimvtk -pqh scene.py MyScene --vtk-time-series
+```
+
+**Output:**
+- `.pvd` - ParaView Data collection file
+- `.vtp` files - One per frame
+- `viewer.html` - Basic HTML viewer template
+
+<Card
+  title="Time Series Guide"
+  icon="clock"
+  href="/vtk/time-series"
+>
+  Detailed guide on time series export
+</Card>
+
+## File Formats
+
+### VTK PolyData (.vtp)
+
+Used for single objects with points, lines, and polygons.
+
+**When created:**
+- Scene contains a single mobject
+- Explicitly exporting one mobject
+
+**Structure:**
+```xml
+<VTKFile type="PolyData" version="1.0">
+  <PolyData>
+    <Piece NumberOfPoints="N" NumberOfPolys="M">
+      <Points>...</Points>
+      <Polys>...</Polys>
+      <PointData>
+        <DataArray Name="Colors" .../>
+      </PointData>
+    </Piece>
+  </PolyData>
+</VTKFile>
+```
+
+**Example output:**
+```
+media/vtk/MyScene/
+└── MyScene_final.vtp
+```
+
+### VTK MultiBlock (.vtm)
+
+Used for scenes with multiple objects.
+
+**When created:**
+- Scene contains multiple mobjects
+- Complex hierarchical structures
+
+**Structure:**
+```xml
+<VTKFile type="vtkMultiBlockDataSet">
+  <vtkMultiBlockDataSet>
+    <DataSet index="0" file="Circle_0.vtp"/>
+    <DataSet index="1" file="Square_1.vtp"/>
+  </vtkMultiBlockDataSet>
+</VTKFile>
+```
+
+**Example output:**
+```
+media/vtk/MyScene/
+├── MyScene_final.vtm
+├── Circle_0.vtp
+└── Square_1.vtp
+```
+
+## Basic Examples
+
+### Export a Simple Shape
+
+```python
+from manimvtk import *
+
+class CircleExport(Scene):
+    def construct(self):
+        circle = Circle(radius=2, color=BLUE, fill_opacity=0.5)
+        self.play(Create(circle))
+        self.wait()
+```
+
+```bash
+manimvtk -pql scene.py CircleExport --vtk-export
+```
+
+**Output:** `media/vtk/CircleExport/CircleExport_final.vtp`
+
+### Export Multiple Objects
+
+```python
+from manimvtk import *
+
+class MultipleShapes(Scene):
+    def construct(self):
+        circle = Circle(radius=1, color=BLUE).shift(LEFT * 2)
+        square = Square(side_length=1.5, color=RED)
+        triangle = Triangle(color=GREEN).shift(RIGHT * 2)
+        
+        self.play(
+            Create(circle),
+            Create(square),
+            Create(triangle)
+        )
+        self.wait()
+```
+
+```bash
+manimvtk -pql scene.py MultipleShapes --vtk-export
+```
+
+**Output:**
+```
+media/vtk/MultipleShapes/
+├── MultipleShapes_final.vtm
+├── Circle_0.vtp
+├── Square_1.vtp
+└── Triangle_2.vtp
+```
+
+### Export 3D Surfaces
+
+```python
+from manimvtk import *
+import numpy as np
+
+class SurfaceExport(ThreeDScene):
+    def construct(self):
+        surface = Surface(
+            lambda u, v: np.array([u, v, np.sin(u) * np.cos(v)]),
+            u_range=[-2, 2],
+            v_range=[-2, 2],
+            resolution=(50, 50),
+        )
+        surface.set_color_by_gradient(BLUE, RED)
+        
+        self.set_camera_orientation(phi=60 * DEGREES, theta=30 * DEGREES)
+        self.play(Create(surface))
+        self.wait()
+```
+
+```bash
+manimvtk -pqh scene.py SurfaceExport --renderer vtk --vtk-export
+```
+
+## Export Location
+
+By default, VTK files are saved to:
+
+```
+media/vtk/<SceneName>/
+```
+
+The location follows ManimVTK's standard media directory structure:
+
+```
+media/
+├── videos/
+│   └── scene.py/
+│       └── 1080p60/
+│           └── MyScene.mp4
+└── vtk/
+    └── MyScene/
+        ├── MyScene_final.vtp
+        └── MyScene_final.vtm
+```
+
+## Programmatic Export
+
+You can also export VTK files programmatically:
+
+```python
+from manimvtk import *
+from manimvtk.vtk import VTKExporter
+
+class ProgrammaticExport(Scene):
+    def construct(self):
+        circle = Circle(radius=2, color=BLUE)
+        self.add(circle)
+        
+        # Create exporter
+        exporter = VTKExporter(
+            output_dir="custom_output",
+            scene_name="MyCircle"
+        )
+        
+        # Export single mobject
+        exporter.export_mobject(circle, filename="circle.vtp")
+        
+        # Export scene (all mobjects)
+        exporter.export_scene_static(self.mobjects)
+```
+
+## Data Preservation
+
+### Colors
+
+Mobject colors are preserved in VTK export:
+
+```python
+circle = Circle(radius=1)
+circle.set_color(BLUE)  # Exported as RGB values
+circle.set_opacity(0.5)  # Exported as opacity
+```
+
+In VTK, colors are stored as `PointData` arrays named "Colors" with RGBA values.
+
+### Geometry
+
+Different mobject types are converted appropriately:
+
+| Mobject | VTK Representation |
+|---------|-------------------|
+| Filled shapes | Polygons (triangulated) |
+| Stroked shapes | PolyLines |
+| Surfaces | Polygonal mesh |
+| Text/Tex | Filled paths (polygons) |
+
+### Transformations
+
+All transformations (position, rotation, scale) are applied before export:
+
+```python
+circle = Circle()
+circle.shift(RIGHT * 2)  # Position
+circle.rotate(45 * DEGREES)  # Rotation
+circle.scale(1.5)  # Scale
+
+# All transformations are baked into exported geometry
+```
+
+## Advanced Features
+
+### Scalar Fields
+
+Attach scalar data to exported geometry:
+
+```python
+from manimvtk import *
+from manimvtk.vtk import add_scalar_field
+import numpy as np
+
+class ScalarFieldExport(Scene):
+    def construct(self):
+        # Create surface
+        surface = Surface(
+            lambda u, v: np.array([u, v, u**2 - v**2]),
+            u_range=[-2, 2],
+            v_range=[-2, 2],
+            resolution=(30, 30)
+        )
+        
+        self.add(surface)
+        # Export and add scalar field in post-processing
+```
+
+See [Scalar Fields](/api-reference/vtk/scalar-fields) for details.
+
+### Vector Fields
+
+Attach vector data for flow visualization:
+
+```python
+from manimvtk.vtk import add_vector_field
+
+# Add velocity vectors to exported polydata
+add_vector_field(polydata, "velocity", velocity_array)
+```
+
+See [Vector Fields](/api-reference/vtk/vector-fields) for details.
+
+## Viewing Exported Files
+
+### ParaView
+
+1. Open ParaView
+2. File → Open
+3. Select `.vtp`, `.vtm`, or `.pvd` file
+4. Click "Apply" in the Properties panel
+
+<Card
+  title="ParaView Guide"
+  icon="chart-line"
+  href="/vtk/paraview"
+>
+  Detailed ParaView visualization guide
+</Card>
+
+### PyVista (Python)
+
+```python
+import pyvista as pv
+
+# Load exported file
+mesh = pv.read('media/vtk/MyScene/MyScene_final.vtp')
+
+# Visualize
+mesh.plot(
+    color='lightblue',
+    show_edges=True,
+    window_size=[800, 600]
+)
+
+# Or interactive
+mesh.plot(jupyter_backend='trame')
+```
+
+### vtk.js (Web)
+
+```javascript
+import vtkXMLPolyDataReader from '@kitware/vtk.js/IO/XML/XMLPolyDataReader';
+
+const reader = vtkXMLPolyDataReader.newInstance();
+reader.setUrl('MyScene_final.vtp');
+reader.loadData().then(() => {
+  const polydata = reader.getOutputData();
+  // Render with vtk.js
+});
+```
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion icon="file-zipper" title="File Sizes">
+    VTK XML formats are human-readable but can be large. Considerations:
+    
+    - Use compression in ParaView: File → Save Data → check "Compressed"
+    - Lower resolution for testing: `resolution=(20, 20)` instead of `(50, 50)`
+    - Use binary format for production (requires VTK binary writer)
+  </Accordion>
+
+  <Accordion icon="folder-tree" title="Organization">
+    Keep exports organized:
+    
+    ```
+    project/
+    ├── scenes/
+    │   ├── scene1.py
+    │   └── scene2.py
+    └── media/
+        └── vtk/
+            ├── Scene1/
+            └── Scene2/
+    ```
+  </Accordion>
+
+  <Accordion icon="clock" title="When to Use Static vs Time Series">
+    **Use static export when:**
+    - You only need the final result
+    - Creating static visualizations
+    - File size is a concern
+    
+    **Use time series when:**
+    - Analyzing animation in ParaView
+    - Need frame-by-frame data
+    - Creating interactive temporal visualizations
+  </Accordion>
+
+  <Accordion icon="gauge-high" title="Performance">
+    Export adds minimal overhead:
+    
+    - Cairo/OpenGL rendering time: ~90%
+    - VTK export time: ~10%
+    
+    Time series export is slower due to per-frame I/O.
+  </Accordion>
+</AccordionGroup>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion icon="triangle-exclamation" title="Export file not created">
+    **Possible causes:**
+    - Forgot `--vtk-export` flag
+    - Scene has no mobjects
+    - Permission issues in output directory
+    
+    **Check:**
+    ```bash
+    ls -la media/vtk/
+    ```
+  </Accordion>
+
+  <Accordion icon="triangle-exclamation" title="ParaView won't open file">
+    **Possible causes:**
+    - VTK file corrupted
+    - ParaView version too old
+    
+    **Solution:**
+    - Re-export the file
+    - Update ParaView to 5.9+
+    - Check file with text editor (XML should be valid)
+  </Accordion>
+
+  <Accordion icon="triangle-exclamation" title="Colors missing or wrong">
+    **Cause:** Color data not exported correctly
+    
+    **Check:**
+    - Are colors set before rendering?
+    - Does the mobject have a stroke or fill?
+    
+    ```python
+    # Ensure colors are set
+    circle.set_color(BLUE)
+    circle.set_fill(BLUE, opacity=0.5)
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Time Series Export" icon="clock" href="/vtk/time-series">
+    Learn about frame-by-frame export
+  </Card>
+  <Card title="ParaView Guide" icon="chart-line" href="/vtk/paraview">
+    Visualize exports in ParaView
+  </Card>
+  <Card title="Scalar Fields" icon="wave" href="/api-reference/vtk/scalar-fields">
+    Add scientific data fields
+  </Card>
+  <Card title="Examples" icon="play" href="/examples/scientific">
+    See scientific visualization examples
+  </Card>
+</CardGroup>

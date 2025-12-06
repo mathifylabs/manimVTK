@@ -1,44 +1,47 @@
-# Mintlify Starter Kit (Test)
+# ManimVTK Documentation
 
-Use the starter kit to get your docs deployed and ready to customize.
+This directory contains the Mintlify documentation for ManimVTK.
 
-Click the green **Use this template** button at the top of this repo to copy the Mintlify starter kit. The starter kit contains examples with
+## Local Development
 
-- Guide pages
-- Navigation
-- Customizations
-- API reference pages
-- Use of popular components
+To preview the documentation locally:
 
-**[Follow the full quickstart guide](https://starter.mintlify.com/quickstart)**
+1. Install the Mintlify CLI:
+   ```bash
+   npm i -g mint
+   ```
 
-## Development
+2. Run the development server:
+   ```bash
+   cd docs
+   mint dev
+   ```
 
-Install the [Mintlify CLI](https://www.npmjs.com/package/mint) to preview your documentation changes locally. To install, use the following command:
+3. Open http://localhost:3000 in your browser
 
-```
-npm i -g mint
-```
+## Documentation Structure
 
-Run the following command at the root of your documentation, where your `docs.json` is located:
+- **Getting Started**: Installation, quick start, and basic usage
+- **VTK Features**: VTK renderer, export, time series, and ParaView integration
+- **Core Concepts**: Scenes, mobjects, animations, cameras, and renderers
+- **Examples**: Practical examples from 2D basics to scientific visualization
+- **API Reference**: Complete API documentation for mobjects, animations, and VTK
+- **Advanced Topics**: Custom mobjects, animations, configuration, and CLI options
 
-```
-mint dev
-```
+## Contributing
 
-View your local preview at `http://localhost:3000`.
+To add or update documentation:
 
-## Publishing changes
+1. Edit the relevant `.mdx` files
+2. Preview your changes locally with `mint dev`
+3. Submit a pull request
 
-Install our GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app) to propagate changes from your repo to your deployment. Changes are deployed to production automatically after pushing to the default branch.
+## Building
 
-## Need help?
+Documentation is automatically built and deployed when changes are pushed to the main branch.
 
-### Troubleshooting
-
-- If your dev environment isn't running: Run `mint update` to ensure you have the most recent version of the CLI.
-- If a page loads as a 404: Make sure you are running in a folder with a valid `docs.json`.
-
-### Resources
+## Resources
 
 - [Mintlify documentation](https://mintlify.com/docs)
+- [ManimVTK GitHub](https://github.com/mathifylabs/manimVTK)
+

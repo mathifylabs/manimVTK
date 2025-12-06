@@ -1,80 +1,259 @@
 ---
-title: "Quickstart"
-description: "Start building awesome documentation in minutes"
+title: "Quick Start"
+description: "Get started with ManimVTK in minutes"
 ---
 
-## Get started in three steps
+## Installation
 
-Get your documentation site running locally and make your first customization.
-
-### Step 1: Set up your local environment
-
-<AccordionGroup>
-  <Accordion icon="copy" title="Clone your docs locally">
-    During the onboarding process, you created a GitHub repository with your docs content if you didn't already have one. You can find a link to this repository in your [dashboard](https://dashboard.mintlify.com).
-    
-    To clone the repository locally so that you can make and preview changes to your docs, follow the [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) guide in the GitHub docs.
-  </Accordion>
-  <Accordion icon="rectangle-terminal" title="Start the preview server">
-    1. Install the Mintlify CLI: `npm i -g mint`
-    2. Navigate to your docs directory and run: `mint dev`
-    3. Open `http://localhost:3000` to see your docs live!
-    
-    <Tip>Your preview updates automatically as you edit files.</Tip>
-  </Accordion>
-</AccordionGroup>
-
-### Step 2: Deploy your changes
-
-<AccordionGroup>
-  <Accordion icon="github" title="Install our GitHub app">
-    Install the Mintlify GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app).
-    
-    Our GitHub app automatically deploys your changes to your docs site, so you don't need to manage deployments yourself.
-</Accordion>
-<Accordion icon="palette" title="Update your site name and colors">
-    For a first change, let's update the name and colors of your docs site.
-
-    1. Open `docs.json` in your editor.
-    2. Change the `"name"` field to your project name.
-    3. Update the `"colors"` to match your brand.
-    4. Save and see your changes instantly at `http://localhost:3000`.
-
-    <Tip>Try changing the primary color to see an immediate difference!</Tip>
-  </Accordion>
-</AccordionGroup>
-
-### Step 3: Go live
-
-<Accordion icon="rocket" title="Publish your docs">
-  1. Commit and push your changes.
-  2. Your docs will update and be live in moments!
-</Accordion>
-
-## Next steps
-
-Now that you have your docs running, explore these key features:
-
-<CardGroup cols={2}>
-
-<Card title="Write Content" icon="pen-to-square" href="/essentials/markdown">
-  Learn MDX syntax and start writing your documentation.
-</Card>
-
-<Card title="Customize style" icon="palette" href="/essentials/settings">
-  Make your docs match your brand perfectly.
-</Card>
-
-<Card title="Add code examples" icon="square-code" href="/essentials/code">
-  Include syntax-highlighted code blocks.
-</Card>
-
-<Card title="API documentation" icon="code" href="/api-reference/introduction">
-  Auto-generate API docs from OpenAPI specs.
-</Card>
-
-</CardGroup>
+### Prerequisites
 
 <Note>
-  **Need help?** See our [full documentation](https://mintlify.com/docs) or join our [community](https://mintlify.com/community).
+  **Linux Users:** ManimVTK depends on ManimPango, which requires system dependencies on Linux. Install them first before proceeding.
 </Note>
+
+<AccordionGroup>
+  <Accordion icon="ubuntu" title="Debian/Ubuntu (including Google Colab)">
+    ```bash
+    sudo apt install libpango1.0-dev pkg-config python3-dev
+    ```
+  </Accordion>
+
+  <Accordion icon="fedora" title="Fedora">
+    ```bash
+    sudo dnf install pango-devel pkg-config python3-devel
+    ```
+  </Accordion>
+
+  <Accordion icon="linux" title="Arch Linux">
+    ```bash
+    sudo pacman -S pango pkgconf
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Install ManimVTK
+
+<Tabs>
+  <Tab title="From PyPI (Recommended)">
+    Install the latest stable version from PyPI:
+
+    ```bash
+    # Basic installation with VTK support
+    pip install manimvtk[vtk]
+
+    # Full scientific stack (includes PyVista)
+    pip install manimvtk[scientific]
+    ```
+  </Tab>
+
+  <Tab title="From Source">
+    Clone the repository and install in development mode:
+
+    ```bash
+    # Clone the repository
+    git clone https://github.com/mathifylabs/manimVTK.git
+    cd manimVTK
+
+    # Install with VTK support
+    pip install -e ".[vtk]"
+
+    # Or install with full scientific stack
+    pip install -e ".[scientific]"
+    ```
+  </Tab>
+</Tabs>
+
+<Check>
+  **Verify Installation:** Run `manimvtk --version` to confirm installation
+</Check>
+
+## Your First Animation
+
+Let's create a simple animation to verify everything is working.
+
+### Step 1: Create a Scene File
+
+Create a new file called `example.py`:
+
+```python
+from manimvtk import *
+
+class CircleExample(Scene):
+    def construct(self):
+        # Create a circle
+        circle = Circle(radius=1, color=BLUE)
+        
+        # Add it to the scene
+        self.play(Create(circle))
+        self.wait()
+```
+
+### Step 2: Render the Animation
+
+Render your scene with the default Cairo renderer:
+
+```bash
+manimvtk -pql example.py CircleExample
+```
+
+**Command breakdown:**
+- `-p`: Preview the video after rendering
+- `-q`: Quality (l=low, m=medium, h=high)
+- `-l`: Low quality for faster rendering
+
+<Tip>
+  The rendered video will be saved in `media/videos/example/480p15/CircleExample.mp4`
+</Tip>
+
+### Step 3: Add VTK Export
+
+Now let's export the scene to VTK format:
+
+```bash
+manimvtk -pql example.py CircleExample --vtk-export
+```
+
+This creates:
+- `media/videos/example/480p15/CircleExample.mp4` - Video file
+- `media/vtk/CircleExample/CircleExample_final.vtp` - VTK file
+
+<Check>
+  **Success!** You've created your first ManimVTK animation with VTK export
+</Check>
+
+## Using the VTK Renderer
+
+Switch to the VTK renderer for high-quality 3D rendering:
+
+```python
+from manimvtk import *
+
+class SphereExample(ThreeDScene):
+    def construct(self):
+        # Create a 3D sphere
+        sphere = Sphere(radius=1.5, resolution=(20, 20))
+        sphere.set_color(BLUE)
+        
+        # Rotate the camera
+        self.set_camera_orientation(phi=75 * DEGREES, theta=30 * DEGREES)
+        
+        # Animate
+        self.play(Create(sphere))
+        self.play(Rotate(sphere, angle=PI, axis=UP))
+        self.wait()
+```
+
+Render with the VTK renderer:
+
+```bash
+manimvtk -pql example.py SphereExample --renderer vtk --vtk-export
+```
+
+## Time Series Export for ParaView
+
+Export frame-by-frame VTK files for animation scrubbing in ParaView:
+
+```python
+from manimvtk import *
+
+class AnimatedCircle(Scene):
+    def construct(self):
+        circle = Circle(radius=1, color=BLUE)
+        self.add(circle)
+        
+        # Animate the circle growing
+        self.play(circle.animate.scale(2))
+        self.wait()
+```
+
+Render with time series export:
+
+```bash
+manimvtk -pql example.py AnimatedCircle --vtk-time-series
+```
+
+**Output structure:**
+```
+media/vtk/AnimatedCircle/
+├── AnimatedCircle.pvd              # ParaView collection file
+├── AnimatedCircle_00000.vtp        # Frame 0
+├── AnimatedCircle_00001.vtp        # Frame 1
+├── ...
+└── AnimatedCircle_viewer.html      # HTML viewer template
+```
+
+<Tip>
+  Open the `.pvd` file in ParaView to scrub through the animation using the time slider
+</Tip>
+
+## Common CLI Options
+
+| Option | Description |
+|--------|-------------|
+| `-p` | Preview video after rendering |
+| `-q{l,m,h}` | Quality: low, medium, or high |
+| `-s` | Save last frame as PNG |
+| `-a` | Render all scenes in file |
+| `--renderer {cairo,opengl,vtk}` | Choose renderer |
+| `--vtk-export` | Export final scene to VTK |
+| `--vtk-time-series` | Export all frames as VTK time series |
+
+<Card
+  title="See all CLI options"
+  icon="terminal"
+  href="/advanced/cli-options"
+>
+  Complete reference of command-line options
+</Card>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card
+    title="VTK Features"
+    icon="cube"
+    href="/vtk/overview"
+  >
+    Learn about VTK rendering and export
+  </Card>
+
+  <Card
+    title="Core Concepts"
+    icon="book"
+    href="/concepts/scenes"
+  >
+    Understand scenes, mobjects, and animations
+  </Card>
+
+  <Card
+    title="Examples Gallery"
+    icon="images"
+    href="/examples/basic-2d"
+  >
+    Explore example animations
+  </Card>
+
+  <Card
+    title="API Reference"
+    icon="code"
+    href="/api-reference/mobjects/overview"
+  >
+    Browse the complete API
+  </Card>
+</CardGroup>
+
+## Getting Help
+
+<AccordionGroup>
+  <Accordion icon="github" title="Found a bug?">
+    Report issues on our [GitHub repository](https://github.com/mathifylabs/manimVTK/issues)
+  </Accordion>
+
+  <Accordion icon="question" title="Need help?">
+    Check the [Manim Community](https://www.manim.community/) resources and Discord
+  </Accordion>
+
+  <Accordion icon="book" title="Want to contribute?">
+    See our [Contributing Guide](https://github.com/mathifylabs/manimVTK/blob/main/CONTRIBUTING.md)
+  </Accordion>
+</AccordionGroup>

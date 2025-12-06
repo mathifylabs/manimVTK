@@ -1,0 +1,525 @@
+---
+title: "Scenes"
+description: "Understanding scenes and the construct method in ManimVTK"
+---
+
+## What is a Scene?
+
+A **Scene** is the fundamental building block of ManimVTK. It's a container for your animation that manages:
+
+- **Mobjects** (visual objects)
+- **Animations** (movements and transformations)
+- **Camera** (viewpoint and perspective)
+- **Rendering** (video output and VTK export)
+
+Every ManimVTK animation starts with a scene class.
+
+## Basic Scene Structure
+
+```python
+from manimvtk import *
+
+class MyScene(Scene):
+    def construct(self):
+        # Your animation code goes here
+        pass
+```
+
+**Key components:**
+1. **Import**: `from manimvtk import *`
+2. **Class definition**: Inherit from `Scene`
+3. **construct() method**: Where you build your animation
+
+## The construct() Method
+
+The `construct()` method is where all your animation logic lives:
+
+```python
+class SimpleAnimation(Scene):
+    def construct(self):
+        # Create objects
+        circle = Circle(radius=1, color=BLUE)
+        
+        # Add to scene
+        self.add(circle)
+        
+        # Animate
+        self.play(circle.animate.scale(2))
+        
+        # Wait
+        self.wait()
+```
+
+<Info>
+  The `construct()` method is called automatically when you render the scene
+</Info>
+
+## Scene Types
+
+ManimVTK provides several scene types for different use cases:
+
+<Tabs>
+  <Tab title="Scene">
+    **Basic 2D scene** - Default scene type
+    
+    ```python
+    class Basic2D(Scene):
+        def construct(self):
+            square = Square()
+            self.play(Create(square))
+    ```
+    
+    **Use for:**
+    - 2D animations
+    - Graphs and plots
+    - Educational diagrams
+  </Tab>
+
+  <Tab title="ThreeDScene">
+    **3D scene with camera controls**
+    
+    ```python
+    class Basic3D(ThreeDScene):
+        def construct(self):
+            # Set camera angle
+            self.set_camera_orientation(phi=60 * DEGREES, theta=30 * DEGREES)
+            
+            # Add 3D object
+            sphere = Sphere()
+            self.play(Create(sphere))
+    ```
+    
+    **Use for:**
+    - 3D visualizations
+    - Surfaces and parametric objects
+    - Scientific simulations
+  </Tab>
+
+  <Tab title="MovingCameraScene">
+    **Scene with movable camera**
+    
+    ```python
+    class CameraMove(MovingCameraScene):
+        def construct(self):
+            square = Square()
+            self.add(square)
+            
+            # Zoom in
+            self.play(self.camera.frame.animate.scale(0.5))
+    ```
+    
+    **Use for:**
+    - Zooming animations
+    - Pan and scan effects
+    - Focus on details
+  </Tab>
+
+  <Tab title="ZoomedScene">
+    **Scene with picture-in-picture zoom**
+    
+    ```python
+    class ZoomExample(ZoomedScene):
+        def construct(self):
+            # Main content
+            dots = VGroup(*[Dot() for _ in range(10)]).arrange_in_grid()
+            self.add(dots)
+            
+            # Create zoomed camera
+            zoomed_camera = self.zoomed_camera
+            # Activate zoom
+            self.activate_zooming()
+    ```
+    
+    **Use for:**
+    - Detail views
+    - Magnification effects
+    - Complex diagrams
+  </Tab>
+</Tabs>
+
+## Adding Objects to a Scene
+
+### Using add()
+
+Instantly add objects without animation:
+
+```python
+class AddExample(Scene):
+    def construct(self):
+        circle = Circle()
+        square = Square()
+        
+        # Add instantly (no animation)
+        self.add(circle, square)
+        self.wait()
+```
+
+### Using play()
+
+Add objects with animation:
+
+```python
+class PlayExample(Scene):
+    def construct(self):
+        circle = Circle()
+        
+        # Add with creation animation
+        self.play(Create(circle))
+        self.wait()
+```
+
+### Adding Multiple Objects
+
+```python
+class MultipleObjects(Scene):
+    def construct(self):
+        # Create a group
+        shapes = VGroup(
+            Circle(),
+            Square(),
+            Triangle()
+        ).arrange(RIGHT, buff=1)
+        
+        # Add all at once
+        self.play(Create(shapes))
+        self.wait()
+```
+
+## Scene Methods
+
+### Animation Control
+
+<AccordionGroup>
+  <Accordion icon="play" title="play()">
+    Play one or more animations:
+    
+    ```python
+    self.play(Create(circle))
+    self.play(Transform(square, circle))
+    
+    # Multiple animations simultaneously
+    self.play(
+        Create(circle),
+        FadeIn(text)
+    )
+    ```
+  </Accordion>
+
+  <Accordion icon="clock" title="wait()">
+    Pause the animation:
+    
+    ```python
+    self.wait()  # Wait 1 second (default)
+    self.wait(2)  # Wait 2 seconds
+    self.wait(0.5)  # Wait 0.5 seconds
+    ```
+  </Accordion>
+
+  <Accordion icon="plus" title="add()">
+    Add objects without animation:
+    
+    ```python
+    self.add(circle)
+    self.add(square, triangle)  # Multiple objects
+    ```
+  </Accordion>
+
+  <Accordion icon="minus" title="remove()">
+    Remove objects from scene:
+    
+    ```python
+    self.remove(circle)
+    self.remove(square, triangle)
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Camera Control (ThreeDScene)
+
+<AccordionGroup>
+  <Accordion icon="camera" title="set_camera_orientation()">
+    Set the initial camera position:
+    
+    ```python
+    self.set_camera_orientation(
+        phi=60 * DEGREES,    # Vertical angle
+        theta=30 * DEGREES,  # Horizontal angle
+        distance=8           # Distance from origin
+    )
+    ```
+  </Accordion>
+
+  <Accordion icon="rotate" title="begin_ambient_camera_rotation()">
+    Start continuous camera rotation:
+    
+    ```python
+    self.begin_ambient_camera_rotation(rate=0.1)
+    self.wait(5)  # Rotate for 5 seconds
+    self.stop_ambient_camera_rotation()
+    ```
+  </Accordion>
+
+  <Accordion icon="arrows-rotate" title="move_camera()">
+    Animate camera movement:
+    
+    ```python
+    self.move_camera(
+        phi=75 * DEGREES,
+        theta=45 * DEGREES,
+        run_time=2
+    )
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Scene Lifecycle
+
+Understanding the order of operations:
+
+```python
+class LifecycleExample(Scene):
+    def construct(self):
+        # 1. Object creation
+        circle = Circle()
+        
+        # 2. Add to scene (instant)
+        self.add(circle)
+        
+        # 3. Animations
+        self.play(circle.animate.scale(2))
+        
+        # 4. Wait/pause
+        self.wait()
+        
+        # 5. More animations
+        self.play(FadeOut(circle))
+        
+        # 6. Scene ends (automatic rendering)
+```
+
+**Rendering process:**
+1. `construct()` method executes
+2. Animations are recorded
+3. Frames are generated
+4. Video is encoded
+5. VTK export (if requested)
+
+## Configuration
+
+### In Scene Class
+
+```python
+class ConfiguredScene(Scene):
+    def construct(self):
+        # Access config
+        print(f"Frame rate: {config.frame_rate}")
+        print(f"Resolution: {config.pixel_width}x{config.pixel_height}")
+        
+        # Your animation
+        circle = Circle()
+        self.play(Create(circle))
+```
+
+### Via Command Line
+
+```bash
+# Set quality
+manimvtk -qh scene.py MyScene  # High quality
+
+# Set frame rate
+manimvtk -r 60 scene.py MyScene  # 60 fps
+
+# Set resolution
+manimvtk --resolution 1920,1080 scene.py MyScene
+```
+
+### Via Config File
+
+Create `manim.cfg`:
+
+```ini
+[CLI]
+quality = high
+frame_rate = 60
+background_color = BLACK
+```
+
+## Common Patterns
+
+### Simple Animation
+
+```python
+class SimplePattern(Scene):
+    def construct(self):
+        # Create → Animate → Remove
+        obj = Circle()
+        self.play(Create(obj))
+        self.play(obj.animate.shift(RIGHT))
+        self.play(FadeOut(obj))
+```
+
+### Sequential Animations
+
+```python
+class Sequential(Scene):
+    def construct(self):
+        objs = VGroup(*[Circle() for _ in range(3)])
+        objs.arrange(RIGHT, buff=1)
+        
+        # Animate one by one
+        for obj in objs:
+            self.play(Create(obj))
+        self.wait()
+```
+
+### Simultaneous Animations
+
+```python
+class Simultaneous(Scene):
+    def construct(self):
+        c1 = Circle().shift(LEFT)
+        c2 = Circle().shift(RIGHT)
+        
+        # Both at the same time
+        self.play(
+            Create(c1),
+            Create(c2)
+        )
+```
+
+### Build Up and Transform
+
+```python
+class BuildAndTransform(Scene):
+    def construct(self):
+        # Build up
+        circle = Circle()
+        self.play(Create(circle))
+        
+        # Transform
+        square = Square()
+        self.play(Transform(circle, square))
+        
+        # Continue with transformed object
+        self.play(circle.animate.rotate(PI/4))
+```
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion icon="lightbulb" title="Keep construct() organized">
+    Break complex scenes into helper methods:
+    
+    ```python
+    class OrganizedScene(Scene):
+        def construct(self):
+            self.intro()
+            self.main_content()
+            self.outro()
+        
+        def intro(self):
+            title = Text("Introduction")
+            self.play(Write(title))
+            self.wait()
+            self.play(FadeOut(title))
+        
+        def main_content(self):
+            # Main animation logic
+            pass
+        
+        def outro(self):
+            # Closing
+            pass
+    ```
+  </Accordion>
+
+  <Accordion icon="comments" title="Use descriptive names">
+    ```python
+    # Good
+    class QuadraticFunction(Scene):
+        pass
+    
+    # Avoid
+    class Test1(Scene):
+        pass
+    ```
+  </Accordion>
+
+  <Accordion icon="clock" title="Add wait() for clarity">
+    Give viewers time to process:
+    
+    ```python
+    self.play(Create(important_diagram))
+    self.wait(2)  # Let viewers see it
+    self.play(FadeOut(important_diagram))
+    ```
+  </Accordion>
+
+  <Accordion icon="recycle" title="Reuse objects">
+    ```python
+    # Efficient
+    circle = Circle()
+    self.play(Create(circle))
+    self.play(circle.animate.shift(RIGHT))
+    
+    # Less efficient
+    circle1 = Circle()
+    self.play(Create(circle1))
+    circle2 = circle1.copy().shift(RIGHT)
+    self.play(Transform(circle1, circle2))
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Debugging Scenes
+
+### Print Debug Info
+
+```python
+class DebugScene(Scene):
+    def construct(self):
+        circle = Circle()
+        
+        # Debug output
+        print(f"Circle center: {circle.get_center()}")
+        print(f"Circle color: {circle.get_color()}")
+        
+        self.add(circle)
+```
+
+### Preview Frames
+
+```bash
+# Save last frame only (fast)
+manimvtk -s scene.py MyScene
+
+# Save all frames
+manimvtk --save_sections scene.py MyScene
+```
+
+### Use Lower Quality for Testing
+
+```bash
+# Fast preview
+manimvtk -ql scene.py MyScene
+
+# Final render
+manimvtk -qh scene.py MyScene
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Mobjects" icon="shapes" href="/concepts/mobjects">
+    Learn about creating and manipulating objects
+  </Card>
+  <Card title="Animations" icon="play" href="/concepts/animations">
+    Master animation techniques
+  </Card>
+  <Card title="Cameras" icon="camera" href="/concepts/cameras">
+    Control camera movement and perspective
+  </Card>
+  <Card title="Examples" icon="code" href="/examples/basic-2d">
+    Browse example scenes
+  </Card>
+</CardGroup>

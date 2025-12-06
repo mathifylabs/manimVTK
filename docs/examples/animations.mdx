@@ -1,0 +1,92 @@
+---
+title: "Animation Examples"
+description: "Advanced animation techniques and patterns"
+---
+
+## Animation Patterns
+
+Master common animation patterns used in ManimVTK projects.
+
+## Transformation Chains
+
+```python
+from manimvtk import *
+
+class TransformChain(Scene):
+    def construct(self):
+        # Start with a circle
+        shapes = [
+            Circle(color=BLUE),
+            Square(color=GREEN),
+            Triangle(color=RED),
+            Star(color=YELLOW)
+        ]
+        
+        current = shapes[0]
+        self.play(Create(current))
+        
+        # Transform through each shape
+        for next_shape in shapes[1:]:
+            self.wait(0.5)
+            self.play(Transform(current, next_shape))
+        
+        self.wait()
+```
+
+## Lagged Animations
+
+```python
+from manimvtk import *
+
+class LaggedExample(Scene):
+    def construct(self):
+        squares = VGroup(*[
+            Square(side_length=0.5).shift(RIGHT * i)
+            for i in range(-3, 4)
+        ])
+        
+        # Staggered creation
+        self.play(
+            LaggedStart(*[Create(s) for s in squares], lag_ratio=0.15)
+        )
+        self.wait()
+        
+        # Staggered color change
+        self.play(
+            LaggedStart(*[s.animate.set_color(RED) for s in squares], lag_ratio=0.1)
+        )
+        self.wait()
+```
+
+## Value Tracking
+
+```python
+from manimvtk import *
+
+class ValueTrackingExample(Scene):
+    def construct(self):
+        # Create a tracker
+        tracker = ValueTracker(0)
+        
+        # Create object that follows tracker
+        dot = Dot()
+        dot.add_updater(lambda m: m.move_to([tracker.get_value(), 0, 0]))
+        
+        self.add(dot)
+        
+        # Animate tracker value
+        self.play(tracker.animate.set_value(3), run_time=2)
+        self.play(tracker.animate.set_value(-3), run_time=2)
+        self.play(tracker.animate.set_value(0), run_time=1)
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Animations Guide" icon="wand-magic-sparkles" href="/concepts/animations">
+    Complete animations guide
+  </Card>
+  <Card title="API Reference" icon="code" href="/api-reference/animations/overview">
+    Animations API reference
+  </Card>
+</CardGroup>

@@ -1,0 +1,322 @@
+---
+title: "VTK Features Overview"
+description: "Understanding ManimVTK's VTK integration and capabilities"
+---
+
+## What is VTK Integration?
+
+ManimVTK extends the original Manim animation engine with **VTK (Visualization Toolkit)** integration, enabling you to:
+
+1. **Render with VTK**: Use VTK's rendering engine for high-quality 3D visualization
+2. **Export to VTK formats**: Save scenes as `.vtp`, `.vtm`, and `.pvd` files
+3. **Create time series**: Export frame-by-frame animations for ParaView
+4. **Add scientific data**: Attach scalar and vector fields to exported geometry
+
+<CardGroup cols={2}>
+  <Card title="VTK Renderer" icon="display" href="/vtk/renderer">
+    High-quality 3D rendering using VTK
+  </Card>
+  <Card title="VTK Export" icon="file-export" href="/vtk/export">
+    Export scenes to VTK file formats
+  </Card>
+  <Card title="Time Series" icon="clock" href="/vtk/time-series">
+    Frame-by-frame export for ParaView
+  </Card>
+  <Card title="ParaView Integration" icon="chart-line" href="/vtk/paraview">
+    Visualize exports in ParaView
+  </Card>
+</CardGroup>
+
+## Key Capabilities
+
+### 1. VTK Rendering
+
+Render scenes using VTK's powerful rendering engine instead of Cairo or OpenGL:
+
+```bash
+manimvtk -pqh scene.py MyScene --renderer vtk
+```
+
+**Benefits:**
+- High-quality 3D rendering with proper lighting and shading
+- Better performance for complex 3D geometry
+- Native support for scientific visualization
+
+### 2. VTK File Export
+
+Export your scenes to industry-standard VTK formats:
+
+<Tabs>
+  <Tab title="Single Frame Export">
+    ```bash
+    manimvtk -pqh scene.py MyScene --vtk-export
+    ```
+    
+    **Output:**
+    - Single mobject → `.vtp` (VTK PolyData)
+    - Multiple mobjects → `.vtm` (VTK MultiBlock)
+  </Tab>
+
+  <Tab title="Time Series Export">
+    ```bash
+    manimvtk -pqh scene.py MyScene --vtk-time-series
+    ```
+    
+    **Output:**
+    - `.pvd` collection file
+    - Frame-by-frame `.vtp` files
+    - HTML viewer template
+  </Tab>
+</Tabs>
+
+### 3. Scientific Data Fields
+
+Attach scalar and vector fields to VTK exports for scientific visualization:
+
+```python
+from manimvtk.vtk import add_scalar_field, add_vector_field
+
+# After creating VTK polydata
+add_scalar_field(polydata, "pressure", pressure_values)
+add_vector_field(polydata, "velocity", velocity_vectors)
+```
+
+**Use cases:**
+- CFD (Computational Fluid Dynamics) visualization
+- FEA (Finite Element Analysis) results
+- Temperature distributions
+- Velocity fields and streamlines
+
+## Supported Mobject Types
+
+| Mobject Type | VTK Export | Notes |
+|-------------|-----------|-------|
+| **2D Shapes** | ✅ | Circle, Square, Polygon, etc. |
+| `VMobject` | ✅ | Converted to PolyData with colors |
+| `Surface` | ✅ | Full mesh with UV coordinates |
+| `ParametricSurface` | ✅ | Parametric surfaces |
+| **3D Primitives** | ✅ | Sphere, Cube, Cone, etc. |
+| `VGroup` | ✅ | Exported as VTK MultiBlock |
+| `Text` / `Tex` | ✅ | Exported as filled paths |
+| `Arrow` / `Vector` | ✅ | Stroke-based or filled |
+| `NumberPlane` / `Axes` | ✅ | Exported as line geometry |
+
+<Check>
+  **Nearly all Manim mobjects** are supported for VTK export!
+</Check>
+
+## File Format Reference
+
+### VTK PolyData (.vtp)
+
+Single object with points, lines, and polygons.
+
+**Best for:**
+- Single surfaces or meshes
+- Simple geometry
+- Quick visualization
+
+**Structure:**
+```xml
+<VTKFile type="PolyData">
+  <PolyData>
+    <Piece NumberOfPoints="..." NumberOfPolys="...">
+      <Points>...</Points>
+      <Polys>...</Polys>
+      <PointData>...</PointData>
+    </Piece>
+  </PolyData>
+</VTKFile>
+```
+
+### VTK MultiBlock (.vtm)
+
+Collection of multiple datasets.
+
+**Best for:**
+- Scenes with multiple objects
+- Hierarchical data
+- Complex assemblies
+
+**Structure:**
+```xml
+<VTKFile type="vtkMultiBlockDataSet">
+  <vtkMultiBlockDataSet>
+    <DataSet index="0" file="object1.vtp"/>
+    <DataSet index="1" file="object2.vtp"/>
+  </vtkMultiBlockDataSet>
+</VTKFile>
+```
+
+### ParaView Data (.pvd)
+
+Time series collection file.
+
+**Best for:**
+- Animations
+- Temporal data
+- Time-varying simulations
+
+**Structure:**
+```xml
+<VTKFile type="Collection">
+  <Collection>
+    <DataSet timestep="0.0" file="frame_00000.vtp"/>
+    <DataSet timestep="0.033" file="frame_00001.vtp"/>
+    ...
+  </Collection>
+</VTKFile>
+```
+
+## Workflow Examples
+
+### Basic Workflow
+
+```python
+from manimvtk import *
+
+class MyScene(Scene):
+    def construct(self):
+        circle = Circle(radius=2, color=BLUE)
+        self.play(Create(circle))
+        self.wait()
+```
+
+```bash
+# Render and export
+manimvtk -pqh scene.py MyScene --renderer vtk --vtk-export
+```
+
+**Output:**
+1. `MyScene.mp4` - Video animation
+2. `MyScene_final.vtp` - VTK export of final frame
+
+### Scientific Visualization Workflow
+
+```python
+from manimvtk import *
+import numpy as np
+
+class CFDSurface(Scene):
+    def construct(self):
+        # Create surface mesh
+        surface = Surface(
+            lambda u, v: np.array([u, v, np.sin(u) * np.cos(v)]),
+            u_range=[-2, 2],
+            v_range=[-2, 2],
+            resolution=(50, 50),
+        )
+        
+        # Color gradient for visualization
+        surface.set_color_by_gradient(BLUE, RED)
+        
+        self.play(Create(surface))
+        self.wait()
+```
+
+```bash
+# Export with time series
+manimvtk -pqh scene.py CFDSurface --vtk-time-series
+```
+
+**Workflow:**
+1. Create animation in ManimVTK
+2. Export time series
+3. Open `.pvd` in ParaView
+4. Apply filters (contours, glyphs, etc.)
+5. Add scalar/vector field visualization
+
+### Interactive Web Workflow
+
+```bash
+# Export for web viewing
+manimvtk -pqh scene.py MyScene --vtk-export
+
+# The .vtp file can be loaded with vtk.js
+```
+
+Embed in web applications using vtk.js for interactive 3D visualization.
+
+## Performance Considerations
+
+<AccordionGroup>
+  <Accordion icon="gauge-high" title="VTK Rendering Performance">
+    - **Faster** for complex 3D scenes with many polygons
+    - **Slower** initial startup (VTK initialization)
+    - Best for: High-quality final renders
+  </Accordion>
+
+  <Accordion icon="file-arrow-down" title="Export File Sizes">
+    - **Text format (.vtp)**: Human-readable but larger
+    - **Binary format**: Smaller but not human-readable
+    - **Compression**: Use ParaView to compress exported files
+  </Accordion>
+
+  <Accordion icon="memory" title="Memory Usage">
+    - High-resolution surfaces consume more memory
+    - Time series exports can be large (one file per frame)
+    - Recommended: Export at lower quality, then upscale if needed
+  </Accordion>
+</AccordionGroup>
+
+## Compatibility
+
+### ParaView Versions
+
+- ✅ ParaView 5.9+
+- ✅ ParaView 5.10+
+- ✅ ParaView 5.11+
+
+### VTK Versions
+
+- ✅ VTK 9.0+
+- ✅ VTK 9.1+
+- ✅ VTK 9.2+
+
+### PyVista Integration
+
+```python
+import pyvista as pv
+
+# Load exported VTK file
+mesh = pv.read('media/vtk/MyScene/MyScene_final.vtp')
+
+# Visualize in PyVista
+mesh.plot()
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card
+    title="VTK Renderer Guide"
+    icon="display"
+    href="/vtk/renderer"
+  >
+    Learn about VTK rendering options
+  </Card>
+
+  <Card
+    title="Export Guide"
+    icon="file-export"
+    href="/vtk/export"
+  >
+    Master VTK file export
+  </Card>
+
+  <Card
+    title="Time Series Tutorial"
+    icon="clock"
+    href="/vtk/time-series"
+  >
+    Create animations for ParaView
+  </Card>
+
+  <Card
+    title="ParaView Workflow"
+    icon="chart-line"
+    href="/vtk/paraview"
+  >
+    Visualize in ParaView
+  </Card>
+</CardGroup>

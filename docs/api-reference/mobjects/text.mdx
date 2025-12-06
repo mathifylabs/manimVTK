@@ -1,0 +1,66 @@
+---
+title: "Text and LaTeX"
+description: "Text rendering reference"
+---
+
+## Text Objects
+
+### Text
+
+```python
+Text(text, font="", font_size=48, **kwargs)
+```
+
+Regular text rendering.
+
+**Example:**
+```python
+text = Text("Hello, World!", font_size=60, color=BLUE)
+```
+
+### MarkupText
+
+```python
+MarkupText(text, **kwargs)
+```
+
+Text with markup support (bold, italic, colors).
+
+### Tex
+
+```python
+Tex(*tex_strings, **kwargs)
+```
+
+LaTeX text rendering.
+
+**Example:**
+```python
+formula = Tex(r"E = mc^2")
+```
+
+### MathTex
+
+```python
+MathTex(*tex_strings, **kwargs)
+```
+
+Mathematical equations.
+
+**Example:**
+```python
+equation = MathTex(
+    r"\int_0^\infty e^{-x^2} dx = \frac{\sqrt{\pi}}{2}"
+)
+```
+
+## See Also
+
+<CardGroup cols={2}>
+  <Card title="2D Examples" icon="font" href="/examples/basic-2d">
+    Text examples
+  </Card>
+  <Card title="Mobjects Guide" icon="book" href="/concepts/mobjects">
+    Mobject concepts
+  </Card>
+</CardGroup>

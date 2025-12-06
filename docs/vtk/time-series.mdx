@@ -1,0 +1,434 @@
+---
+title: "Time Series Export"
+description: "Export frame-by-frame VTK files for animation in ParaView"
+---
+
+## Overview
+
+Time series export creates a VTK file for **every frame** of your animation, allowing you to scrub through the animation in ParaView using its time slider.
+
+<Info>
+  **Perfect for:** Analyzing animations frame-by-frame, creating temporal visualizations, and debugging complex motion
+</Info>
+
+## Basic Usage
+
+Use the `--vtk-time-series` flag:
+
+```bash
+manimvtk -pqh scene.py MyScene --vtk-time-series
+```
+
+**Output structure:**
+```
+media/vtk/MyScene/
+├── MyScene.pvd              # ParaView Data collection file
+├── MyScene_00000.vtp        # Frame 0
+├── MyScene_00001.vtp        # Frame 1
+├── MyScene_00002.vtp        # Frame 2
+├── ...
+└── MyScene_viewer.html      # HTML viewer template (optional)
+```
+
+## Example Scene
+
+```python
+from manimvtk import *
+
+class AnimatedCircle(Scene):
+    def construct(self):
+        circle = Circle(radius=1, color=BLUE)
+        self.add(circle)
+        
+        # Animate the circle
+        self.play(circle.animate.scale(2))
+        self.play(circle.animate.shift(RIGHT * 3))
+        self.play(circle.animate.set_color(RED))
+        self.wait()
+```
+
+Render with time series:
+
+```bash
+manimvtk -pql scene.py AnimatedCircle --vtk-time-series
+```
+
+## ParaView Data (.pvd) File
+
+The `.pvd` file is an XML collection file that references all frame files:
+
+```xml
+<?xml version="1.0"?>
+<VTKFile type="Collection" version="0.1">
+  <Collection>
+    <DataSet timestep="0.0" group="" part="0" file="AnimatedCircle_00000.vtp"/>
+    <DataSet timestep="0.033333" group="" part="0" file="AnimatedCircle_00001.vtp"/>
+    <DataSet timestep="0.066667" group="" part="0" file="AnimatedCircle_00002.vtp"/>
+    ...
+  </Collection>
+</VTKFile>
+```
+
+**Time step calculation:**
+- Based on your frame rate: `timestep = frame_number / frame_rate`
+- Default frame rate: 30 fps (configurable via `-r` flag)
+
+## Opening in ParaView
+
+1. **Launch ParaView**
+2. **File → Open**
+3. **Select the `.pvd` file** (not individual `.vtp` files)
+4. **Click "Apply"** in Properties panel
+
+You'll now see:
+- **Time toolbar** at the top
+- **Time slider** to scrub through frames
+- **Play button** to animate
+
+<Tip>
+  Use the time slider or VCR controls to move through your animation frame by frame
+</Tip>
+
+## Advanced Examples
+
+### Growing Surface
+
+```python
+from manimvtk import *
+import numpy as np
+
+class GrowingSurface(ThreeDScene):
+    def construct(self):
+        # Create a surface that changes over time
+        def surface_func(u, v):
+            return np.array([u, v, np.sin(u) * np.cos(v)])
+        
+        surface = Surface(
+            surface_func,
+            u_range=[-2, 2],
+            v_range=[-2, 2],
+            resolution=(30, 30)
+        )
+        surface.set_color_by_gradient(BLUE, RED)
+        
+        self.set_camera_orientation(phi=60 * DEGREES, theta=30 * DEGREES)
+        
+        # Animate
+        self.play(Create(surface), run_time=2)
+        self.play(surface.animate.scale(1.5), run_time=2)
+        self.wait()
+```
+
+```bash
+manimvtk -pqh scene.py GrowingSurface --vtk-time-series
+```
+
+### Multiple Objects with Motion
+
+```python
+from manimvtk import *
+
+class MultiObjectMotion(Scene):
+    def construct(self):
+        # Create objects
+        circle = Circle(radius=0.5, color=BLUE).shift(LEFT * 2)
+        square = Square(side_length=0.8, color=RED)
+        triangle = Triangle(color=GREEN).shift(RIGHT * 2)
+        
+        self.add(circle, square, triangle)
+        
+        # Synchronized motion
+        self.play(
+            circle.animate.shift(UP * 2),
+            square.animate.rotate(PI),
+            triangle.animate.scale(1.5),
+            run_time=2
+        )
+        
+        # Sequential motion
+        self.play(circle.animate.shift(RIGHT * 4), run_time=1)
+        self.play(square.animate.shift(DOWN * 2), run_time=1)
+        self.play(triangle.animate.shift(LEFT * 4), run_time=1)
+        
+        self.wait()
+```
+
+```bash
+manimvtk -pqm scene.py MultiObjectMotion --vtk-time-series
+```
+
+### Rotating 3D Object
+
+```python
+from manimvtk import *
+
+class Rotating3DObject(ThreeDScene):
+    def construct(self):
+        # Create a torus
+        torus = Surface(
+            lambda u, v: np.array([
+                (2 + np.cos(v)) * np.cos(u),
+                (2 + np.cos(v)) * np.sin(u),
+                np.sin(v)
+            ]),
+            u_range=[0, TAU],
+            v_range=[0, TAU],
+            resolution=(40, 40)
+        )
+        torus.set_color_by_gradient(BLUE, PURPLE, RED)
+        
+        self.set_camera_orientation(phi=60 * DEGREES, theta=45 * DEGREES)
+        
+        # Create and rotate
+        self.play(Create(torus), run_time=2)
+        self.play(Rotate(torus, angle=TAU, axis=UP, run_time=4))
+        self.wait()
+```
+
+```bash
+manimvtk -pqh scene.py Rotating3DObject --renderer vtk --vtk-time-series
+```
+
+## Frame Rate Control
+
+Control the frame rate to adjust time resolution:
+
+```bash
+# 30 fps (default) - 30 frames per second
+manimvtk -pqh scene.py MyScene --vtk-time-series
+
+# 60 fps - smoother, more files
+manimvtk -pqh -r 60 scene.py MyScene --vtk-time-series
+
+# 15 fps - fewer files, less storage
+manimvtk -pqh -r 15 scene.py MyScene --vtk-time-series
+```
+
+**Trade-offs:**
+- **Higher fps**: Smoother animation, more files, more storage
+- **Lower fps**: Less storage, choppier animation
+
+## File Naming Convention
+
+Files are named with zero-padded frame numbers:
+
+```
+MyScene_00000.vtp  # Frame 0
+MyScene_00001.vtp  # Frame 1
+...
+MyScene_00099.vtp  # Frame 99
+MyScene_00100.vtp  # Frame 100
+```
+
+Padding ensures correct alphabetical sorting.
+
+## Storage Considerations
+
+Time series export can create many files:
+
+**Calculation:**
+```
+Number of files = total_frames = duration_seconds × frame_rate
+File size total ≈ size_per_frame × total_frames
+```
+
+**Example:**
+- 10 second animation at 30 fps = 300 files
+- If each file is 500 KB = 150 MB total
+
+<Warning>
+  Long animations at high frame rates can generate **hundreds of files** and require **gigabytes** of storage
+</Warning>
+
+### Optimization Tips
+
+<AccordionGroup>
+  <Accordion icon="tachometer-alt" title="Reduce frame rate">
+    Lower frame rate for testing:
+    
+    ```bash
+    # Test with low frame rate
+    manimvtk -pql -r 15 scene.py MyScene --vtk-time-series
+    
+    # Final render at full rate
+    manimvtk -pqh -r 60 scene.py MyScene --vtk-time-series
+    ```
+  </Accordion>
+
+  <Accordion icon="scissors" title="Shorten animations">
+    Use shorter `run_time` during development:
+    
+    ```python
+    # Development
+    self.play(Create(surface), run_time=0.5)
+    
+    # Production
+    self.play(Create(surface), run_time=2)
+    ```
+  </Accordion>
+
+  <Accordion icon="compress" title="Reduce geometry complexity">
+    Lower resolution for faster export:
+    
+    ```python
+    # Development
+    surface = Surface(func, resolution=(15, 15))
+    
+    # Production
+    surface = Surface(func, resolution=(50, 50))
+    ```
+  </Accordion>
+
+  <Accordion icon="file-zipper" title="Compress in ParaView">
+    After loading in ParaView:
+    
+    1. File → Save Data
+    2. Choose output location
+    3. Check "Write all timesteps"
+    4. Check "Use compression"
+  </Accordion>
+</AccordionGroup>
+
+## Viewing and Analysis in ParaView
+
+### Timeline Controls
+
+- **Play/Pause**: Animate through time steps
+- **Step Forward/Back**: Move one frame at a time
+- **Time Slider**: Scrub to any frame
+- **First/Last Frame**: Jump to beginning/end
+
+### Animation Settings
+
+In ParaView:
+
+1. **View → Animation View**
+2. Set animation duration
+3. Set frame rate
+4. Export as video:
+   - File → Save Animation
+   - Choose format (AVI, MP4, etc.)
+
+### Filters on Time Series
+
+Apply filters that respect time:
+
+```
+Temporal:
+- Temporal Interpolator
+- Temporal Shifts Scale
+- Temporal Statistics
+
+Geometric:
+- Clip (changes over time)
+- Threshold (updates per frame)
+- Glyph (follows motion)
+```
+
+### Extract Specific Frames
+
+Save individual frames:
+
+1. Use time slider to desired frame
+2. File → Save Data
+3. Uncheck "Write all timesteps"
+4. Save single `.vtp` file
+
+## Combining with Other Exports
+
+You can use both export methods:
+
+```bash
+# Export both final frame AND time series
+manimvtk -pqh scene.py MyScene --vtk-export --vtk-time-series
+```
+
+**Output:**
+```
+media/vtk/MyScene/
+├── MyScene_final.vtp        # Static export (final frame)
+├── MyScene.pvd              # Time series collection
+├── MyScene_00000.vtp        # Time series frame 0
+├── MyScene_00001.vtp        # Time series frame 1
+└── ...
+```
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion icon="triangle-exclamation" title="Too many files created">
+    **Cause:** Long animation or high frame rate
+    
+    **Solution:**
+    - Reduce frame rate: `-r 15` instead of `-r 60`
+    - Shorten animation duration
+    - Use `--vtk-export` for final frame only
+  </Accordion>
+
+  <Accordion icon="triangle-exclamation" title="ParaView time slider doesn't work">
+    **Cause:** Opened individual `.vtp` instead of `.pvd`
+    
+    **Solution:**
+    - Close all files in ParaView
+    - File → Open → Select the `.pvd` file
+    - Click Apply
+  </Accordion>
+
+  <Accordion icon="triangle-exclamation" title="Missing frames in ParaView">
+    **Cause:** Frame files moved or renamed
+    
+    **Solution:**
+    - Ensure all `.vtp` files are in same directory as `.pvd`
+    - Check `.pvd` file paths are relative
+    - Re-export if files were moved
+  </Accordion>
+
+  <Accordion icon="triangle-exclamation" title="Export is very slow">
+    **Cause:** High resolution geometry or many frames
+    
+    **Solution:**
+    - Lower surface resolution during testing
+    - Use `-ql` quality for faster export
+    - Reduce frame rate
+  </Accordion>
+</AccordionGroup>
+
+## Best Practices
+
+1. **Test with low quality first**
+   ```bash
+   manimvtk -ql -r 15 scene.py MyScene --vtk-time-series
+   ```
+
+2. **Use descriptive scene names**
+   ```python
+   class FluidFlowSimulation(Scene):  # Good
+   class Test123(Scene):  # Avoid
+   ```
+
+3. **Monitor disk space**
+   ```bash
+   du -sh media/vtk/MyScene/
+   ```
+
+4. **Clean up old exports**
+   ```bash
+   rm -rf media/vtk/old_scene/
+   ```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="ParaView Guide" icon="chart-line" href="/vtk/paraview">
+    Master ParaView visualization
+  </Card>
+  <Card title="VTK Export Basics" icon="file-export" href="/vtk/export">
+    Learn static export
+  </Card>
+  <Card title="Scientific Examples" icon="flask" href="/examples/scientific">
+    View scientific visualization examples
+  </Card>
+  <Card title="Animations API" icon="play" href="/api-reference/animations/overview">
+    Explore animation types
+  </Card>
+</CardGroup>

@@ -1,0 +1,518 @@
+---
+title: "Mobjects"
+description: "Understanding and working with Manim objects (Mobjects)"
+---
+
+## What are Mobjects?
+
+**Mobjects** (Manim Objects) are the visual elements in your scenes - everything you see in a ManimVTK animation is a mobject:
+
+- Geometric shapes (circles, squares, polygons)
+- 3D objects (spheres, cubes, surfaces)
+- Text and mathematical equations
+- Graphs, plots, and coordinate systems
+- Custom drawn paths
+
+<Info>
+  Mobjects are the building blocks of ManimVTK - understanding them is key to creating great animations
+</Info>
+
+## Mobject Hierarchy
+
+```
+Mobject (base class)
+├── VMobject (vectorized 2D shapes)
+│   ├── Circle, Square, Triangle
+│   ├── Line, Arrow, Vector
+│   ├── Text, Tex, MathTex
+│   └── Polygon, Rectangle
+├── ThreeDMobject (3D objects)
+│   ├── Sphere, Cube, Cone
+│   ├── Surface, ParametricSurface
+│   └── Prism, Cylinder, Torus
+└── VGroup (container for grouping)
+```
+
+## Creating Mobjects
+
+### Basic 2D Shapes
+
+```python
+from manimvtk import *
+
+class BasicShapes(Scene):
+    def construct(self):
+        # Circle
+        circle = Circle(radius=1, color=BLUE)
+        
+        # Square
+        square = Square(side_length=2, color=RED)
+        
+        # Triangle
+        triangle = Triangle(color=GREEN)
+        
+        # Rectangle
+        rectangle = Rectangle(width=3, height=1.5, color=YELLOW)
+        
+        # Arrange and display
+        shapes = VGroup(circle, square, triangle, rectangle)
+        shapes.arrange(RIGHT, buff=0.5)
+        
+        self.play(Create(shapes))
+        self.wait()
+```
+
+### Basic 3D Objects
+
+```python
+from manimvtk import *
+
+class Basic3DObjects(ThreeDScene):
+    def construct(self):
+        # Sphere
+        sphere = Sphere(radius=1, color=BLUE)
+        
+        # Cube
+        cube = Cube(side_length=1.5, color=RED)
+        
+        # Cone
+        cone = Cone(base_radius=0.5, height=1, color=GREEN)
+        
+        # Arrange
+        objects = VGroup(sphere, cube, cone)
+        objects.arrange(RIGHT, buff=1.5)
+        
+        self.set_camera_orientation(phi=60 * DEGREES, theta=30 * DEGREES)
+        self.play(Create(objects))
+        self.wait()
+```
+
+### Text and Math
+
+```python
+from manimvtk import *
+
+class TextAndMath(Scene):
+    def construct(self):
+        # Regular text
+        text = Text("Hello, ManimVTK!", font_size=48)
+        
+        # Mathematical equation
+        equation = MathTex(r"E = mc^2")
+        
+        # Arrange vertically
+        VGroup(text, equation).arrange(DOWN, buff=1)
+        
+        self.play(Write(text))
+        self.play(Write(equation))
+        self.wait()
+```
+
+## Mobject Properties
+
+### Color
+
+```python
+# Set color at creation
+circle = Circle(color=BLUE)
+
+# Set color after creation
+circle.set_color(RED)
+
+# Gradient color
+square = Square()
+square.set_color_by_gradient(BLUE, RED)
+
+# RGB values
+circle.set_color(rgb_to_color([0.5, 0.7, 0.9]))
+```
+
+### Opacity
+
+```python
+# Stroke opacity (outline)
+circle.set_stroke(opacity=0.8)
+
+# Fill opacity (interior)
+circle.set_fill(opacity=0.5)
+
+# Overall opacity
+circle.set_opacity(0.7)
+```
+
+### Size
+
+```python
+# Scale
+circle.scale(2)  # 2x larger
+circle.scale(0.5)  # Half size
+
+# Set specific dimensions
+rectangle.width = 3
+rectangle.height = 2
+
+# Stretch in one direction
+square.stretch(2, 0)  # Stretch horizontally
+```
+
+### Position
+
+```python
+# Shift (relative movement)
+circle.shift(RIGHT * 2)
+circle.shift(UP + LEFT)
+
+# Move to absolute position
+circle.move_to(ORIGIN)
+circle.move_to([1, 2, 0])
+
+# Align
+circle.to_edge(LEFT)
+circle.to_corner(UR)  # Upper right
+```
+
+### Rotation
+
+```python
+# Rotate around center
+square.rotate(PI / 4)  # 45 degrees
+
+# Rotate around a point
+square.rotate(PI / 4, about_point=ORIGIN)
+
+# Rotate around axis (3D)
+cube.rotate(PI / 2, axis=UP)
+```
+
+## Styling Mobjects
+
+### Stroke (Outline)
+
+```python
+circle = Circle()
+
+# Stroke color
+circle.set_stroke(color=BLUE)
+
+# Stroke width
+circle.set_stroke(width=5)
+
+# Combine
+circle.set_stroke(color=BLUE, width=3, opacity=0.8)
+```
+
+### Fill (Interior)
+
+```python
+square = Square()
+
+# Fill color
+square.set_fill(color=RED)
+
+# Fill opacity
+square.set_fill(opacity=0.5)
+
+# Combine
+square.set_fill(color=RED, opacity=0.7)
+```
+
+### Combining Stroke and Fill
+
+```python
+# Circle with blue fill and red outline
+circle = Circle()
+circle.set_fill(BLUE, opacity=0.5)
+circle.set_stroke(RED, width=3)
+```
+
+## Grouping Mobjects
+
+### VGroup
+
+Group multiple mobjects together:
+
+```python
+# Create individual shapes
+c1 = Circle()
+c2 = Square()
+c3 = Triangle()
+
+# Group them
+group = VGroup(c1, c2, c3)
+
+# Operations on group affect all members
+group.arrange(RIGHT, buff=1)
+group.set_color(BLUE)
+group.scale(0.5)
+```
+
+### Arrangement
+
+```python
+shapes = VGroup(*[Circle() for _ in range(6)])
+
+# Arrange in a row
+shapes.arrange(RIGHT, buff=0.5)
+
+# Arrange in a column
+shapes.arrange(DOWN, buff=0.5)
+
+# Arrange in a grid
+shapes.arrange_in_grid(rows=2, cols=3, buff=0.5)
+
+# Arrange in a circle
+shapes.arrange_in_circle()
+```
+
+## Copying Mobjects
+
+```python
+# Simple copy
+circle1 = Circle()
+circle2 = circle1.copy()
+
+# Copy and modify
+circle2.shift(RIGHT * 2)
+circle2.set_color(RED)
+
+# Deep copy (for complex objects)
+import copy
+complex_group = VGroup(...)
+copy_of_group = copy.deepcopy(complex_group)
+```
+
+## Mobject Methods
+
+### Common Methods
+
+<AccordionGroup>
+  <Accordion icon="arrows-alt" title="get_center()">
+    Get the center point:
+    
+    ```python
+    center = circle.get_center()
+    print(center)  # [x, y, z]
+    ```
+  </Accordion>
+
+  <Accordion icon="ruler" title="get_width() / get_height()">
+    Get dimensions:
+    
+    ```python
+    width = rectangle.get_width()
+    height = rectangle.get_height()
+    ```
+  </Accordion>
+
+  <Accordion icon="palette" title="get_color()">
+    Get current color:
+    
+    ```python
+    color = circle.get_color()
+    ```
+  </Accordion>
+
+  <Accordion icon="arrows-rotate" title="rotate()">
+    Rotate the mobject:
+    
+    ```python
+    square.rotate(PI / 4)
+    ```
+  </Accordion>
+
+  <Accordion icon="expand" title="scale()">
+    Scale the mobject:
+    
+    ```python
+    circle.scale(2)  # Double size
+    ```
+  </Accordion>
+
+  <Accordion icon="arrows-h" title="shift()">
+    Move relative to current position:
+    
+    ```python
+    circle.shift(RIGHT * 2 + UP)
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Alignment Methods
+
+```python
+# Align to edges
+mobject.to_edge(UP)
+mobject.to_edge(LEFT)
+
+# Align to corners
+mobject.to_corner(UL)  # Upper left
+mobject.to_corner(DR)  # Down right
+
+# Align relative to other mobject
+circle.next_to(square, RIGHT)
+circle.next_to(square, DOWN, buff=0.5)
+
+# Move to specific position
+mobject.move_to(ORIGIN)
+mobject.move_to([1, 2, 0])
+```
+
+## Custom Mobjects
+
+### Creating Custom Shapes
+
+```python
+from manimvtk import *
+
+class CustomStar(VMobject):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        # Define your custom shape
+        points = [...]  # Define points
+        self.set_points_as_corners(points)
+```
+
+### Using Paths
+
+```python
+# Custom path
+path = VMobject()
+path.set_points_as_corners([
+    ORIGIN,
+    UP,
+    UP + RIGHT,
+    RIGHT
+])
+path.set_stroke(BLUE, width=3)
+```
+
+## Surfaces and Parametric Objects
+
+### Parametric Surface
+
+```python
+from manimvtk import *
+import numpy as np
+
+class ParametricSurfaceExample(ThreeDScene):
+    def construct(self):
+        surface = Surface(
+            lambda u, v: np.array([
+                u,
+                v,
+                np.sin(u) * np.cos(v)
+            ]),
+            u_range=[-2, 2],
+            v_range=[-2, 2],
+            resolution=(30, 30)
+        )
+        
+        surface.set_color_by_gradient(BLUE, GREEN, RED)
+        
+        self.set_camera_orientation(phi=60 * DEGREES)
+        self.play(Create(surface))
+        self.wait()
+```
+
+### Common Parametric Surfaces
+
+```python
+# Torus
+torus = Surface(
+    lambda u, v: np.array([
+        (2 + np.cos(v)) * np.cos(u),
+        (2 + np.cos(v)) * np.sin(u),
+        np.sin(v)
+    ]),
+    u_range=[0, TAU],
+    v_range=[0, TAU]
+)
+
+# Sphere (parametric)
+sphere = Surface(
+    lambda u, v: np.array([
+        np.cos(u) * np.cos(v),
+        np.sin(u) * np.cos(v),
+        np.sin(v)
+    ]),
+    u_range=[0, TAU],
+    v_range=[-PI/2, PI/2]
+)
+```
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion icon="lightbulb" title="Initialize at creation">
+    Set properties when creating:
+    
+    ```python
+    # Good
+    circle = Circle(radius=2, color=BLUE, fill_opacity=0.5)
+    
+    # Less efficient
+    circle = Circle()
+    circle.scale(2)
+    circle.set_color(BLUE)
+    circle.set_fill(opacity=0.5)
+    ```
+  </Accordion>
+
+  <Accordion icon="recycle" title="Reuse when possible">
+    ```python
+    # Good - reuse and transform
+    circle = Circle()
+    self.play(Create(circle))
+    self.play(circle.animate.shift(RIGHT))
+    
+    # Avoid - creating new objects
+    circle1 = Circle()
+    self.play(Create(circle1))
+    circle2 = Circle().shift(RIGHT)
+    self.play(Transform(circle1, circle2))
+    ```
+  </Accordion>
+
+  <Accordion icon="layer-group" title="Use VGroups for organization">
+    ```python
+    # Organize related objects
+    axes_group = VGroup(x_axis, y_axis, labels)
+    data_group = VGroup(points, lines, curves)
+    
+    # Easy to manipulate together
+    axes_group.shift(LEFT * 3)
+    data_group.set_color(BLUE)
+    ```
+  </Accordion>
+
+  <Accordion icon="palette" title="Consistent coloring">
+    Define color schemes:
+    
+    ```python
+    PRIMARY = BLUE
+    SECONDARY = RED
+    ACCENT = YELLOW
+    
+    title = Text("Title", color=PRIMARY)
+    shape = Circle(color=SECONDARY)
+    highlight = Square(color=ACCENT)
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Animations" icon="play" href="/concepts/animations">
+    Learn how to animate mobjects
+  </Card>
+  <Card title="Geometry Reference" icon="shapes" href="/api-reference/mobjects/geometry">
+    Complete geometry API reference
+  </Card>
+  <Card title="3D Objects Reference" icon="cube" href="/api-reference/mobjects/3d-objects">
+    Complete 3D objects API
+  </Card>
+  <Card title="Examples" icon="code" href="/examples/basic-2d">
+    See mobject examples
+  </Card>
+</CardGroup>

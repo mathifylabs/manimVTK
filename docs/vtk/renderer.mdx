@@ -1,0 +1,370 @@
+---
+title: "VTK Renderer"
+description: "Using the VTK renderer for high-quality 3D visualization"
+---
+
+## Overview
+
+The VTK renderer is one of three rendering backends available in ManimVTK (alongside Cairo and OpenGL). It leverages the VTK (Visualization Toolkit) library for high-quality 3D rendering with advanced shading and lighting.
+
+<Info>
+  The VTK renderer is particularly powerful for **3D scenes** and **scientific visualization**, providing superior quality compared to the standard Cairo renderer.
+</Info>
+
+## Basic Usage
+
+### Selecting the VTK Renderer
+
+Use the `--renderer vtk` flag when rendering:
+
+```bash
+manimvtk -pqh scene.py MyScene --renderer vtk
+```
+
+### In Code
+
+You can also specify the renderer in your scene configuration:
+
+```python
+from manimvtk import *
+
+class MyScene(ThreeDScene):
+    def construct(self):
+        # Your 3D content here
+        sphere = Sphere()
+        self.add(sphere)
+```
+
+<Note>
+  `ThreeDScene` works with all renderers, but VTK provides the best quality for 3D content
+</Note>
+
+## Renderer Comparison
+
+| Feature | Cairo | OpenGL | VTK |
+|---------|-------|--------|-----|
+| **2D Quality** | ⭐⭐⭐ | ⭐⭐ | ⭐⭐ |
+| **3D Quality** | ⭐ | ⭐⭐ | ⭐⭐⭐ |
+| **Performance** | ⭐⭐ | ⭐⭐⭐ | ⭐⭐ |
+| **Export Support** | Images only | Images only | VTK files |
+| **Lighting** | Basic | Good | Excellent |
+| **Shading** | None | Basic | Advanced |
+| **Anti-aliasing** | Good | Good | Excellent |
+
+## VTK Renderer Features
+
+### Advanced Lighting
+
+VTK supports sophisticated lighting models:
+
+```python
+from manimvtk import *
+
+class LightingExample(ThreeDScene):
+    def construct(self):
+        # Create a sphere
+        sphere = Sphere(radius=1.5, resolution=(40, 40))
+        sphere.set_color(BLUE)
+        
+        # Adjust camera and lighting
+        self.set_camera_orientation(phi=60 * DEGREES, theta=45 * DEGREES)
+        
+        self.add(sphere)
+        self.wait()
+```
+
+When rendered with VTK (`--renderer vtk`), you'll see realistic shading and highlights.
+
+### Surface Shading
+
+VTK provides multiple shading options:
+
+- **Flat shading**: Each polygon rendered with uniform color
+- **Gouraud shading**: Smooth interpolation across polygons
+- **Phong shading**: High-quality specular highlights
+
+<Tip>
+  VTK automatically selects the appropriate shading based on your geometry and lighting
+</Tip>
+
+### Transparency and Opacity
+
+VTK handles transparency correctly with depth sorting:
+
+```python
+from manimvtk import *
+
+class TransparencyExample(ThreeDScene):
+    def construct(self):
+        # Create overlapping transparent spheres
+        sphere1 = Sphere(radius=1).shift(LEFT)
+        sphere1.set_color(BLUE)
+        sphere1.set_opacity(0.5)
+        
+        sphere2 = Sphere(radius=1).shift(RIGHT)
+        sphere2.set_color(RED)
+        sphere2.set_opacity(0.5)
+        
+        self.set_camera_orientation(phi=60 * DEGREES)
+        self.add(sphere1, sphere2)
+        self.wait()
+```
+
+## Configuration
+
+### Camera Settings
+
+Configure the camera for optimal VTK rendering:
+
+```python
+from manimvtk import *
+
+class CameraExample(ThreeDScene):
+    def construct(self):
+        # Set camera position
+        self.set_camera_orientation(
+            phi=75 * DEGREES,    # Vertical rotation
+            theta=30 * DEGREES,  # Horizontal rotation
+            distance=8           # Distance from origin
+        )
+        
+        # Add your objects
+        axes = ThreeDAxes()
+        surface = Surface(
+            lambda u, v: np.array([u, v, u**2 - v**2]),
+            u_range=[-2, 2],
+            v_range=[-2, 2]
+        )
+        
+        self.add(axes, surface)
+        self.wait()
+```
+
+### Resolution Settings
+
+Control render quality in config:
+
+```python
+# In your scene file
+config.pixel_height = 1080
+config.pixel_width = 1920
+config.frame_rate = 60
+```
+
+Or via CLI:
+
+```bash
+# High quality 1080p @ 60fps
+manimvtk -qh scene.py MyScene --renderer vtk
+
+# 4K quality
+manimvtk --resolution 3840,2160 scene.py MyScene --renderer vtk
+```
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion icon="cube" title="Use for 3D Scenes">
+    The VTK renderer excels at 3D visualization. For pure 2D animations, Cairo may be faster and sufficient.
+    
+    **VTK recommended for:**
+    - Surfaces and parametric surfaces
+    - 3D primitives (spheres, cubes, etc.)
+    - Scientific 3D data
+    - Complex lighting scenarios
+  </Accordion>
+
+  <Accordion icon="gauge-high" title="Optimize Resolution">
+    Start with lower resolution for testing, then render at full quality:
+    
+    ```bash
+    # Test render (fast)
+    manimvtk -ql scene.py MyScene --renderer vtk
+    
+    # Final render (slow but high quality)
+    manimvtk -qh scene.py MyScene --renderer vtk
+    ```
+  </Accordion>
+
+  <Accordion icon="palette" title="Color and Shading">
+    VTK rendering may display colors differently than Cairo due to lighting. Test your colors with VTK early in development.
+    
+    ```python
+    # Set colors that work well with lighting
+    surface.set_color(BLUE)
+    surface.set_opacity(0.8)  # Slight transparency often looks better
+    ```
+  </Accordion>
+
+  <Accordion icon="arrows-rotate" title="Camera Movement">
+    Smooth camera movements work beautifully with VTK:
+    
+    ```python
+    self.begin_ambient_camera_rotation(rate=0.2)
+    self.wait(5)
+    self.stop_ambient_camera_rotation()
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Combining with Export
+
+The VTK renderer works seamlessly with VTK export:
+
+```bash
+# Render with VTK and export
+manimvtk -pqh scene.py MyScene --renderer vtk --vtk-export
+```
+
+This produces:
+1. High-quality video rendered with VTK
+2. VTK files (.vtp or .vtm) for further analysis
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion icon="triangle-exclamation" title="Black screen or no output">
+    **Cause:** VTK initialization failed or display not available
+    
+    **Solution:**
+    ```bash
+    # On headless servers, use xvfb
+    xvfb-run -a manimvtk -pqh scene.py MyScene --renderer vtk
+    ```
+  </Accordion>
+
+  <Accordion icon="triangle-exclamation" title="Slow rendering">
+    **Cause:** High polygon count or complex geometry
+    
+    **Solution:**
+    - Reduce surface resolution
+    - Lower video quality for testing
+    - Use simpler geometry during development
+    
+    ```python
+    # Lower resolution surface
+    surface = Surface(
+        func,
+        resolution=(20, 20)  # Instead of (50, 50)
+    )
+    ```
+  </Accordion>
+
+  <Accordion icon="triangle-exclamation" title="Colors look different">
+    **Cause:** VTK applies lighting and shading
+    
+    **Solution:**
+    - Adjust colors to account for lighting
+    - Increase ambient light if colors are too dark
+    - Test with different camera angles
+  </Accordion>
+
+  <Accordion icon="triangle-exclamation" title="ImportError: No module named 'vtk'">
+    **Cause:** VTK not installed
+    
+    **Solution:**
+    ```bash
+    pip install vtk
+    # Or reinstall with VTK extras
+    pip install manimvtk[vtk]
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Advanced Examples
+
+### Parametric Surface with Lighting
+
+```python
+from manimvtk import *
+import numpy as np
+
+class ParametricSurfaceVTK(ThreeDScene):
+    def construct(self):
+        # Create a complex parametric surface
+        surface = Surface(
+            lambda u, v: np.array([
+                np.cos(u) * (2 + np.cos(v)),
+                np.sin(u) * (2 + np.cos(v)),
+                np.sin(v)
+            ]),
+            u_range=[0, TAU],
+            v_range=[0, TAU],
+            resolution=(50, 50),
+        )
+        
+        # Gradient coloring
+        surface.set_color_by_gradient(BLUE, GREEN, YELLOW, RED)
+        
+        # Camera setup
+        self.set_camera_orientation(phi=60 * DEGREES, theta=-45 * DEGREES)
+        
+        # Animation
+        self.play(Create(surface), run_time=2)
+        self.begin_ambient_camera_rotation(rate=0.1)
+        self.wait(5)
+        self.stop_ambient_camera_rotation()
+```
+
+Render:
+```bash
+manimvtk -pqh scene.py ParametricSurfaceVTK --renderer vtk --vtk-export
+```
+
+### Multiple 3D Objects
+
+```python
+from manimvtk import *
+
+class Multiple3DObjects(ThreeDScene):
+    def construct(self):
+        # Create axes
+        axes = ThreeDAxes()
+        
+        # Create objects
+        sphere = Sphere(radius=0.5).shift(UP + LEFT)
+        sphere.set_color(BLUE)
+        
+        cube = Cube(side_length=1).shift(UP + RIGHT)
+        cube.set_color(RED)
+        
+        cone = Cone(base_radius=0.5, height=1).shift(DOWN)
+        cone.set_color(GREEN)
+        
+        # Camera
+        self.set_camera_orientation(phi=70 * DEGREES, theta=30 * DEGREES)
+        
+        # Animate
+        self.play(Create(axes))
+        self.play(
+            FadeIn(sphere),
+            FadeIn(cube),
+            FadeIn(cone)
+        )
+        
+        # Rotate all objects
+        self.play(
+            Rotate(sphere, angle=PI, axis=UP),
+            Rotate(cube, angle=PI, axis=UP),
+            Rotate(cone, angle=PI, axis=UP),
+            run_time=3
+        )
+        self.wait()
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="VTK Export" icon="file-export" href="/vtk/export">
+    Learn how to export VTK files
+  </Card>
+  <Card title="3D Scenes" icon="cube" href="/concepts/scenes">
+    Master 3D scene creation
+  </Card>
+  <Card title="Surfaces" icon="wave" href="/api-reference/mobjects/3d-objects">
+    Explore 3D surface objects
+  </Card>
+  <Card title="Examples" icon="play" href="/examples/basic-3d">
+    View 3D rendering examples
+  </Card>
+</CardGroup>

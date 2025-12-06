@@ -1,0 +1,435 @@
+---
+title: "Renderers"
+description: "Understanding ManimVTK's rendering backends"
+---
+
+## Renderer Overview
+
+ManimVTK supports three rendering backends, each optimized for different use cases:
+
+<CardGroup cols={3}>
+  <Card title="Cairo" icon="pen-nib">
+    **2D Vector Graphics**
+    Best for 2D animations and diagrams
+  </Card>
+  <Card title="OpenGL" icon="cube">
+    **3D Hardware Acceleration**
+    Fast real-time 3D rendering
+  </Card>
+  <Card title="VTK" icon="microscope">
+    **Scientific Visualization**
+    High-quality 3D with VTK export
+  </Card>
+</CardGroup>
+
+## Selecting a Renderer
+
+### Via Command Line
+
+```bash
+# Cairo (default)
+manimvtk -pqh scene.py MyScene
+
+# OpenGL
+manimvtk -pqh scene.py MyScene --renderer opengl
+
+# VTK
+manimvtk -pqh scene.py MyScene --renderer vtk
+```
+
+### Via Configuration
+
+In `manim.cfg`:
+
+```ini
+[CLI]
+renderer = vtk
+```
+
+## Cairo Renderer
+
+The default renderer, based on the Cairo graphics library.
+
+### Characteristics
+
+- ✅ **Excellent 2D quality**: Sharp vector graphics
+- ✅ **Text rendering**: High-quality text and LaTeX
+- ✅ **Mature and stable**: Well-tested, minimal bugs
+- ⚠️ **2D focused**: Basic 3D support only
+- ⚠️ **CPU-based**: No GPU acceleration
+
+### Best For
+
+- 2D mathematical animations
+- Educational diagrams
+- Text-heavy content
+- Precise vector graphics
+
+### Example
+
+```python
+from manimvtk import *
+
+class CairoExample(Scene):
+    def construct(self):
+        # Perfect for 2D
+        equation = MathTex(r"e^{i\pi} + 1 = 0")
+        self.play(Write(equation))
+        self.wait()
+```
+
+```bash
+# Render with Cairo (default)
+manimvtk -pqh scene.py CairoExample
+```
+
+## OpenGL Renderer
+
+Hardware-accelerated rendering using OpenGL.
+
+### Characteristics
+
+- ✅ **Fast**: GPU-accelerated
+- ✅ **Real-time preview**: Interactive viewing
+- ✅ **3D support**: Good 3D capabilities
+- ⚠️ **Less mature**: May have edge cases
+- ⚠️ **Platform-dependent**: Requires OpenGL drivers
+
+### Best For
+
+- Interactive development
+- Real-time previews
+- 3D animations (lighter-weight than VTK)
+- Fast iteration
+
+### Example
+
+```python
+from manimvtk import *
+
+class OpenGLExample(ThreeDScene):
+    def construct(self):
+        sphere = Sphere()
+        self.set_camera_orientation(phi=60 * DEGREES)
+        self.play(Create(sphere))
+        self.wait()
+```
+
+```bash
+# Render with OpenGL
+manimvtk -pqh scene.py OpenGLExample --renderer opengl
+```
+
+## VTK Renderer
+
+Scientific visualization renderer with VTK export capabilities.
+
+### Characteristics
+
+- ✅ **Scientific quality**: Publication-grade 3D
+- ✅ **VTK export**: Export to .vtp, .vtm, .pvd formats
+- ✅ **Advanced lighting**: Realistic shading
+- ✅ **ParaView integration**: Direct export to ParaView
+- ⚠️ **Slower startup**: VTK initialization overhead
+- ⚠️ **3D focused**: Best for 3D content
+
+### Best For
+
+- Scientific visualization
+- 3D surfaces and meshes
+- CFD/FEA visualization
+- ParaView workflows
+- High-quality 3D renders
+
+### Example
+
+```python
+from manimvtk import *
+import numpy as np
+
+class VTKExample(ThreeDScene):
+    def construct(self):
+        surface = Surface(
+            lambda u, v: np.array([u, v, np.sin(u) * np.cos(v)]),
+            u_range=[-2, 2],
+            v_range=[-2, 2],
+            resolution=(50, 50)
+        )
+        surface.set_color_by_gradient(BLUE, RED)
+        
+        self.set_camera_orientation(phi=60 * DEGREES)
+        self.play(Create(surface))
+        self.wait()
+```
+
+```bash
+# Render with VTK and export
+manimvtk -pqh scene.py VTKExample --renderer vtk --vtk-export
+```
+
+<Card
+  title="VTK Renderer Guide"
+  icon="cube"
+  href="/vtk/renderer"
+>
+  Detailed guide on VTK renderer features
+</Card>
+
+## Renderer Comparison
+
+| Feature | Cairo | OpenGL | VTK |
+|---------|-------|--------|-----|
+| **2D Quality** | ⭐⭐⭐ | ⭐⭐ | ⭐⭐ |
+| **3D Quality** | ⭐ | ⭐⭐ | ⭐⭐⭐ |
+| **Performance** | ⭐⭐ | ⭐⭐⭐ | ⭐⭐ |
+| **Text/LaTeX** | ⭐⭐⭐ | ⭐⭐ | ⭐⭐ |
+| **Stability** | ⭐⭐⭐ | ⭐⭐ | ⭐⭐⭐ |
+| **Export Formats** | Image/Video | Image/Video | VTK Files |
+| **GPU Acceleration** | ❌ | ✅ | ✅ |
+| **Scientific Use** | ⭐ | ⭐⭐ | ⭐⭐⭐ |
+
+## Choosing the Right Renderer
+
+### Decision Tree
+
+```
+Are you creating 2D content?
+├─ Yes → Use Cairo
+└─ No (3D content)
+    ├─ Need VTK export?
+    │  └─ Yes → Use VTK
+    └─ Need fast preview?
+       ├─ Yes → Use OpenGL
+       └─ Need highest quality → Use VTK
+```
+
+### Use Cases
+
+<Tabs>
+  <Tab title="Educational Videos">
+    **Recommendation: Cairo**
+    
+    Most educational content is 2D:
+    - Equations and text
+    - 2D graphs
+    - Geometric diagrams
+    
+    ```bash
+    manimvtk -pqh lesson.py Lecture
+    ```
+  </Tab>
+
+  <Tab title="Scientific Visualization">
+    **Recommendation: VTK**
+    
+    Scientific work needs VTK export:
+    - Surface meshes
+    - CFD data
+    - ParaView integration
+    
+    ```bash
+    manimvtk -pqh simulation.py CFDViz --renderer vtk --vtk-export
+    ```
+  </Tab>
+
+  <Tab title="3D Showcases">
+    **Recommendation: OpenGL or VTK**
+    
+    3D demonstrations:
+    - Product visualizations
+    - Architecture
+    - Mathematical surfaces
+    
+    ```bash
+    # Fast preview
+    manimvtk -pql demo.py Product --renderer opengl
+    
+    # Final quality
+    manimvtk -pqh demo.py Product --renderer vtk
+    ```
+  </Tab>
+
+  <Tab title="Development/Testing">
+    **Recommendation: OpenGL (low quality)**
+    
+    Fast iteration:
+    - Testing animations
+    - Debugging layouts
+    - Quick previews
+    
+    ```bash
+    manimvtk -ql test.py TestScene --renderer opengl
+    ```
+  </Tab>
+</Tabs>
+
+## Renderer-Specific Features
+
+### Cairo Only
+
+- **Precise 2D rendering**: Perfect for diagrams
+- **Text shaping**: Advanced typography
+- **SVG-like quality**: Clean vector output
+
+### OpenGL Only
+
+- **Interactive preview**: Real-time interaction
+- **Fast rendering**: GPU acceleration
+- **Window mode**: Live preview window
+
+### VTK Only
+
+- **VTK file export**: .vtp, .vtm, .pvd formats
+- **Scientific data**: Scalar/vector fields
+- **Advanced shading**: Physically-based rendering
+- **ParaView compatibility**: Direct export
+
+## Switching Renderers
+
+You can use different renderers for the same scene:
+
+```python
+class UniversalScene(ThreeDScene):
+    def construct(self):
+        sphere = Sphere()
+        self.set_camera_orientation(phi=60 * DEGREES)
+        self.play(Create(sphere))
+        self.wait()
+```
+
+```bash
+# Test with OpenGL (fast)
+manimvtk -ql scene.py UniversalScene --renderer opengl
+
+# Final render with VTK (quality)
+manimvtk -qh scene.py UniversalScene --renderer vtk --vtk-export
+
+# Alternative with Cairo (if 2D is enough)
+manimvtk -qh scene.py UniversalScene
+```
+
+## Performance Considerations
+
+### Cairo
+
+- **Startup**: Fast
+- **Rendering**: Moderate (CPU-bound)
+- **Memory**: Low to moderate
+- **Best for**: Small to medium 2D scenes
+
+### OpenGL
+
+- **Startup**: Moderate
+- **Rendering**: Fast (GPU-accelerated)
+- **Memory**: Moderate
+- **Best for**: Large 3D scenes, development
+
+### VTK
+
+- **Startup**: Slow (VTK initialization)
+- **Rendering**: Moderate to slow
+- **Memory**: Higher (complex meshes)
+- **Best for**: Final quality renders, export
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion icon="triangle-exclamation" title="OpenGL: Black screen">
+    **Cause:** OpenGL drivers not available
+    
+    **Solution:**
+    ```bash
+    # On headless servers
+    xvfb-run -a manimvtk -pqh scene.py MyScene --renderer opengl
+    
+    # Or use Cairo/VTK instead
+    manimvtk -pqh scene.py MyScene --renderer cairo
+    ```
+  </Accordion>
+
+  <Accordion icon="triangle-exclamation" title="VTK: ImportError">
+    **Cause:** VTK not installed
+    
+    **Solution:**
+    ```bash
+    pip install vtk
+    # Or reinstall with VTK extras
+    pip install manimvtk[vtk]
+    ```
+  </Accordion>
+
+  <Accordion icon="triangle-exclamation" title="Cairo: Poor 3D quality">
+    **Cause:** Cairo is optimized for 2D
+    
+    **Solution:**
+    Switch to VTK or OpenGL for 3D:
+    ```bash
+    manimvtk -pqh scene.py MyScene --renderer vtk
+    ```
+  </Accordion>
+
+  <Accordion icon="triangle-exclamation" title="Slow rendering">
+    **Cause:** Complex geometry or wrong renderer
+    
+    **Solution:**
+    - Use lower quality for testing: `-ql`
+    - Use OpenGL for faster preview
+    - Reduce geometry resolution
+  </Accordion>
+</AccordionGroup>
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion icon="rocket" title="Use appropriate renderer for task">
+    ```bash
+    # Testing - fast
+    manimvtk -ql scene.py Test --renderer opengl
+    
+    # Final 2D - quality
+    manimvtk -qh scene.py Final
+    
+    # Final 3D with export - quality + export
+    manimvtk -qh scene.py Final --renderer vtk --vtk-export
+    ```
+  </Accordion>
+
+  <Accordion icon="code" title="Write renderer-agnostic code">
+    Most code works across all renderers:
+    
+    ```python
+    # This works with any renderer
+    class AgnosticScene(Scene):
+        def construct(self):
+            circle = Circle()
+            self.play(Create(circle))
+    ```
+  </Accordion>
+
+  <Accordion icon="flask" title="Test with multiple renderers">
+    Verify your scene works across renderers:
+    
+    ```bash
+    manimvtk -ql scene.py Test --renderer cairo
+    manimvtk -ql scene.py Test --renderer opengl
+    manimvtk -ql scene.py Test --renderer vtk
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="VTK Renderer" icon="cube" href="/vtk/renderer">
+    Detailed VTK renderer guide
+  </Card>
+  <Card title="VTK Export" icon="file-export" href="/vtk/export">
+    Learn about VTK file export
+  </Card>
+  <Card title="Configuration" icon="gear" href="/advanced/configuration">
+    Configure renderer settings
+  </Card>
+  <Card title="CLI Options" icon="terminal" href="/advanced/cli-options">
+    All command-line options
+  </Card>
+</CardGroup>

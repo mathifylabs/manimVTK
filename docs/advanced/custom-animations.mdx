@@ -1,0 +1,24 @@
+---
+title: "Custom Animations"
+description: "Creating custom animation classes"
+---
+
+## Creating Custom Animations
+
+Extend Animation class:
+
+```python
+from manimvtk import *
+
+class CustomAnimation(Animation):
+    def interpolate_mobject(self, alpha):
+        # alpha goes from 0 to 1
+        # Modify self.mobject based on alpha
+        self.mobject.scale(1 + alpha)
+```
+
+## See Also
+
+<Card title="Animations Guide" icon="wand-magic-sparkles" href="/concepts/animations">
+  Animation concepts
+</Card>

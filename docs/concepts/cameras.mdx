@@ -1,0 +1,468 @@
+---
+title: "Cameras"
+description: "Understanding and controlling cameras in ManimVTK"
+---
+
+## Camera Basics
+
+The camera determines what is visible in your scene and from what perspective. ManimVTK provides different camera types for different needs.
+
+<Info>
+  For 2D scenes, the camera is mostly invisible. For 3D scenes, camera control is essential.
+</Info>
+
+## Camera Types
+
+### 2D Camera (Scene)
+
+The default camera for 2D scenes:
+
+```python
+class Basic2D(Scene):
+    def construct(self):
+        circle = Circle()
+        self.play(Create(circle))
+        # Camera is fixed, looking straight at the XY plane
+```
+
+**Characteristics:**
+- Fixed perspective
+- Orthographic projection
+- Default view: looking down Z-axis
+
+### 3D Camera (ThreeDScene)
+
+Camera with full 3D control:
+
+```python
+class Basic3D(ThreeDScene):
+    def construct(self):
+        # Set camera angle
+        self.set_camera_orientation(
+            phi=60 * DEGREES,
+            theta=30 * DEGREES
+        )
+        
+        sphere = Sphere()
+        self.play(Create(sphere))
+```
+
+**Characteristics:**
+- Adjustable viewing angle
+- Can rotate around objects
+- Perspective projection
+
+### Moving Camera (MovingCameraScene)
+
+Camera that can zoom and pan in 2D:
+
+```python
+class MovingCamera(MovingCameraScene):
+    def construct(self):
+        square = Square()
+        self.add(square)
+        
+        # Zoom in
+        self.play(self.camera.frame.animate.scale(0.5))
+        
+        # Pan to the right
+        self.play(self.camera.frame.animate.shift(RIGHT * 2))
+```
+
+## 3D Camera Control
+
+### Setting Initial Orientation
+
+```python
+class CameraOrientation(ThreeDScene):
+    def construct(self):
+        # Set at the beginning
+        self.set_camera_orientation(
+            phi=75 * DEGREES,      # Vertical angle (0 = top view, 90 = side view)
+            theta=-30 * DEGREES,   # Horizontal rotation
+            distance=8,            # Distance from origin
+            gamma=0 * DEGREES      # Camera roll (usually 0)
+        )
+        
+        # Add objects
+        axes = ThreeDAxes()
+        self.add(axes)
+```
+
+**Understanding angles:**
+- **phi**: Vertical angle from Z-axis (0° = top, 90° = side)
+- **theta**: Horizontal rotation around Z-axis
+- **distance**: How far the camera is from the origin
+- **gamma**: Camera rotation (tilt)
+
+### Animating Camera Movement
+
+```python
+class CameraMovement(ThreeDScene):
+    def construct(self):
+        sphere = Sphere()
+        self.add(sphere)
+        
+        # Initial position
+        self.set_camera_orientation(phi=60 * DEGREES, theta=30 * DEGREES)
+        self.wait()
+        
+        # Move camera
+        self.move_camera(
+            phi=90 * DEGREES,
+            theta=45 * DEGREES,
+            run_time=3
+        )
+        self.wait()
+```
+
+### Ambient Camera Rotation
+
+Continuous rotation for showcasing 3D objects:
+
+```python
+class AmbientRotation(ThreeDScene):
+    def construct(self):
+        torus = Torus()
+        self.add(torus)
+        
+        # Start rotation
+        self.begin_ambient_camera_rotation(rate=0.2)
+        
+        # Let it rotate for 5 seconds
+        self.wait(5)
+        
+        # Stop rotation
+        self.stop_ambient_camera_rotation()
+```
+
+**Rate parameter:**
+- Positive: Counter-clockwise rotation
+- Negative: Clockwise rotation
+- Typical values: 0.1 to 0.3
+
+### Camera at a Specific Point
+
+Point camera at an object:
+
+```python
+class LookAtPoint(ThreeDScene):
+    def construct(self):
+        # Create objects at different locations
+        sphere1 = Sphere().shift(LEFT * 2)
+        sphere2 = Sphere().shift(RIGHT * 2)
+        
+        self.add(sphere1, sphere2)
+        
+        # Look at first sphere
+        self.set_camera_orientation(phi=60 * DEGREES, theta=0)
+        self.wait()
+        
+        # Adjust to look at second sphere
+        self.move_camera(theta=30 * DEGREES, run_time=2)
+        self.wait()
+```
+
+## Moving Camera (2D)
+
+### Frame Control
+
+```python
+class FrameControl(MovingCameraScene):
+    def construct(self):
+        # Get the camera frame
+        frame = self.camera.frame
+        
+        # Create content larger than the frame
+        grid = NumberPlane(x_range=[-10, 10], y_range=[-10, 10])
+        self.add(grid)
+        
+        # Pan around
+        self.play(frame.animate.shift(RIGHT * 3))
+        self.play(frame.animate.shift(UP * 2))
+        
+        # Return to origin
+        self.play(frame.animate.move_to(ORIGIN))
+```
+
+### Zooming
+
+```python
+class ZoomExample(MovingCameraScene):
+    def construct(self):
+        circle = Circle(radius=0.1)
+        text = Text("Tiny text", font_size=12).next_to(circle, UP, buff=0.1)
+        self.add(circle, text)
+        
+        # Zoom in to see details
+        self.play(self.camera.frame.animate.scale(0.2))
+        self.wait()
+        
+        # Zoom out
+        self.play(self.camera.frame.animate.scale(5))
+        self.wait()
+```
+
+### Following Objects
+
+```python
+class FollowObject(MovingCameraScene):
+    def construct(self):
+        dot = Dot()
+        self.add(dot)
+        
+        # Camera follows the dot
+        self.camera.frame.add_updater(
+            lambda m: m.move_to(dot.get_center())
+        )
+        
+        # Move the dot around
+        self.play(dot.animate.shift(RIGHT * 5), run_time=3)
+        self.play(dot.animate.shift(UP * 3), run_time=2)
+        
+        # Stop following
+        self.camera.frame.clear_updaters()
+```
+
+## Camera Presets
+
+### Common 3D Views
+
+```python
+class CommonViews(ThreeDScene):
+    def construct(self):
+        axes = ThreeDAxes()
+        self.add(axes)
+        
+        # Top view
+        self.set_camera_orientation(phi=0, theta=0)
+        self.wait()
+        
+        # Front view
+        self.move_camera(phi=90 * DEGREES, theta=0)
+        self.wait()
+        
+        # Side view
+        self.move_camera(phi=90 * DEGREES, theta=90 * DEGREES)
+        self.wait()
+        
+        # Isometric view
+        self.move_camera(phi=60 * DEGREES, theta=45 * DEGREES)
+        self.wait()
+```
+
+### Reset Camera
+
+```python
+# Reset to default position
+self.set_camera_orientation(phi=0, theta=0, distance=8)
+
+# Or in MovingCameraScene
+self.play(self.camera.frame.animate.move_to(ORIGIN).scale(1))
+```
+
+## Advanced Techniques
+
+### Camera Along Path
+
+```python
+class CameraPath(ThreeDScene):
+    def construct(self):
+        surface = Sphere()
+        self.add(surface)
+        
+        # Define camera positions
+        positions = [
+            (60 * DEGREES, 0 * DEGREES),
+            (60 * DEGREES, 90 * DEGREES),
+            (60 * DEGREES, 180 * DEGREES),
+            (60 * DEGREES, 270 * DEGREES),
+            (60 * DEGREES, 360 * DEGREES),
+        ]
+        
+        # Move through positions
+        for phi, theta in positions:
+            self.move_camera(phi=phi, theta=theta, run_time=1.5)
+```
+
+### Combine Zoom and Pan
+
+```python
+class ZoomAndPan(MovingCameraScene):
+    def construct(self):
+        shapes = VGroup(*[Square() for _ in range(9)])
+        shapes.arrange_in_grid(3, 3, buff=1)
+        self.add(shapes)
+        
+        # Zoom and pan to top-left square
+        self.play(
+            self.camera.frame.animate
+                .scale(0.3)
+                .move_to(shapes[0])
+        )
+        self.wait()
+```
+
+### Smooth Camera Transitions
+
+```python
+class SmoothTransition(ThreeDScene):
+    def construct(self):
+        cube = Cube()
+        self.add(cube)
+        
+        # Smooth camera movement with rate function
+        self.set_camera_orientation(phi=60 * DEGREES, theta=0)
+        
+        self.move_camera(
+            phi=90 * DEGREES,
+            theta=180 * DEGREES,
+            run_time=4,
+            rate_func=smooth  # Smooth ease in/out
+        )
+```
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion icon="eye" title="Choose appropriate views">
+    - **2D content**: Use standard `Scene`
+    - **3D objects**: Use `ThreeDScene` with good phi/theta
+    - **Detail work**: Use `MovingCameraScene` to zoom
+  </Accordion>
+
+  <Accordion icon="clock" title="Camera movement timing">
+    ```python
+    # Good - slow enough to follow
+    self.move_camera(phi=90 * DEGREES, run_time=3)
+    
+    # Too fast - disorienting
+    self.move_camera(phi=90 * DEGREES, run_time=0.2)
+    ```
+  </Accordion>
+
+  <Accordion icon="compass" title="Start with good orientation">
+    Set initial camera position that shows your object well:
+    
+    ```python
+    # Good starting point for most 3D objects
+    self.set_camera_orientation(phi=60 * DEGREES, theta=45 * DEGREES)
+    ```
+  </Accordion>
+
+  <Accordion icon="arrows-rotate" title="Use ambient rotation sparingly">
+    ```python
+    # Good - slow rotation for showcase
+    self.begin_ambient_camera_rotation(rate=0.1)
+    
+    # Too fast - nauseating
+    self.begin_ambient_camera_rotation(rate=1.0)
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Camera Configuration
+
+### Via Code
+
+```python
+# In your scene
+class ConfiguredCamera(ThreeDScene):
+    def construct(self):
+        # Camera settings
+        self.camera.frame_width = 15
+        self.camera.frame_height = 15
+        
+        # Your content
+        sphere = Sphere()
+        self.add(sphere)
+```
+
+### Via Config File
+
+```ini
+[camera]
+frame_width = 15
+frame_height = 15
+```
+
+## Common Patterns
+
+### Orbit Around Object
+
+```python
+class OrbitPattern(ThreeDScene):
+    def construct(self):
+        obj = Torus()
+        self.add(obj)
+        
+        # Set initial position
+        self.set_camera_orientation(phi=60 * DEGREES, theta=0)
+        
+        # Orbit 360 degrees
+        self.move_camera(theta=360 * DEGREES, run_time=8)
+```
+
+### Zoom to Detail
+
+```python
+class ZoomToDetail(MovingCameraScene):
+    def construct(self):
+        # Large scene
+        full_scene = VGroup(*[Circle() for _ in range(20)])
+        full_scene.arrange_in_grid(4, 5)
+        self.add(full_scene)
+        
+        self.wait()
+        
+        # Zoom to one element
+        target = full_scene[5]
+        self.play(
+            self.camera.frame.animate
+                .scale(0.2)
+                .move_to(target)
+        )
+        self.wait()
+```
+
+### Pan Across Scene
+
+```python
+class PanAcross(MovingCameraScene):
+    def construct(self):
+        # Create wide content
+        content = VGroup(
+            Text("Part 1").shift(LEFT * 6),
+            Text("Part 2"),
+            Text("Part 3").shift(RIGHT * 6)
+        )
+        self.add(content)
+        
+        # Pan from left to right
+        self.camera.frame.move_to(LEFT * 6)
+        self.play(
+            self.camera.frame.animate.move_to(ORIGIN),
+            run_time=3
+        )
+        self.play(
+            self.camera.frame.animate.move_to(RIGHT * 6),
+            run_time=3
+        )
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Renderers" icon="display" href="/concepts/renderers">
+    Learn about different rendering backends
+  </Card>
+  <Card title="3D Scenes" icon="cube" href="/api-reference/scene/three-d-scene">
+    ThreeDScene API reference
+  </Card>
+  <Card title="Examples" icon="play" href="/examples/basic-3d">
+    See camera control examples
+  </Card>
+  <Card title="VTK Renderer" icon="cube" href="/vtk/renderer">
+    VTK rendering for 3D
+  </Card>
+</CardGroup>

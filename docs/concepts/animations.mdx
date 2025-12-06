@@ -1,0 +1,578 @@
+---
+title: "Animations"
+description: "Master animation techniques in ManimVTK"
+---
+
+## Animation Basics
+
+Animations are transformations applied to mobjects over time. ManimVTK provides a rich set of animation classes for creating smooth, beautiful movements and effects.
+
+<Info>
+  All animations are played using `self.play()` in your scene's `construct()` method
+</Info>
+
+## Playing Animations
+
+### Basic Syntax
+
+```python
+from manimvtk import *
+
+class BasicAnimation(Scene):
+    def construct(self):
+        circle = Circle()
+        
+        # Play a single animation
+        self.play(Create(circle))
+        
+        # Wait (pause animation)
+        self.wait()
+```
+
+### Multiple Animations
+
+```python
+class MultipleAnimations(Scene):
+    def construct(self):
+        c1 = Circle().shift(LEFT)
+        c2 = Square().shift(RIGHT)
+        
+        # Play animations simultaneously
+        self.play(
+            Create(c1),
+            Create(c2)
+        )
+        
+        # Play sequentially
+        self.play(FadeOut(c1))
+        self.play(FadeOut(c2))
+```
+
+### Animation Parameters
+
+```python
+self.play(
+    Create(circle),
+    run_time=2,          # Duration in seconds
+    rate_func=smooth     # Timing function
+)
+```
+
+## Animation Types
+
+### Creation Animations
+
+Animations that introduce objects to the scene:
+
+<Tabs>
+  <Tab title="Create">
+    Draw the object from start to finish:
+    
+    ```python
+    circle = Circle()
+    self.play(Create(circle))
+    ```
+  </Tab>
+
+  <Tab title="Write">
+    Write text or equations:
+    
+    ```python
+    text = Text("Hello, World!")
+    self.play(Write(text))
+    ```
+  </Tab>
+
+  <Tab title="FadeIn">
+    Fade object into view:
+    
+    ```python
+    square = Square()
+    self.play(FadeIn(square))
+    ```
+  </Tab>
+
+  <Tab title="GrowFromCenter">
+    Grow object from its center:
+    
+    ```python
+    circle = Circle()
+    self.play(GrowFromCenter(circle))
+    ```
+  </Tab>
+</Tabs>
+
+### Removal Animations
+
+Animations that remove objects from the scene:
+
+<Tabs>
+  <Tab title="Uncreate">
+    Reverse of Create:
+    
+    ```python
+    self.play(Uncreate(circle))
+    ```
+  </Tab>
+
+  <Tab title="FadeOut">
+    Fade object out of view:
+    
+    ```python
+    self.play(FadeOut(square))
+    ```
+  </Tab>
+
+  <Tab title="ShrinkToCenter">
+    Shrink to center point:
+    
+    ```python
+    self.play(ShrinkToCenter(circle))
+    ```
+  </Tab>
+</Tabs>
+
+### Transform Animations
+
+Transform one object into another:
+
+```python
+class TransformExample(Scene):
+    def construct(self):
+        circle = Circle()
+        square = Square()
+        
+        self.play(Create(circle))
+        self.wait()
+        
+        # Transform circle into square
+        self.play(Transform(circle, square))
+        self.wait()
+```
+
+**Types of transforms:**
+
+- `Transform` - Morph one object into another
+- `ReplacementTransform` - Replace and morph
+- `TransformFromCopy` - Create copy that transforms
+- `ClockwiseTransform` - Transform with rotation
+
+### Movement Animations
+
+Move objects around the scene:
+
+```python
+class MovementExample(Scene):
+    def construct(self):
+        circle = Circle()
+        self.add(circle)
+        
+        # Using .animate syntax (recommended)
+        self.play(circle.animate.shift(RIGHT * 3))
+        self.play(circle.animate.move_to(UP * 2))
+        
+        # Using explicit animations
+        self.play(circle.animate.to_edge(LEFT))
+```
+
+### Rotation Animations
+
+Rotate objects:
+
+```python
+class RotationExample(Scene):
+    def construct(self):
+        square = Square()
+        self.add(square)
+        
+        # Rotate 90 degrees
+        self.play(Rotate(square, PI / 2))
+        
+        # Or using .animate
+        self.play(square.animate.rotate(PI / 2))
+```
+
+### Indication Animations
+
+Draw attention to objects:
+
+<Tabs>
+  <Tab title="Indicate">
+    Briefly highlight:
+    
+    ```python
+    self.play(Indicate(circle))
+    ```
+  </Tab>
+
+  <Tab title="Flash">
+    Flash effect:
+    
+    ```python
+    self.play(Flash(point))
+    ```
+  </Tab>
+
+  <Tab title="Wiggle">
+    Wiggle animation:
+    
+    ```python
+    self.play(Wiggle(text))
+    ```
+  </Tab>
+
+  <Tab title="Circumscribe">
+    Draw attention with shape around object:
+    
+    ```python
+    self.play(Circumscribe(equation))
+    ```
+  </Tab>
+</Tabs>
+
+## The .animate Syntax
+
+The most intuitive way to animate transformations:
+
+```python
+class AnimateSyntax(Scene):
+    def construct(self):
+        circle = Circle()
+        self.add(circle)
+        
+        # Chain multiple transformations
+        self.play(
+            circle.animate
+                .shift(RIGHT * 2)
+                .scale(1.5)
+                .set_color(RED)
+        )
+```
+
+**Benefits:**
+- Readable and intuitive
+- Supports method chaining
+- Works with most mobject methods
+
+**Examples:**
+
+```python
+# Movement
+self.play(mob.animate.shift(UP))
+self.play(mob.animate.move_to([1, 2, 0]))
+self.play(mob.animate.to_edge(RIGHT))
+
+# Scaling
+self.play(mob.animate.scale(2))
+self.play(mob.animate.stretch(2, 0))
+
+# Rotation
+self.play(mob.animate.rotate(PI / 4))
+
+# Color
+self.play(mob.animate.set_color(BLUE))
+self.play(mob.animate.set_opacity(0.5))
+
+# Combination
+self.play(
+    mob.animate
+        .shift(RIGHT)
+        .rotate(PI / 2)
+        .set_color(RED)
+)
+```
+
+## Rate Functions
+
+Control the timing and pacing of animations:
+
+```python
+from manimvtk import *
+
+class RateFunctions(Scene):
+    def construct(self):
+        circle = Circle()
+        self.add(circle)
+        
+        # Linear (constant speed)
+        self.play(circle.animate.shift(RIGHT), rate_func=linear)
+        
+        # Smooth (ease in and out)
+        self.play(circle.animate.shift(LEFT), rate_func=smooth)
+        
+        # Rush into (accelerate)
+        self.play(circle.animate.shift(UP), rate_func=rush_into)
+        
+        # Rush from (decelerate)
+        self.play(circle.animate.shift(DOWN), rate_func=rush_from)
+```
+
+**Common rate functions:**
+- `linear` - Constant speed
+- `smooth` - Ease in and out
+- `rush_into` - Start slow, end fast
+- `rush_from` - Start fast, end slow
+- `there_and_back` - Go and return
+- `running_start` - Build momentum
+
+## Animation Composition
+
+### Succession
+
+Animate one after another:
+
+```python
+from manimvtk import Succession
+
+self.play(
+    Succession(
+        Create(circle),
+        FadeIn(square),
+        Write(text)
+    )
+)
+```
+
+### AnimationGroup
+
+Group animations to play together:
+
+```python
+from manimvtk import AnimationGroup
+
+self.play(
+    AnimationGroup(
+        Create(circle),
+        FadeIn(square),
+        lag_ratio=0.5  # Stagger the animations
+    )
+)
+```
+
+### LaggedStart
+
+Start animations with a delay:
+
+```python
+from manimvtk import LaggedStart
+
+shapes = VGroup(*[Circle() for _ in range(5)])
+shapes.arrange(RIGHT)
+
+self.play(
+    LaggedStart(*[Create(s) for s in shapes], lag_ratio=0.2)
+)
+```
+
+## Advanced Techniques
+
+### Custom Run Time
+
+```python
+# Slow animation
+self.play(Create(circle), run_time=3)
+
+# Fast animation
+self.play(FadeOut(square), run_time=0.5)
+```
+
+### UpdateFromFunc
+
+Animate based on custom function:
+
+```python
+def update_func(mob, alpha):
+    # alpha goes from 0 to 1
+    mob.move_to(alpha * RIGHT * 3)
+
+circle = Circle()
+self.add(circle)
+self.play(UpdateFromFunc(circle, update_func))
+```
+
+### ValueTracker
+
+Animate a value over time:
+
+```python
+tracker = ValueTracker(0)
+
+def update_circle(circle):
+    circle.move_to(RIGHT * tracker.get_value())
+
+circle = Circle()
+circle.add_updater(update_circle)
+self.add(circle)
+
+self.play(tracker.animate.set_value(3), run_time=2)
+```
+
+### Updaters
+
+Continuous updates during animation:
+
+```python
+def update_text(text):
+    text.next_to(circle.get_center(), UP)
+
+circle = Circle()
+text = Text("Follow me")
+text.add_updater(update_text)
+
+self.add(circle, text)
+self.play(circle.animate.shift(RIGHT * 3))
+```
+
+## Animation Timing
+
+### Wait Duration
+
+```python
+# Wait 1 second
+self.wait()
+
+# Wait 2 seconds
+self.wait(2)
+
+# Wait 0.5 seconds
+self.wait(0.5)
+```
+
+### Controlling Speed
+
+```python
+# Default speed
+self.play(Create(circle))
+
+# Slow motion (2x slower)
+self.play(Create(circle), run_time=2)
+
+# Fast forward (2x faster)
+self.play(Create(circle), run_time=0.5)
+```
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion icon="clock" title="Appropriate timing">
+    Choose run times that feel natural:
+    
+    ```python
+    # Good - gives viewers time to process
+    self.play(Write(important_equation), run_time=2)
+    self.wait(1)
+    
+    # Too fast - hard to follow
+    self.play(Write(important_equation), run_time=0.2)
+    ```
+  </Accordion>
+
+  <Accordion icon="layer-group" title="Group related animations">
+    ```python
+    # Good - simultaneous related actions
+    self.play(
+        circle.animate.shift(RIGHT),
+        square.animate.shift(LEFT)
+    )
+    
+    # Less effective - sequential when simultaneous makes sense
+    self.play(circle.animate.shift(RIGHT))
+    self.play(square.animate.shift(LEFT))
+    ```
+  </Accordion>
+
+  <Accordion icon="arrows-spin" title="Use appropriate rate functions">
+    ```python
+    # Smooth for most animations
+    self.play(mob.animate.shift(UP), rate_func=smooth)
+    
+    # Linear for constant motion
+    self.play(mob.animate.shift(RIGHT), rate_func=linear)
+    
+    # Rush for dramatic effect
+    self.play(mob.animate.scale(2), rate_func=rush_into)
+    ```
+  </Accordion>
+
+  <Accordion icon="sync" title="Use .animate for clarity">
+    ```python
+    # Preferred - clear and concise
+    self.play(circle.animate.shift(RIGHT).scale(2))
+    
+    # Avoid - more verbose
+    self.play(
+        ApplyMethod(circle.shift, RIGHT),
+        ApplyMethod(circle.scale, 2)
+    )
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Common Patterns
+
+### Intro → Content → Outro
+
+```python
+class StandardPattern(Scene):
+    def construct(self):
+        # Intro
+        title = Text("My Topic")
+        self.play(Write(title))
+        self.wait()
+        self.play(FadeOut(title))
+        
+        # Content
+        circle = Circle()
+        self.play(Create(circle))
+        self.play(circle.animate.scale(2))
+        self.wait()
+        
+        # Outro
+        self.play(FadeOut(circle))
+```
+
+### Build Up Gradually
+
+```python
+class BuildUp(Scene):
+    def construct(self):
+        elements = VGroup(*[Square() for _ in range(4)])
+        elements.arrange(RIGHT, buff=0.5)
+        
+        # Add one at a time
+        for elem in elements:
+            self.play(FadeIn(elem))
+            self.wait(0.3)
+```
+
+### Transform Chain
+
+```python
+class TransformChain(Scene):
+    def construct(self):
+        shapes = [Circle(), Square(), Triangle(), Star()]
+        
+        current = shapes[0]
+        self.play(Create(current))
+        
+        for next_shape in shapes[1:]:
+            self.wait(0.5)
+            self.play(Transform(current, next_shape))
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Animations Reference" icon="play" href="/api-reference/animations/overview">
+    Complete animations API
+  </Card>
+  <Card title="Mobjects" icon="shapes" href="/concepts/mobjects">
+    Learn about animatable objects
+  </Card>
+  <Card title="Examples" icon="code" href="/examples/animations">
+    Browse animation examples
+  </Card>
+  <Card title="Rate Functions" icon="chart-line" href="/api-reference/animations/overview">
+    Explore timing functions
+  </Card>
+</CardGroup>

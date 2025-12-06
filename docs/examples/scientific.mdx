@@ -1,0 +1,213 @@
+---
+title: "Scientific Visualization Examples"
+description: "Examples for CFD, FEA, and scientific data visualization"
+---
+
+## Scientific Visualization with ManimVTK
+
+ManimVTK's VTK integration makes it ideal for scientific visualization workflows. Export your animations to ParaView for further analysis.
+
+## CFD-Style Surface
+
+### Pressure Field Visualization
+
+```python
+from manimvtk import *
+import numpy as np
+
+class PressureField(ThreeDScene):
+    def construct(self):
+        # Create surface representing a pressure field
+        surface = Surface(
+            lambda u, v: np.array([
+                u,
+                v,
+                np.exp(-(u**2 + v**2))  # Gaussian pressure distribution
+            ]),
+            u_range=[-2, 2],
+            v_range=[-2, 2],
+            resolution=(50, 50)
+        )
+        
+        # Color by height (simulating pressure)
+        surface.set_color_by_gradient(BLUE, GREEN, YELLOW, RED)
+        
+        self.set_camera_orientation(phi=60 * DEGREES, theta=-45 * DEGREES)
+        self.play(Create(surface), run_time=2)
+        self.wait()
+```
+
+**Render and export:**
+```bash
+manimvtk -pqh example.py PressureField --renderer vtk --vtk-export
+```
+
+### Velocity Field Arrows
+
+```python
+from manimvtk import *
+import numpy as np
+
+class VelocityField(Scene):
+    def construct(self):
+        # Create a grid of velocity vectors
+        vectors = VGroup()
+        
+        for x in np.linspace(-3, 3, 7):
+            for y in np.linspace(-3, 3, 7):
+                # Compute velocity (circular flow)
+                velocity = np.array([-y, x, 0]) / 5
+                magnitude = np.linalg.norm(velocity)
+                
+                if magnitude > 0:
+                    arrow = Arrow(
+                        start=np.array([x, y, 0]),
+                        end=np.array([x, y, 0]) + velocity,
+                        buff=0,
+                        color=interpolate_color(BLUE, RED, magnitude / 1.5)
+                    )
+                    vectors.add(arrow)
+        
+        self.play(Create(vectors))
+        self.wait()
+```
+
+## Time-Varying Simulations
+
+### Wave Propagation
+
+```python
+from manimvtk import *
+import numpy as np
+
+class WavePropagation(ThreeDScene):
+    def construct(self):
+        def wave_surface(t):
+            return Surface(
+                lambda u, v: np.array([
+                    u,
+                    v,
+                    0.5 * np.sin(np.sqrt(u**2 + v**2) - t)
+                ]),
+                u_range=[-3, 3],
+                v_range=[-3, 3],
+                resolution=(40, 40)
+            )
+        
+        self.set_camera_orientation(phi=60 * DEGREES)
+        
+        # Initial surface
+        surface = wave_surface(0)
+        surface.set_color_by_gradient(BLUE, GREEN, RED)
+        
+        self.play(Create(surface))
+        
+        # Animate wave propagation
+        for t in np.linspace(0, 2*PI, 60):
+            new_surface = wave_surface(t)
+            new_surface.set_color_by_gradient(BLUE, GREEN, RED)
+            surface.become(new_surface)
+            self.wait(1/30)
+```
+
+**Export as time series:**
+```bash
+manimvtk -pqm example.py WavePropagation --renderer vtk --vtk-time-series
+```
+
+## Mesh Visualization
+
+### Surface Mesh Example
+
+```python
+from manimvtk import *
+import numpy as np
+
+class SurfaceMesh(ThreeDScene):
+    def construct(self):
+        # Create a mathematical surface
+        surface = Surface(
+            lambda u, v: np.array([
+                u,
+                v,
+                np.sin(u) * np.cos(v)
+            ]),
+            u_range=[-PI, PI],
+            v_range=[-PI, PI],
+            resolution=(25, 25)
+        )
+        
+        surface.set_color(BLUE_E)
+        surface.set_opacity(0.8)
+        
+        self.set_camera_orientation(phi=70 * DEGREES, theta=45 * DEGREES)
+        
+        self.play(Create(surface))
+        self.begin_ambient_camera_rotation(rate=0.1)
+        self.wait(6)
+```
+
+## Multi-Field Visualization
+
+### Combined Scalar and Vector Fields
+
+```python
+from manimvtk import *
+import numpy as np
+
+class MultiFieldViz(ThreeDScene):
+    def construct(self):
+        # Base surface (scalar field)
+        surface = Surface(
+            lambda u, v: np.array([u, v, 0]),
+            u_range=[-2, 2],
+            v_range=[-2, 2],
+            resolution=(20, 20)
+        )
+        surface.set_color(BLUE_E)
+        
+        # Overlay vector field
+        arrows = VGroup()
+        for x in np.linspace(-2, 2, 5):
+            for y in np.linspace(-2, 2, 5):
+                arrow = Arrow(
+                    start=[x, y, 0],
+                    end=[x + 0.3, y + 0.2, 0.5],
+                    buff=0,
+                    color=RED
+                )
+                arrows.add(arrow)
+        
+        self.set_camera_orientation(phi=60 * DEGREES, theta=30 * DEGREES)
+        
+        self.play(Create(surface))
+        self.play(Create(arrows))
+        self.wait()
+```
+
+## ParaView Workflow
+
+After exporting to VTK, open in ParaView:
+
+1. **Load data**: File → Open → Select `.pvd` or `.vtm` file
+2. **Apply filters**: Contour, Slice, Clip, etc.
+3. **Add color maps**: Color by scalar fields
+4. **Add glyphs**: Visualize vector fields
+5. **Export animation**: Save as video or image sequence
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="ParaView Guide" icon="chart-line" href="/vtk/paraview">
+    Master ParaView visualization
+  </Card>
+  <Card title="VTK Export" icon="file-export" href="/vtk/export">
+    Learn VTK export options
+  </Card>
+  <Card title="Time Series" icon="clock" href="/vtk/time-series">
+    Create temporal animations
+  </Card>
+  <Card title="VTK API" icon="code" href="/api-reference/vtk/vtk-exporter">
+    VTK API reference
+  </Card>
+</CardGroup>
