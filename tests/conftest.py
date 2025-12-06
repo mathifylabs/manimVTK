@@ -72,8 +72,8 @@ def temp_media_dir(tmpdir, monkeypatch, request):
         monkeypatch.chdir(tmpdir)
         yield tmpdir
     else:
-        with manim.tempconfig({"media_dir": str(tmpdir)}):
-            assert manim.config.media_dir == str(tmpdir)
+        with manimvtk.tempconfig({"media_dir": str(tmpdir)}):
+            assert manimvtk.config.media_dir == str(tmpdir)
             yield tmpdir
 
 
@@ -88,12 +88,12 @@ def manim_caplog(caplog):
 
 @pytest.fixture
 def config():
-    saved = manim.config.copy()
-    manim.config.renderer = "cairo"
+    saved = manimvtk.config.copy()
+    manimvtk.config.renderer = "cairo"
     # we need to return the actual config so that tests
     # using tempconfig pass
-    yield manim.config
-    manim.config.update(saved)
+    yield manimvtk.config
+    manimvtk.config.update(saved)
 
 
 @pytest.fixture

@@ -223,8 +223,10 @@ class TestVGroupConversion:
         assert polydata is not None
         # VGroup should have points from all child circles
         assert polydata.GetNumberOfPoints() > 0
-        # Each circle has 32 points, so 3 circles = 96 points
-        assert polydata.GetNumberOfPoints() == 96
+        # Circles with stroke (no fill) are exported as sampled polylines,
+        # which results in more points than the raw bezier control points.
+        # Just verify we have at least the minimum expected points.
+        assert polydata.GetNumberOfPoints() >= 3 * 8  # At least 8 points per circle
 
     def test_vgroup_has_cells(self):
         """Test that VGroup conversion preserves cell information."""
@@ -270,3 +272,72 @@ class TestVGroupConversion:
 
         assert polydata is not None
         assert polydata.GetNumberOfPoints() > 0
+
+
+class TestStrokeBasedMobjectConversion:
+    """Tests for stroke-based mobjects (lines, axes) converted to VTK polylines."""
+
+    def test_line_exports_as_vtk_lines(self):
+        """Test that a Line is exported as VTK polylines, not polygons."""
+        line = Line(start=np.array([-1, 0, 0]), end=np.array([1, 0, 0]))
+        polydata = vmobject_to_vtk_polydata(line)
+
+        assert polydata is not None
+        assert polydata.GetNumberOfPoints() > 0
+        # Lines should export as VTK lines, not polygons
+        assert polydata.GetNumberOfLines() > 0
+        assert polydata.GetNumberOfPolys() == 0
+
+    def test_circle_stroke_only_exports_as_vtk_lines(self):
+        """Test that a Circle with stroke only is exported as VTK polylines."""
+        circle = Circle(radius=1.0)  # Default: stroke only, no fill
+        polydata = vmobject_to_vtk_polydata(circle)
+
+        assert polydata is not None
+        assert polydata.GetNumberOfPoints() > 0
+        assert polydata.GetNumberOfLines() > 0
+        assert polydata.GetNumberOfPolys() == 0
+
+    def test_filled_circle_exports_as_polygons(self):
+        """Test that a Circle with fill is exported as VTK polygons."""
+        circle = Circle(radius=1.0, fill_opacity=0.5)
+        polydata = vmobject_to_vtk_polydata(circle)
+
+        assert polydata is not None
+        assert polydata.GetNumberOfPoints() > 0
+        # Filled shapes should use polygons
+        assert polydata.GetNumberOfPolys() > 0
+
+    def test_axes_export_includes_lines(self):
+        """Test that Axes are properly exported with VTK lines for axis lines and ticks."""
+        from manimvtk import Axes
+
+        axes = Axes(
+            x_range=[0, 6, 1],
+            y_range=[-1.5, 1.5, 1],
+            x_length=10.0,
+            y_length=4.2,
+            tips=True,
+        )
+        polydata = mobject_to_vtk_polydata(axes)
+
+        assert polydata is not None
+        assert polydata.GetNumberOfPoints() > 0
+        # Axes should have lines (for axis lines and ticks)
+        assert polydata.GetNumberOfLines() > 0
+        # Axes should also have polygons (for arrow tips)
+        assert polydata.GetNumberOfPolys() > 0
+
+    def test_parametric_function_exports_as_lines(self):
+        """Test that plotted functions are exported as VTK lines."""
+        from manimvtk import Axes
+
+        axes = Axes(x_range=[0, 6, 1], y_range=[-1.5, 1.5, 1])
+        graph = axes.plot(lambda x: np.sin(x), use_smoothing=False)
+        polydata = vmobject_to_vtk_polydata(graph)
+
+        assert polydata is not None
+        assert polydata.GetNumberOfPoints() > 0
+        # Graphs should export as lines
+        assert polydata.GetNumberOfLines() > 0
+        assert polydata.GetNumberOfPolys() == 0
