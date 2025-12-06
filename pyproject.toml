@@ -1,6 +1,6 @@
 [project]
 name = "manimvtk"
-version = "0.19.0.post5"
+version = "0.19.0.post6"
 description = "Animation engine for explanatory math videos with VTK scientific visualization support."
 authors = [
   {name = "José Alvarez (Mathify.dev)", email = "jose@mathify.dev"},
