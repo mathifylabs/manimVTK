@@ -1,0 +1,488 @@
+---
+title: "ParaView Integration"
+description: "Visualize ManimVTK exports in ParaView"
+---
+
+## Introduction
+
+[ParaView](https://www.paraview.org/) is a powerful open-source scientific visualization application. ManimVTK's VTK export is specifically designed to integrate seamlessly with ParaView.
+
+<Card
+  title="Download ParaView"
+  icon="download"
+  href="https://www.paraview.org/download/"
+>
+  Get the latest ParaView version (5.9+ recommended)
+</Card>
+
+## Quick Start
+
+### 1. Export from ManimVTK
+
+```bash
+manimvtk -pqh scene.py MyScene --vtk-export
+```
+
+### 2. Open in ParaView
+
+1. Launch ParaView
+2. **File → Open**
+3. Navigate to `media/vtk/MyScene/`
+4. Select `MyScene_final.vtp` or `MyScene_final.vtm`
+5. Click **"Open"**
+6. Click **"Apply"** in Properties panel
+
+Your ManimVTK scene is now loaded!
+
+## Basic Visualization
+
+### Surface Representation
+
+Change how your objects appear:
+
+**In Properties panel:**
+- **Representation**: Surface, Wireframe, Points, Surface With Edges
+- **Coloring**: Solid Color, by array data
+- **Opacity**: 0.0 (transparent) to 1.0 (opaque)
+
+<Tip>
+  **Surface With Edges** is great for seeing the mesh structure
+</Tip>
+
+### Color by Data
+
+If your export includes color data:
+
+1. In Properties panel, find **"Coloring"**
+2. Select **"Colors"** from dropdown
+3. Choose color map (Cool to Warm, Viridis, etc.)
+4. Adjust range in **Color Map Editor**
+
+### Camera Controls
+
+- **Left Click + Drag**: Rotate
+- **Middle Click + Drag**: Pan
+- **Scroll Wheel**: Zoom
+- **Right Click + Drag**: Zoom
+
+**Reset camera:**
+- Click camera icon in toolbar
+- Or **View → Camera → Reset**
+
+## Time Series Animation
+
+For exports with `--vtk-time-series`:
+
+### Loading Time Series
+
+1. File → Open
+2. Select the **`.pvd` file** (not individual frames)
+3. Click "Apply"
+
+### Playback Controls
+
+**Time toolbar** appears at top:
+- ⏮️ First frame
+- ⏪ Previous frame  
+- ▶️ Play
+- ⏸️ Pause
+- ⏩ Next frame
+- ⏭️ Last frame
+
+**Time slider:**
+- Drag to scrub through frames
+- Shows current time value
+
+### Animation View
+
+For advanced timeline control:
+
+1. **View → Animation View**
+2. Set duration and frame rate
+3. Add keyframes for camera movement
+4. Export animation as video
+
+## Filters and Analysis
+
+### Common Filters
+
+<Tabs>
+  <Tab title="Clip">
+    Cut through your geometry to see inside:
+    
+    1. Select your object
+    2. **Filters → Common → Clip**
+    3. Adjust plane position and normal
+    4. Click "Apply"
+  </Tab>
+
+  <Tab title="Slice">
+    Create a 2D slice through 3D data:
+    
+    1. **Filters → Common → Slice**
+    2. Choose slice orientation
+    3. Position the slice
+    4. Apply
+  </Tab>
+
+  <Tab title="Contour">
+    Create isosurfaces from scalar data:
+    
+    1. **Filters → Common → Contour**
+    2. Select scalar array
+    3. Set isovalues
+    4. Apply
+  </Tab>
+
+  <Tab title="Calculator">
+    Compute new fields from existing data:
+    
+    1. **Filters → Common → Calculator**
+    2. Enter formula (e.g., `sqrt(X^2 + Y^2 + Z^2)`)
+    3. Name result array
+    4. Apply
+  </Tab>
+</Tabs>
+
+### Measuring
+
+**Distance Tool:**
+1. **View → Find Data → Select Points On**
+2. Click two points
+3. View distance in Information panel
+
+**Volume/Area:**
+1. Select object
+2. **Filters → Alphabetical → Integrate Variables**
+3. View in Spreadsheet View
+
+## Scientific Visualization
+
+### Scalar Field Visualization
+
+If you've attached scalar data (temperature, pressure):
+
+```python
+# In ManimVTK (requires post-processing)
+from manimvtk.vtk import add_scalar_field
+# add_scalar_field(polydata, "temperature", temp_array)
+```
+
+**In ParaView:**
+1. Color by scalar field
+2. Add color bar: **View → Color Map Editor → Show Color Legend**
+3. Apply **Contour** filter for isosurfaces
+4. Use **Threshold** to filter by value range
+
+### Vector Field Visualization
+
+For velocity or force fields:
+
+```python
+# In ManimVTK (post-processing)
+from manimvtk.vtk import add_vector_field
+# add_vector_field(polydata, "velocity", velocity_array)
+```
+
+**In ParaView:**
+
+**Glyphs (arrows):**
+1. **Filters → Common → Glyph**
+2. Set Glyph Type: Arrow
+3. Orient by vector field
+4. Scale by magnitude
+5. Apply
+
+**Streamlines:**
+1. **Filters → Common → Stream Tracer**
+2. Set Vectors: your velocity field
+3. Choose seed type (Line, Point, etc.)
+4. Apply
+
+### CFD Workflow Example
+
+1. **Load data**: Open your `.pvd` time series
+2. **Slice**: Create cross-section
+3. **Contour**: Show pressure isosurfaces
+4. **Glyph**: Display velocity vectors
+5. **Color**: By temperature or pressure
+6. **Animate**: Play through time steps
+
+## Rendering and Export
+
+### Screenshots
+
+**High-quality screenshots:**
+
+1. Adjust view and size window
+2. **File → Save Screenshot**
+3. Set resolution (e.g., 4096x2160)
+4. Choose format (PNG recommended)
+5. Save
+
+<Tip>
+  Use **transparent background** for compositing: Check "Transparent Background" in save dialog
+</Tip>
+
+### Exporting Animation
+
+**Save as video:**
+
+1. Set up time series and view
+2. **File → Save Animation**
+3. Choose format:
+   - **AVI**: Uncompressed, large
+   - **MP4**: Compressed, smaller (requires ffmpeg)
+   - **Image sequence**: PNG frames
+4. Set frame rate and resolution
+5. Save
+
+**Quality settings:**
+- **Stereo**: For 3D viewing
+- **Frame Rate**: Match source or higher
+- **Compression**: Balance quality/size
+
+### Python Export
+
+Export current view to Python script:
+
+1. **Tools → Start Trace**
+2. Perform visualization steps
+3. **Tools → Stop Trace**
+4. Save Python script
+5. Run with `pvpython script.py`
+
+## Advanced Features
+
+### Python Scripting
+
+Automate ParaView with Python:
+
+```python
+# Load in pvpython or Programmable Filter
+from paraview.simple import *
+
+# Load VTK file
+reader = XMLPolyDataReader(FileName='MyScene_final.vtp')
+Show(reader)
+
+# Apply filter
+clip = Clip(Input=reader)
+clip.ClipType = 'Plane'
+Show(clip)
+
+# Render
+Render()
+```
+
+### Batch Processing
+
+Process multiple files:
+
+```python
+import glob
+from paraview.simple import *
+
+for file in glob.glob('media/vtk/*/*.vtp'):
+    reader = XMLPolyDataReader(FileName=file)
+    # Process...
+    SaveData(f'output/{file}.png')
+```
+
+### Custom Filters
+
+Create reusable visualization pipelines:
+
+1. Set up filter pipeline
+2. **Tools → Create Custom Filter**
+3. Name and save
+4. Access from **Filters → Custom**
+
+## Tips and Tricks
+
+<AccordionGroup>
+  <Accordion icon="lightbulb" title="Keyboard Shortcuts">
+    - `R`: Reset camera
+    - `Space`: Play/pause animation
+    - `Ctrl + O`: Open file
+    - `Ctrl + S`: Save screenshot
+    - `Ctrl + E`: Save animation
+    - `3`: Toggle surface with edges
+  </Accordion>
+
+  <Accordion icon="eye" title="Visibility">
+    - Click eye icon to toggle object visibility
+    - Use Pipeline Browser to manage multiple objects
+    - Group objects: Select multiple → Right click → Group
+  </Accordion>
+
+  <Accordion icon="palette" title="Color Maps">
+    Best color maps for different data:
+    - **Sequential**: Viridis, Plasma, Inferno
+    - **Diverging**: Cool to Warm, Blue to Red
+    - **Rainbow**: Use sparingly (can be misleading)
+  </Accordion>
+
+  <Accordion icon="gauge" title="Performance">
+    For large datasets:
+    - Use **LOD (Level of Detail)**: Edit → Settings → Render View
+    - Reduce geometry: **Filters → Decimate**
+    - Hide objects not in view
+    - Use client-server mode for very large data
+  </Accordion>
+</AccordionGroup>
+
+## Example Workflows
+
+### Basic Shape Inspection
+
+```python
+# ManimVTK scene
+from manimvtk import *
+
+class ShapeInspection(Scene):
+    def construct(self):
+        shapes = VGroup(
+            Circle(radius=1, color=BLUE),
+            Square(side_length=1.5, color=RED),
+            Triangle(color=GREEN)
+        ).arrange(RIGHT, buff=1)
+        
+        self.play(Create(shapes))
+        self.wait()
+```
+
+```bash
+manimvtk -pql scene.py ShapeInspection --vtk-export
+```
+
+**In ParaView:**
+1. Open `ShapeInspection_final.vtm`
+2. Apply
+3. In Pipeline Browser, expand to see each shape
+4. Toggle visibility to examine individually
+5. Use "Surface With Edges" to see mesh
+
+### 3D Surface Analysis
+
+```python
+# ManimVTK scene
+from manimvtk import *
+import numpy as np
+
+class SurfaceAnalysis(ThreeDScene):
+    def construct(self):
+        surface = Surface(
+            lambda u, v: np.array([u, v, np.sin(u) * np.cos(v)]),
+            u_range=[-2, 2],
+            v_range=[-2, 2],
+            resolution=(50, 50)
+        )
+        surface.set_color_by_gradient(BLUE, RED)
+        
+        self.set_camera_orientation(phi=60 * DEGREES)
+        self.add(surface)
+```
+
+```bash
+manimvtk -pqh scene.py SurfaceAnalysis --vtk-export
+```
+
+**In ParaView:**
+1. Open surface
+2. Apply **Calculator** filter: `coordsZ` to create height field
+3. Color by height
+4. Apply **Contour** to show level curves
+5. Adjust camera for best view
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion icon="triangle-exclamation" title="Object appears black">
+    **Cause:** No lighting or normals
+    
+    **Solution:**
+    - Apply **Generate Surface Normals** filter
+    - Or adjust lighting in Properties
+  </Accordion>
+
+  <Accordion icon="triangle-exclamation" title="Time series won't play">
+    **Cause:** Wrong file opened
+    
+    **Solution:**
+    - Must open `.pvd` file, not individual `.vtp`
+    - Close all and reopen `.pvd`
+  </Accordion>
+
+  <Accordion icon="triangle-exclamation" title="Colors missing">
+    **Cause:** Color data not in export
+    
+    **Solution:**
+    - Check if colors set in ManimVTK
+    - Look for "Colors" array in Information panel
+    - If missing, set in Coloring dropdown to "Solid Color"
+  </Accordion>
+
+  <Accordion icon="triangle-exclamation" title="Slow performance">
+    **Cause:** Complex geometry or large data
+    
+    **Solution:**
+    - Use lower quality setting in ParaView
+    - Apply Decimate filter
+    - Enable LOD threshold
+    - Close unused pipeline objects
+  </Accordion>
+</AccordionGroup>
+
+## Resources
+
+<CardGroup cols={2}>
+  <Card
+    title="ParaView Guide"
+    icon="book"
+    href="https://docs.paraview.org/en/latest/"
+  >
+    Official ParaView documentation
+  </Card>
+
+  <Card
+    title="ParaView Tutorial"
+    icon="graduation-cap"
+    href="https://www.paraview.org/Wiki/The_ParaView_Tutorial"
+  >
+    Step-by-step tutorials
+  </Card>
+
+  <Card
+    title="ParaView Discourse"
+    icon="comments"
+    href="https://discourse.paraview.org/"
+  >
+    Community forum for help
+  </Card>
+
+  <Card
+    title="VTK File Formats"
+    icon="file-code"
+    href="https://kitware.github.io/vtk-examples/site/VTKFileFormats/"
+  >
+    VTK format specification
+  </Card>
+</CardGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="VTK Export Guide" icon="file-export" href="/vtk/export">
+    Master VTK file export from ManimVTK
+  </Card>
+  <Card title="Time Series" icon="clock" href="/vtk/time-series">
+    Create animated time series
+  </Card>
+  <Card title="Scientific Examples" icon="flask" href="/examples/scientific">
+    See scientific visualization examples
+  </Card>
+  <Card title="Scalar Fields" icon="wave" href="/api-reference/vtk/scalar-fields">
+    Add scientific data to exports
+  </Card>
+</CardGroup>
