@@ -21,7 +21,15 @@ class CircleExample(Scene):
         self.wait()
 ```
 
+<iframe
+  src="https://mathify.dev/share/276d53a3-ce75-4957-8230-70a48e5eaa1b/vtk"
+  width="100%"
+  height="500"
+  style={{ border: "none", borderRadius: "12px" }}
+/>
+
 **Render:**
+
 ```bash
 manimvtk -pql examples.py CircleExample
 ```
@@ -37,11 +45,11 @@ class MultipleShapes(Scene):
         circle = Circle(radius=1, color=BLUE)
         square = Square(side_length=1.5, color=RED)
         triangle = Triangle(color=GREEN)
-        
+
         # Arrange horizontally
         shapes = VGroup(circle, square, triangle)
         shapes.arrange(RIGHT, buff=1)
-        
+
         # Animate
         self.play(Create(shapes))
         self.wait()
@@ -61,7 +69,7 @@ class ColoredShapes(Scene):
             for color in colors
         ])
         circles.arrange_in_grid(rows=2, cols=3, buff=0.5)
-        
+
         # Animate creation with lag
         self.play(LaggedStart(*[Create(c) for c in circles], lag_ratio=0.2))
         self.wait()
@@ -78,7 +86,7 @@ class SquareToCircle(Scene):
     def construct(self):
         square = Square(color=BLUE, fill_opacity=0.5)
         circle = Circle(color=RED, fill_opacity=0.5)
-        
+
         self.play(Create(square))
         self.wait()
         self.play(Transform(square, circle))
@@ -93,19 +101,19 @@ from manimvtk import *
 class MovementExample(Scene):
     def construct(self):
         square = Square(color=BLUE)
-        
+
         # Create
         self.play(Create(square))
-        
+
         # Move right
         self.play(square.animate.shift(RIGHT * 3))
-        
+
         # Rotate
         self.play(square.animate.rotate(PI / 4))
-        
+
         # Scale
         self.play(square.animate.scale(1.5))
-        
+
         self.wait()
 ```
 
@@ -132,11 +140,11 @@ class EquationExample(Scene):
     def construct(self):
         # Pythagorean theorem
         equation = MathTex(r"a^2 + b^2 = c^2")
-        
+
         # Write equation
         self.play(Write(equation))
         self.wait()
-        
+
         # Transform to specific example
         example = MathTex(r"3^2 + 4^2 = 5^2")
         self.play(Transform(equation, example))
@@ -152,9 +160,9 @@ class LabeledShapes(Scene):
     def construct(self):
         circle = Circle(radius=1.5, color=BLUE)
         label = Text("Circle", font_size=36).next_to(circle, UP)
-        
+
         group = VGroup(circle, label)
-        
+
         self.play(Create(circle))
         self.play(Write(label))
         self.wait()
@@ -173,11 +181,11 @@ class FadeExample(Scene):
             Square(side_length=1).shift(direction * 2)
             for direction in [LEFT, ORIGIN, RIGHT]
         ])
-        
+
         # Fade in
         self.play(FadeIn(shapes))
         self.wait()
-        
+
         # Fade out one by one
         for shape in shapes:
             self.play(FadeOut(shape))
@@ -193,14 +201,14 @@ class IndicateExample(Scene):
     def construct(self):
         squares = VGroup(*[Square() for _ in range(3)])
         squares.arrange(RIGHT, buff=1)
-        
+
         self.add(squares)
         self.wait()
-        
+
         # Indicate middle square
         self.play(Indicate(squares[1]))
         self.wait()
-        
+
         # Flash effect
         self.play(Flash(squares[0].get_center()))
         self.wait()
@@ -218,11 +226,11 @@ class GrowExample(Scene):
             Square(color=RED).shift(RIGHT * 2.5),
             Triangle(color=GREEN).shift(LEFT * 2.5)
         )
-        
+
         # Grow from center
         self.play(*[GrowFromCenter(shape) for shape in shapes])
         self.wait()
-        
+
         # Shrink to center
         self.play(*[ShrinkToCenter(shape) for shape in shapes])
 ```
@@ -238,14 +246,14 @@ class GridArrangement(Scene):
     def construct(self):
         # Create 12 squares
         squares = VGroup(*[Square(side_length=0.5) for _ in range(12)])
-        
+
         # Arrange in 3x4 grid
         squares.arrange_in_grid(rows=3, cols=4, buff=0.3)
-        
+
         # Color by row
         for i, row in enumerate([squares[0:4], squares[4:8], squares[8:12]]):
             row.set_color([RED, GREEN, BLUE][i])
-        
+
         self.play(Create(squares))
         self.wait()
 ```
@@ -259,7 +267,7 @@ class CircularArrangement(Scene):
     def construct(self):
         dots = VGroup(*[Dot() for _ in range(8)])
         dots.arrange_in_circle(radius=2)
-        
+
         self.play(LaggedStart(*[GrowFromCenter(dot) for dot in dots], lag_ratio=0.1))
         self.wait()
 ```
@@ -278,12 +286,13 @@ class Export2DShapes(Scene):
             Square(side_length=1.5, color=RED, fill_opacity=0.5),
             Triangle(color=GREEN, fill_opacity=0.5)
         ).arrange(RIGHT, buff=1)
-        
+
         self.play(Create(shapes))
         self.wait()
 ```
 
 **Render with VTK export:**
+
 ```bash
 manimvtk -pql examples.py Export2DShapes --vtk-export
 ```
@@ -302,7 +311,11 @@ This creates both a video and VTK files for further visualization.
   <Card title="Mobjects Guide" icon="shapes" href="/concepts/mobjects">
     Learn more about mobjects
   </Card>
-  <Card title="Animations Guide" icon="wand-magic-sparkles" href="/concepts/animations">
+  <Card
+    title="Animations Guide"
+    icon="wand-magic-sparkles"
+    href="/concepts/animations"
+  >
     Master animation techniques
   </Card>
 </CardGroup>
