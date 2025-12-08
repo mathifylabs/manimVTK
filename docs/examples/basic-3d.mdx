@@ -18,16 +18,24 @@ class SphereExample(ThreeDScene):
     def construct(self):
         # Set camera angle
         self.set_camera_orientation(phi=60 * DEGREES, theta=30 * DEGREES)
-        
+
         # Create sphere
         sphere = Sphere(radius=1.5, resolution=(20, 20))
         sphere.set_color(BLUE)
-        
+
         self.play(Create(sphere))
         self.wait()
 ```
 
+<iframe
+  src="https://mathify.dev/share/295ec9a9-91f8-4981-898e-6d77024fe788/vtk"
+  width="100%"
+  height="500"
+  style={{ border: "none", borderRadius: "12px" }}
+/>
+
 **Render:**
+
 ```bash
 manimvtk -pql examples.py SphereExample --renderer vtk
 ```
@@ -40,14 +48,14 @@ from manimvtk import *
 class Multiple3DObjects(ThreeDScene):
     def construct(self):
         self.set_camera_orientation(phi=70 * DEGREES, theta=30 * DEGREES)
-        
+
         # Create objects
         sphere = Sphere(radius=0.5, color=BLUE).shift(LEFT * 2)
         cube = Cube(side_length=1, color=RED)
         cone = Cone(base_radius=0.5, height=1, color=GREEN).shift(RIGHT * 2)
-        
+
         objects = VGroup(sphere, cube, cone)
-        
+
         self.play(Create(objects))
         self.begin_ambient_camera_rotation(rate=0.1)
         self.wait(5)
@@ -75,7 +83,7 @@ class WaveSurface(ThreeDScene):
             resolution=(40, 40)
         )
         surface.set_color_by_gradient(BLUE, GREEN, RED)
-        
+
         self.set_camera_orientation(phi=60 * DEGREES, theta=-45 * DEGREES)
         self.play(Create(surface), run_time=2)
         self.wait()
@@ -100,7 +108,7 @@ class TorusExample(ThreeDScene):
             resolution=(40, 40)
         )
         torus.set_color_by_gradient(BLUE, PURPLE, RED)
-        
+
         self.set_camera_orientation(phi=60 * DEGREES, theta=45 * DEGREES)
         self.play(Create(torus))
         self.begin_ambient_camera_rotation(rate=0.15)
@@ -118,9 +126,9 @@ class RotatingCube(ThreeDScene):
     def construct(self):
         cube = Cube(side_length=2, fill_opacity=0.7)
         cube.set_color_by_gradient(BLUE, GREEN, YELLOW)
-        
+
         self.set_camera_orientation(phi=60 * DEGREES, theta=30 * DEGREES)
-        
+
         self.play(Create(cube))
         self.play(Rotate(cube, angle=TAU, axis=UP, run_time=4))
         self.wait()
@@ -134,9 +142,9 @@ from manimvtk import *
 class GrowingSphere(ThreeDScene):
     def construct(self):
         sphere = Sphere(radius=0.5, color=BLUE)
-        
+
         self.set_camera_orientation(phi=60 * DEGREES)
-        
+
         self.play(GrowFromCenter(sphere))
         self.play(sphere.animate.scale(3), run_time=2)
         self.wait()
@@ -153,13 +161,13 @@ class OrbitingCamera(ThreeDScene):
     def construct(self):
         axes = ThreeDAxes()
         sphere = Sphere(radius=1, color=BLUE)
-        
+
         self.add(axes, sphere)
-        
+
         # Start from front
         self.set_camera_orientation(phi=60 * DEGREES, theta=0)
         self.wait()
-        
+
         # Orbit 360 degrees
         self.move_camera(theta=360 * DEGREES, run_time=8)
         self.wait()
@@ -174,11 +182,11 @@ class CameraZoom(ThreeDScene):
     def construct(self):
         cube = Cube()
         self.add(cube)
-        
+
         # Start far away
         self.set_camera_orientation(phi=60 * DEGREES, distance=10)
         self.wait()
-        
+
         # Zoom in
         self.move_camera(distance=4, run_time=3)
         self.wait()
@@ -201,13 +209,14 @@ class ExportSurface(ThreeDScene):
             resolution=(30, 30)
         )
         surface.set_color_by_gradient(BLUE, RED)
-        
+
         self.set_camera_orientation(phi=60 * DEGREES)
         self.play(Create(surface))
         self.wait()
 ```
 
 **Render with VTK export:**
+
 ```bash
 manimvtk -pqh examples.py ExportSurface --renderer vtk --vtk-export
 ```
@@ -220,7 +229,11 @@ Open the resulting `.vtp` file in ParaView for further analysis.
   <Card title="Scientific Examples" icon="flask" href="/examples/scientific">
     Scientific visualization examples
   </Card>
-  <Card title="3D API Reference" icon="cube" href="/api-reference/mobjects/3d-objects">
+  <Card
+    title="3D API Reference"
+    icon="cube"
+    href="/api-reference/mobjects/3d-objects"
+  >
     Complete 3D objects reference
   </Card>
   <Card title="VTK Renderer" icon="display" href="/vtk/renderer">
