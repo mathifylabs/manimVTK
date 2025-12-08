@@ -8,7 +8,8 @@ description: "Get started with ManimVTK in minutes"
 ### Prerequisites
 
 <Note>
-  **Linux Users:** ManimVTK depends on ManimPango, which requires system dependencies on Linux. Install them first before proceeding.
+  **Linux Users:** ManimVTK depends on ManimPango, which requires system
+  dependencies on Linux. Install them first before proceeding.
 </Note>
 
 <AccordionGroup>
@@ -18,11 +19,10 @@ description: "Get started with ManimVTK in minutes"
     ```
   </Accordion>
 
-  <Accordion icon="fedora" title="Fedora">
-    ```bash
-    sudo dnf install pango-devel pkg-config python3-devel
-    ```
-  </Accordion>
+{" "}
+<Accordion icon="fedora" title="Fedora">
+  ```bash sudo dnf install pango-devel pkg-config python3-devel ```
+</Accordion>
 
   <Accordion icon="linux" title="Arch Linux">
     ```bash
@@ -44,6 +44,7 @@ description: "Get started with ManimVTK in minutes"
     # Full scientific stack (includes PyVista)
     pip install manimvtk[scientific]
     ```
+
   </Tab>
 
   <Tab title="From Source">
@@ -60,6 +61,7 @@ description: "Get started with ManimVTK in minutes"
     # Or install with full scientific stack
     pip install -e ".[scientific]"
     ```
+
   </Tab>
 </Tabs>
 
@@ -82,11 +84,18 @@ class CircleExample(Scene):
     def construct(self):
         # Create a circle
         circle = Circle(radius=1, color=BLUE)
-        
+
         # Add it to the scene
         self.play(Create(circle))
         self.wait()
 ```
+
+<iframe
+  src="https://mathify.dev/share/16e387ba-5c6d-4fde-bb48-62cb9f0bb173/vtk"
+  width="100%"
+  height="500"
+  style={{ border: "none", borderRadius: "12px" }}
+/>
 
 ### Step 2: Render the Animation
 
@@ -97,12 +106,14 @@ manimvtk -pql example.py CircleExample
 ```
 
 **Command breakdown:**
+
 - `-p`: Preview the video after rendering
 - `-q`: Quality (l=low, m=medium, h=high)
 - `-l`: Low quality for faster rendering
 
 <Tip>
-  The rendered video will be saved in `media/videos/example/480p15/CircleExample.mp4`
+  The rendered video will be saved in
+  `media/videos/example/480p15/CircleExample.mp4`
 </Tip>
 
 ### Step 3: Add VTK Export
@@ -114,6 +125,7 @@ manimvtk -pql example.py CircleExample --vtk-export
 ```
 
 This creates:
+
 - `media/videos/example/480p15/CircleExample.mp4` - Video file
 - `media/vtk/CircleExample/CircleExample_final.vtp` - VTK file
 
@@ -133,10 +145,10 @@ class SphereExample(ThreeDScene):
         # Create a 3D sphere
         sphere = Sphere(radius=1.5, resolution=(20, 20))
         sphere.set_color(BLUE)
-        
+
         # Rotate the camera
         self.set_camera_orientation(phi=75 * DEGREES, theta=30 * DEGREES)
-        
+
         # Animate
         self.play(Create(sphere))
         self.play(Rotate(sphere, angle=PI, axis=UP))
@@ -160,7 +172,7 @@ class AnimatedCircle(Scene):
     def construct(self):
         circle = Circle(radius=1, color=BLUE)
         self.add(circle)
-        
+
         # Animate the circle growing
         self.play(circle.animate.scale(2))
         self.wait()
@@ -173,6 +185,7 @@ manimvtk -pql example.py AnimatedCircle --vtk-time-series
 ```
 
 **Output structure:**
+
 ```
 media/vtk/AnimatedCircle/
 ├── AnimatedCircle.pvd              # ParaView collection file
@@ -183,26 +196,23 @@ media/vtk/AnimatedCircle/
 ```
 
 <Tip>
-  Open the `.pvd` file in ParaView to scrub through the animation using the time slider
+  Open the `.pvd` file in ParaView to scrub through the animation using the time
+  slider
 </Tip>
 
 ## Common CLI Options
 
-| Option | Description |
-|--------|-------------|
-| `-p` | Preview video after rendering |
-| `-q{l,m,h}` | Quality: low, medium, or high |
-| `-s` | Save last frame as PNG |
-| `-a` | Render all scenes in file |
-| `--renderer {cairo,opengl,vtk}` | Choose renderer |
-| `--vtk-export` | Export final scene to VTK |
-| `--vtk-time-series` | Export all frames as VTK time series |
+| Option                          | Description                          |
+| ------------------------------- | ------------------------------------ |
+| `-p`                            | Preview video after rendering        |
+| `-q{l,m,h}`                     | Quality: low, medium, or high        |
+| `-s`                            | Save last frame as PNG               |
+| `-a`                            | Render all scenes in file            |
+| `--renderer {cairo,opengl,vtk}` | Choose renderer                      |
+| `--vtk-export`                  | Export final scene to VTK            |
+| `--vtk-time-series`             | Export all frames as VTK time series |
 
-<Card
-  title="See all CLI options"
-  icon="terminal"
-  href="/advanced/cli-options"
->
+<Card title="See all CLI options" icon="terminal" href="/advanced/cli-options">
   Complete reference of command-line options
 </Card>
 
@@ -217,21 +227,15 @@ media/vtk/AnimatedCircle/
     Learn about VTK rendering and export
   </Card>
 
-  <Card
-    title="Core Concepts"
-    icon="book"
-    href="/concepts/scenes"
-  >
-    Understand scenes, mobjects, and animations
-  </Card>
+{" "}
+<Card title="Core Concepts" icon="book" href="/concepts/scenes">
+  Understand scenes, mobjects, and animations
+</Card>
 
-  <Card
-    title="Examples Gallery"
-    icon="images"
-    href="/examples/basic-2d"
-  >
-    Explore example animations
-  </Card>
+{" "}
+<Card title="Examples Gallery" icon="images" href="/examples/basic-2d">
+  Explore example animations
+</Card>
 
   <Card
     title="API Reference"
@@ -249,9 +253,11 @@ media/vtk/AnimatedCircle/
     Report issues on our [GitHub repository](https://github.com/mathifylabs/manimVTK/issues)
   </Accordion>
 
-  <Accordion icon="question" title="Need help?">
-    Check the [Manim Community](https://www.manim.community/) resources and Discord
-  </Accordion>
+{" "}
+<Accordion icon="question" title="Need help?">
+  Check the [Manim Community](https://www.manim.community/) resources and
+  Discord
+</Accordion>
 
   <Accordion icon="book" title="Want to contribute?">
     See our [Contributing Guide](https://github.com/mathifylabs/manimVTK/blob/main/CONTRIBUTING.md)
