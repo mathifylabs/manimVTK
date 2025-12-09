@@ -40,8 +40,8 @@
           {
             "group": "Examples",
             "pages": [
-              "examples/basic-2d",
               "examples/basic-3d",
+              "examples/basic-2d",
               "examples/animations",
               "examples/scientific"
             ]
@@ -110,13 +110,8 @@
           "icon": "github"
         },
         {
-          "anchor": "Community",
-          "href": "https://www.manim.community/",
-          "icon": "users"
-        },
-        {
           "anchor": "Examples",
-          "href": "https://github.com/mathifylabs/manimVTK/tree/main/example_scenes",
+          "href": "https://manimvtk.mathify.dev/examples/basic-3d",
           "icon": "play"
         }
       ]
