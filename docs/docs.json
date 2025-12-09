@@ -111,7 +111,7 @@
         },
         {
           "anchor": "Examples",
-          "href": "https://manimvtk.mathify.dev/examples/basic-3d",
+          "href": "https://github.com/mathifylabs/manimVTK/blob/main/example_scenes/vtk_examples.py",
           "icon": "play"
         }
       ]
