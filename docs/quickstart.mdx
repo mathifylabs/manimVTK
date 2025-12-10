@@ -13,7 +13,18 @@ description: "Get started with ManimVTK in minutes"
 </Note>
 
 <AccordionGroup>
-  <Accordion icon="ubuntu" title="Debian/Ubuntu (including Google Colab)">
+  <Accordion icon="colab" title="Google Colab (Recommended)">
+    ```bash
+      !sudo apt update
+      !sudo apt install libcairo2-dev \
+          # optional dependencies for full LaTeX support
+          # texlive texlive-latex-extra texlive-fonts-extra \
+          # texlive-latex-recommended texlive-science \
+          tipa libpango1.0-dev
+      !pip install IPython==8.21.0
+    ```
+  </Accordion>
+  <Accordion icon="ubuntu" title="Debian/Ubuntu">
     ```bash
     sudo apt install libpango1.0-dev pkg-config python3-dev
     ```

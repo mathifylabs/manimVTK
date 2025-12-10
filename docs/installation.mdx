@@ -27,6 +27,17 @@ description: "Detailed installation instructions for all platforms"
 ManimVTK requires system-level dependencies on Linux for text rendering (ManimPango).
 
 <Tabs>
+  <Tab title="Google Colab (Recommended)">
+    ```bash
+      !sudo apt update
+      !sudo apt install libcairo2-dev \
+          # optional dependencies for full LaTeX support
+          # texlive texlive-latex-extra texlive-fonts-extra \
+          # texlive-latex-recommended texlive-science \
+          tipa libpango1.0-dev
+      !pip install IPython==8.21.0
+    ```
+  </Tab>
   <Tab title="Debian/Ubuntu">
     ```bash
     sudo apt update
@@ -39,24 +50,19 @@ ManimVTK requires system-level dependencies on Linux for text rendering (ManimPa
     - Google Colab
   </Tab>
 
-  <Tab title="Fedora">
-    ```bash
-    sudo dnf install pango-devel pkg-config python3-devel
-    ```
-    
-    **Tested on:**
-    - Fedora 38, 39, 40
-  </Tab>
+{" "}
 
-  <Tab title="Arch Linux">
-    ```bash
-    sudo pacman -S pango pkgconf
-    ```
-    
-    **Tested on:**
-    - Arch Linux (rolling release)
-    - Manjaro
-  </Tab>
+<Tab title="Fedora">
+  ```bash sudo dnf install pango-devel pkg-config python3-devel ``` **Tested
+  on:** - Fedora 38, 39, 40
+</Tab>
+
+{" "}
+
+<Tab title="Arch Linux">
+  ```bash sudo pacman -S pango pkgconf ``` **Tested on:** - Arch Linux (rolling
+  release) - Manjaro
+</Tab>
 
   <Tab title="Other Distributions">
     Install the following packages using your distribution's package manager:
@@ -67,11 +73,9 @@ ManimVTK requires system-level dependencies on Linux for text rendering (ManimPa
 </Tabs>
 
 <Note>
-  **Linux headless environments:** For rendering on servers without a display, you'll need `xvfb`:
-  ```bash
-  sudo apt install xvfb  # Debian/Ubuntu
-  sudo dnf install xorg-x11-server-Xvfb  # Fedora
-  ```
+  **Linux headless environments:** For rendering on servers without a display,
+  you'll need `xvfb`: ```bash sudo apt install xvfb # Debian/Ubuntu sudo dnf
+  install xorg-x11-server-Xvfb # Fedora ```
 </Note>
 
 ### macOS
@@ -88,7 +92,8 @@ python3 --version
 No additional system dependencies required! Python 3.9+ is sufficient.
 
 <Tip>
-  **Windows users:** We recommend using Windows Terminal for the best CLI experience
+  **Windows users:** We recommend using Windows Terminal for the best CLI
+  experience
 </Tip>
 
 ## Installation Methods
@@ -109,15 +114,13 @@ Install the latest stable release from the Python Package Index:
     - All standard dependencies
   </Tab>
 
-  <Tab title="Scientific Stack">
-    ```bash
-    pip install manimvtk[scientific]
-    ```
-    
-    Includes everything from basic installation plus:
-    - PyVista (advanced VTK visualization)
-    - Additional scientific computing tools
-  </Tab>
+{" "}
+
+<Tab title="Scientific Stack">
+  ```bash pip install manimvtk[scientific] ``` Includes everything from basic
+  installation plus: - PyVista (advanced VTK visualization) - Additional
+  scientific computing tools
+</Tab>
 
   <Tab title="Development Installation">
     ```bash
@@ -148,7 +151,8 @@ pip install -e ".[vtk,dev]"
 ```
 
 <Check>
-  **Editable mode** (`-e`) allows you to modify the source code and see changes immediately without reinstalling
+  **Editable mode** (`-e`) allows you to modify the source code and see changes
+  immediately without reinstalling
 </Check>
 
 ## Verify Installation
@@ -181,9 +185,7 @@ Render it:
 manimvtk -pql test.py Test
 ```
 
-<Check>
-  If a video file opens, your installation is working correctly!
-</Check>
+<Check>If a video file opens, your installation is working correctly!</Check>
 
 ### Test VTK Export
 
@@ -211,44 +213,34 @@ ls media/vtk/Test/
     2. Reinstall: `pip install --force-reinstall manimpango`
   </Accordion>
 
-  <Accordion icon="triangle-exclamation" title="ModuleNotFoundError: No module named 'vtk'">
-    VTK was not installed or the installation failed.
-    
-    **Solution:**
-    ```bash
-    pip install vtk
-    # Or reinstall with VTK extras
-    pip install --force-reinstall manimvtk[vtk]
-    ```
-  </Accordion>
+{" "}
 
-  <Accordion icon="triangle-exclamation" title="OpenGL errors on Linux">
-    This occurs in headless environments (servers without display).
-    
-    **Solution:**
-    ```bash
-    # Install xvfb
-    sudo apt install xvfb
-    
-    # Run with xvfb wrapper
-    xvfb-run -a manimvtk -pql example.py Scene
-    ```
-  </Accordion>
+<Accordion
+  icon="triangle-exclamation"
+  title="ModuleNotFoundError: No module named 'vtk'"
+>
+  VTK was not installed or the installation failed. **Solution:** ```bash pip
+  install vtk # Or reinstall with VTK extras pip install --force-reinstall
+  manimvtk[vtk] ```
+</Accordion>
 
-  <Accordion icon="triangle-exclamation" title="Permission denied errors">
-    You may need to use `--user` flag or a virtual environment.
-    
-    **Solution:**
-    ```bash
-    # Option 1: Install for current user only
-    pip install --user manimvtk[vtk]
-    
-    # Option 2: Use a virtual environment (recommended)
-    python -m venv venv
-    source venv/bin/activate  # On Windows: venv\Scripts\activate
-    pip install manimvtk[vtk]
-    ```
-  </Accordion>
+{" "}
+
+<Accordion icon="triangle-exclamation" title="OpenGL errors on Linux">
+  This occurs in headless environments (servers without display). **Solution:**
+  ```bash # Install xvfb sudo apt install xvfb # Run with xvfb wrapper xvfb-run
+  -a manimvtk -pql example.py Scene ```
+</Accordion>
+
+{" "}
+
+<Accordion icon="triangle-exclamation" title="Permission denied errors">
+  You may need to use `--user` flag or a virtual environment. **Solution:**
+  ```bash # Option 1: Install for current user only pip install --user
+  manimvtk[vtk] # Option 2: Use a virtual environment (recommended) python -m
+  venv venv source venv/bin/activate # On Windows: venv\Scripts\activate pip
+  install manimvtk[vtk] ```
+</Accordion>
 
   <Accordion icon="triangle-exclamation" title="FFmpeg not found">
     ManimVTK uses FFmpeg for video encoding.
@@ -289,16 +281,12 @@ Using virtual environments helps avoid dependency conflicts:
     ```
   </Tab>
 
-  <Tab title="conda">
-    ```bash
-    # Create conda environment
-    conda create -n manimvtk python=3.11
-    conda activate manimvtk
-    
-    # Install ManimVTK
-    pip install manimvtk[vtk]
-    ```
-  </Tab>
+{" "}
+
+<Tab title="conda">
+  ```bash # Create conda environment conda create -n manimvtk python=3.11 conda
+  activate manimvtk # Install ManimVTK pip install manimvtk[vtk] ```
+</Tab>
 
   <Tab title="uv (Fast)">
     ```bash
@@ -356,21 +344,17 @@ pip install matplotlib
     Create your first animation
   </Card>
 
-  <Card
-    title="VTK Features"
-    icon="cube"
-    href="/vtk/overview"
-  >
-    Learn about VTK capabilities
-  </Card>
+{" "}
 
-  <Card
-    title="Examples"
-    icon="play"
-    href="/examples/basic-2d"
-  >
-    Browse example scenes
-  </Card>
+<Card title="VTK Features" icon="cube" href="/vtk/overview">
+  Learn about VTK capabilities
+</Card>
+
+{" "}
+
+<Card title="Examples" icon="play" href="/examples/basic-2d">
+  Browse example scenes
+</Card>
 
   <Card
     title="Configuration"
