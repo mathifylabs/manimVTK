@@ -151,5 +151,10 @@
       "github": "https://github.com/mathifylabs/manimVTK",
       "x": "https://twitter.com/mathify_dev"
     }
+  },
+  "seo": {
+    "metatags": {
+      "canonical": "https://manimvtk.mathify.dev"
+    }
   }
 }
